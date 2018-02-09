@@ -1,0 +1,51 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar">
+    <ion-title class="side-title">
+      <img src="assets/imgs/logoatriawhite.png" height="45" />
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-slides class="content-slides-images" pager="true" style="border-bottom: 1px #dedede solid;">
+    <ion-slide *ngFor="let image of images">
+      <img src="{{image.url}}/500/500">
+    </ion-slide>
+  </ion-slides>
+  <div *ngFor="let item of items">
+    <div>
+      <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
+        <div class="text-description">
+          {{item.description}}
+        </div>
+      </ion-item>
+      <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
+        <div style="text-align:center;">
+          <button style="background:transparent;">
+            <ion-icon name="ios-basket" style="font-size:50px;color:#66c56c;"></ion-icon>
+          </button>
+          <br>
+          <div style="color:#66c56c">{{item.item_no}}</div>
+        </div>
+      </ion-item>
+      <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
+        <div style="text-align:center;">
+          <button style="background:transparent;">
+            <ion-icon name="ios-basket" style="font-size:50px;color:#66c56c;"></ion-icon>
+          </button>
+          <br>
+          <div style="color:#66c56c">{{item.item_no}}</div>
+        </div>
+      </ion-item>
+      <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
+        <div style="text-align:center;">
+          <button style="background:transparent;">
+            <ion-icon name="ios-basket" style="font-size:50px;color:#66c56c;"></ion-icon>
+          </button>
+          <br>
+          <div style="color:#66c56c">{{item.item_no}}</div>
+        </div>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>

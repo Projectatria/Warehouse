@@ -1,0 +1,53 @@
+page-putaway {
+    .header-menu {
+        padding: 0px;
+        height: 70px;
+    }
+    .header-navbar {
+
+    }
+    .header-title-menu {
+       text-align: left;
+       font-size: 17px;
+       font-family: "Roboto", "Helvetica Neue", sans-serif;
+       background: #ee1c26;
+       color: #ffffff;
+   }
+   .content-body-menu {
+
+   }
+    .back-button-md {
+        margin: 0 6px;
+        min-width: 44px;
+        box-shadow: none;
+        display: inline-block;
+        color: #ffffff;
+        background-color: transparent;
+    }
+
+    .content-images{
+        height: 50%;
+        width: 100%;
+    }
+    .content-title {
+        font-size: 20px;
+        text-align: center;
+        border-bottom: 1px solid;
+        border-color: #dedede;
+        padding: 10px;
+    }
+    .btn-go-location {
+        align-content: center; 
+        margin-top: 20px;
+        margin-left: 30%;
+        width: 40%;
+        height: 50px; 
+    }
+    .content-item-select {
+        font-size: 20px;
+    }.item-md ion-icon[item-left] + .item-inner, .item-md ion-icon[item-left] + .item-input, .item-md ion-icon[item-start] + .item-inner, .item-md ion-icon[item-start] + .item-input {
+        margin-left: 10px;
+    }
+    
+
+}

@@ -1,0 +1,74 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar">
+    <button ion-button menuToggle color="light">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title class="side-title">
+      <img src="assets/imgs/logoatriawhite.png" height="45" />
+    </ion-title>
+  </ion-navbar>
+    <div class="content-search">
+    <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search Order No">
+    </ion-searchbar>
+  </div>
+</ion-header>
+<ion-content class="content-menu" no-padding>
+  <ion-list class="content-list-menu">
+    <ion-item *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
+      <ion-avatar item-start>
+        <img src="assets/imgs/{{po.vendor_status}}.png" alt="">
+      </ion-avatar>
+      <h2>No Order : {{po.order_no}}</h2>
+      <br/>
+      <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
+      <br/>
+      <ion-note>{{po.posting_date}}</ion-note>
+    </ion-item> 
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content>
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <!--  <div class="content-menu-grid">
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let po of purchasing_order" col-12 col-md-6 col-lg-4 col-xl-3>
+          <div class="content-menu-list">
+            <button class="btn-header-title-list" ion-button color="darkitem" block (click)="doNext()">
+              <div class="content-header-title-list">
+                No.Order : {{po.order_no}}
+              </div>
+            </button>
+            <div class="content-body-list">
+              <ion-list>
+                No.Doc : {{po.doc_no}}
+              </ion-list>
+              <ion-list>
+                No.Vendor : {{po.vendor_no}}
+              </ion-list>
+              <ion-list>
+                Vendor Status : {{po.vendor_status}}
+              </ion-list>
+              <ion-list>
+                Posting Date : {{po.posting_date}}
+              </ion-list>
+            </div>
+            <ion-row>
+              <ion-col class="content-footer-body-list">
+                Location Code : {{po.location_code}}
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>-->
+  <ion-fab class="fixed-div" right bottom>
+    <button ion-fab color="light" (click)="doHome()">
+      <ion-icon name="ios-home"></ion-icon>
+    </button>
+  </ion-fab>
+<ion-toolbar class="toolbar-scroll" *ngIf="this.halaman==-1">Search Completed {{totaldata}}</ion-toolbar>
+</ion-content>  

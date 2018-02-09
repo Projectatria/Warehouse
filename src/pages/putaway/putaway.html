@@ -1,0 +1,32 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar">
+    <ion-title class="side-title">
+      <img src="assets/imgs/logoatriawhite.png" height="45" />
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div class="content-header-images">
+    <img class="content-images" src="assets/imgs/furniture.jpg">
+  </div>
+  <div class="content-title">
+    Warehouse Location
+  </div>
+  <div class="content-item">
+    <ion-list padding>
+      <ion-item class="content-item-select">
+        <ion-icon name="ios-pin-outline" item-start></ion-icon>
+        <ion-label stacked>Location</ion-label>
+        <ion-select placeholder="Select Location" [(ngModel)]="location_name">
+          <ion-option *ngFor="let loc of location" value="{{loc.location_code}}">{{loc.location_name}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <button item-end class="btn-go-location" ion-button color="primary" round (click)="doLocation(location_name)">GO</button>
+    </ion-list>
+  </div>
+  <ion-fab class="fixed-div" right bottom>
+    <button ion-fab color="light">
+      <ion-icon name="ios-home" (click)="doHome()"></ion-icon>
+    </button>
+  </ion-fab>
+</ion-content>

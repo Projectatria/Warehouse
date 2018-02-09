@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle color="light">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      Loading
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-fab top right edge>
+    <button ion-fab mini (click)="addLoading()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+  <ion-grid>
+    <ion-row wrap>
+      <ion-col col-3 *ngFor="let item of items">
+          <div class="title">
+            Loading Number: {{item.loading_no}}<br>
+            Invoice Number: {{item.invoice_no}}<br>
+            QC Number: {{item.qc_no}}<br>
+            State: {{item.state}}<br>
+            Loading Date: {{item.date}}<br>
+            Latitude: {{item.latitude}}<br>
+            Longitude: {{item.longitude}}
+          </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

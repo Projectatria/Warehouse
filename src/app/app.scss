@@ -1,0 +1,53 @@
+.split-pane-md.split-pane-visible > .split-pane-side {
+    min-width: 100px;
+    max-width: 15%;
+    border-right: 0px solid #dedede;
+    border-left: 0;
+}
+.md .menu-inner {
+    background: linear-gradient(200deg, #d1d1d1 50%, #e6e6e6);
+}
+ion-header {
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    display: block;
+    width: 100%;
+    background: #ee1c26;
+}   
+.toolbar-background-md {
+    border-color: #ffffff;
+    background: #ee1c26;
+}
+.header-navbar {
+    margin-top: 10px;
+}
+.side-header-logo {
+    height: 70px;
+    text-align: center;
+    font-size: 15px;
+    color: #ffffff;
+}
+.side-title {
+    text-align: center;
+}
+.side-content {
+    font-family: "Roboto", "Helvetica Neue", sans-serif;
+    font-weight: bold;
+    color: #ececec;
+    margin-top: 0px;
+    background: #ececec;
+}
+.side-header-list {
+    margin-top: 0px;
+    margin-left: 0px;
+    background: #ececec;
+    color: #000000;
+}
+.btn-side-menu {
+    background: #ececec;
+    color: #000000;
+}
+.side-list {
+    background: #ececec;
+}

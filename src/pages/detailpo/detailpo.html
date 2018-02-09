@@ -1,0 +1,48 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar">
+    <ion-title class="side-title">
+      <img src="assets/imgs/logoatriawhite.png" height="45" />
+    </ion-title>
+  </ion-navbar>
+  <div class="content-search">
+    <ion-searchbar (ionInput)="getSearchRCV($event)" placeholder="Search No Item">
+    </ion-searchbar>
+  </div>
+</ion-header>
+<ion-content class="content-menu" no-padding>
+  <ion-list>
+    <div class="content-data">
+      <ion-list>
+        <ion-item class="content-data-item" *ngFor="let rcv of receiving" no-lines>
+          <div class="thumbnail-content-data" item-start>
+            <ion-thumbnail>
+              <img src="http://101.255.60.202/webapi/img/c2">
+            </ion-thumbnail>
+          </div>
+          <h2>{{rcv.item_no}}</h2>
+          <p>
+            {{rcv.description}}
+          </p>
+          <hr/>
+          <ion-note>{{rcv.qty}} {{rcv.unit}}</ion-note>
+          <div class="btn-content-data" item-end>
+            <button ion-button clear (click)="viewItem(rcv)">View</button>
+            <button ion-button color="danger" outline (click)="putAway(rcv)">Putaway</button>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content>
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-fab class="fixed-div" right bottom>
+    <button ion-fab color="light" (click)="doHome()">
+      <ion-icon name="ios-home"></ion-icon>
+    </button>
+  </ion-fab>
+  <ion-toolbar class="toolbar-scroll" *ngIf="this.halaman==-1">Search Completed</ion-toolbar>  
+</ion-content>

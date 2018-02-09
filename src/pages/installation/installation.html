@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle color="light">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      Installation
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div class="content-search">
+    <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search No Order">
+    </ion-searchbar>
+  </div>
+  <ion-fab top right edge>
+    <button ion-fab mini (click)="addInstallation()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+  <ion-grid>
+    <ion-row wrap>
+      <ion-col col-3 *ngFor="let item of items">
+        <div class="title">
+          Installation Number: {{item.installation_no}}
+          <br> Installation Date: {{item.installation_date}}
+          <br> Installation Time: {{item.installation_time}}
+          <br> State: {{item.state}}
+          <br> Staff Name: {{item.staff_name}}
+          <br> Latitude: {{item.latitude}}
+          <br> Longitude: {{item.longitude}}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
