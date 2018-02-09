@@ -7,12 +7,21 @@
     <ion-title class="header-title-menu">Location</ion-title>
   </ion-navbar>
 </ion-header>
---><ion-content class="content-location" padding>
-  <div class="grid-location">
-    <ion-grid padding>
-      <ion-row>
-          <ion-col colspan="6" class="col-location" col-2>1</ion-col>
-      </ion-row>  
+-->
+<ion-content class="content-location" padding>
+  <ion-card>
+<ion-card-header class="title-header-location">
+  <div class="fc-left">
+    <button class="btn-location-back" ion-button color="light"><ion-icon name="ios-arrow-back"></ion-icon></button>
+    <button class="btn-location-forward" ion-button color="light"><ion-icon name="ios-arrow-forward"></ion-icon></button>
+  </div>
+  <div class="fc-center">
+    Location
+  </div>
+</ion-card-header>
+<ion-card-content>
+<div class="grid-location">
+    <ion-grid>
       <ion-row>
         <ion-col class="col-location" col-2>
           <h6>1</h6>
@@ -38,4 +47,6 @@
       </ion-row>
     </ion-grid>
   </div>
+</ion-card-content>
+</ion-card>
 </ion-content>

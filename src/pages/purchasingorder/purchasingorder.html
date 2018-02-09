@@ -4,7 +4,7 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title class="side-title">
-      <img src="assets/imgs/logoatriawhite.png" height="45" />
+      <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
     </ion-title>
   </ion-navbar>
     <div class="content-search">
@@ -16,7 +16,7 @@
   <ion-list class="content-list-menu">
     <ion-item *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
       <ion-avatar item-start>
-        <img src="assets/imgs/{{po.vendor_status}}.png" alt="">
+        <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
       </ion-avatar>
       <h2>No Order : {{po.order_no}}</h2>
       <br/>

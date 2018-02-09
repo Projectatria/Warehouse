@@ -21,4 +21,29 @@ page-location {
        border: 1px solid;
        border-color: #ececec;
    }
+   .fc-left {
+       text-align: left;
+       height: 12px;
+   }
+   .fc-center {
+       text-align: center;     
+       font-weight: bold;
+       font-size: 20px;
+       padding-top: -100px;
+   }
+   .btn-location-back {  
+       background: linear-gradient(150deg, #d4d4d4, #ffffff);  
+       font-weight: bold;
+       font-size: 20px;
+       border-radius: 10%;
+   }
+   .btn-location-forward {
+       background: linear-gradient(150deg, #d4d4d4, #ffffff); 
+       font-weight: bold;
+       font-size: 20px;
+       border-radius: 10%;
+   }
+   .title-header-location {
+       text-align: center;
+   }
 }

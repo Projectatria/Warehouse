@@ -1,93 +1,98 @@
-  <!--  our side menu  -->
-  <ion-menu [content]="content">
-    <ion-header class="side-header-logo">
-      <ion-navbar class="header-navbar">  
-    <button ion-button menuToggle color="light">
+<!--  our side menu  -->
+<ion-menu [content]="content">
+  <ion-header class="side-header-logo">
+    <ion-navbar class="header-navbar">
+      <button ion-button menuToggle color="light">
         <ion-icon name="menu"></ion-icon>
       </button>
       <ion-title class="side-title">
         <img src="assets/imgs/logoatriawhite.png" height="45" />
       </ion-title>
     </ion-navbar>
-    </ion-header>
-    <ion-content class="side-content">
-      <ion-list>
-        <ion-item class="side-header-list">
-          <ion-card-header>
-            IN
-          </ion-card-header>
-          <ion-list class="side-list">
-            <button class="btn-side-menu" ion-item (click)="open('PurchasingorderPage')" menuClose>
-              <ion-icon name="add"> Purchasing Order</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('ReceivingPage')" menuClose>
-              <ion-icon name="menu"> Receiving</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('QcinPage')" menuClose>
-              <ion-icon name="menu"> Quality Control</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('PutawayPage')" menuClose>
-              <ion-icon name="menu"> Put Away</ion-icon>
-            </button>
-          </ion-list>
-        </ion-item>
-        <ion-item class="side-header-list">
-          <ion-card-header class="side-header-list">
-            OUT
-          </ion-card-header>
-          <ion-list class="side-list">
-            <button class="btn-side-menu" ion-item (click)="open('MovementPage')" menuClose>
-              <ion-icon name="add"> Movement</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('TransferorderPage')" menuClose>
-              <ion-icon name="menu"> Transfer Order</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('PickingPage')" menuClose>
-              <ion-icon name="menu"> Picking</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('QcoutPage')" menuClose>
-              <ion-icon name="menu"> Quality Control</ion-icon>
-            </button>
-          </ion-list>
-        </ion-item>
-        <ion-item class="side-header-list">
-          <ion-card-header class="side-header-list">
-            Delivery
-          </ion-card-header>
-          <ion-list class="side-list">
-            <button class="btn-side-menu" ion-item (click)="open('LoadingPage')" menuClose>
-              <ion-icon name="add"> Loading</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('TransporterPage')" menuClose>
-              <ion-icon name="menu"> Transporter</ion-icon>
-            </button>
-            <button class="btn-side-menu" ion-item (click)="open('InstallationPage')" menuClose>
-              <ion-icon name="menu"> Installation</ion-icon>
-            </button>
-          </ion-list>
-        </ion-item>
-        <ion-item class="side-header-list">
-          <ion-card-header class="side-header-list">
-            History
-          </ion-card-header>
-          <ion-list class="side-list">
-            <button class="btn-side-menu" ion-item (click)="open('PreparationpoPage')" menuClose>
-              <ion-icon name="add"> Movement</ion-icon>
-            </button>
-          </ion-list>
-        </ion-item>
-        <ion-item class="side-header-list">
-          <ion-card-header class="side-header-list">
-            Report
-          </ion-card-header>
-          <ion-list class="side-list">
-            <button class="btn-side-menu" ion-item (click)="open('PreparationpoPage')" menuClose>
-              <ion-icon name="add"> Movement</ion-icon>
-            </button>
-          </ion-list>
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-menu>
-  <!-- the main content -->
-  <ion-nav [root]="rootPage" main #content></ion-nav>
+  </ion-header>
+  <ion-content class="side-content">
+    <ion-list>
+      <ion-item class="side-header-list">
+        <ion-card-header>
+          IN
+        </ion-card-header>
+        <ion-list class="side-list">
+          <button class="btn-side-menu" ion-item (click)="open('PurchasingorderPage')" menuClose>
+            <!--<ion-icon name="ios-list"> Purchasing Order</ion-icon>-->
+            <img class="icon-list" src="assets/imgs/icons/po.png">
+            <div>Purchasing Order</div>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('ReceivingPage')" menuClose>
+            <img class="icon-list" src="assets/imgs/icons/receiving.png">
+            <div>Receiving</div>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('QcinPage')" menuClose>
+            <img class="icon-list" src="assets/imgs/icons/qc.png">
+            <div>Quality Control</div>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('PutawayPage')" menuClose>
+            <img class="icon-list" src="assets/imgs/icons/putaway4.png">
+            <div>Put Away</div>
+          </button>
+        </ion-list>
+      </ion-item>
+      <ion-item class="side-header-list">
+        <ion-card-header class="side-header-list">
+          OUT
+        </ion-card-header>
+        <ion-list class="side-list">
+          <button class="btn-side-menu" ion-item (click)="open('MovementPage')" menuClose>
+            <ion-icon name="add"> Movement</ion-icon>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('TransferorderPage')" menuClose>
+            <ion-icon name="menu"> Transfer Order</ion-icon>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('PickingPage')" menuClose>
+            <ion-icon name="menu"> Picking</ion-icon>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('QcoutPage')" menuClose>
+            <ion-icon name="menu"> Quality Control</ion-icon>
+          </button>
+        </ion-list>
+      </ion-item>
+      <ion-item class="side-header-list">
+        <ion-card-header class="side-header-list">
+          Delivery
+        </ion-card-header>
+        <ion-list class="side-list">
+          <button class="btn-side-menu" ion-item (click)="open('LoadingPage')" menuClose>
+            <ion-icon name="add"> Loading</ion-icon>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('TransporterPage')" menuClose>
+            <ion-icon name="menu"> Transporter</ion-icon>
+          </button>
+          <button class="btn-side-menu" ion-item (click)="open('InstallationPage')" menuClose>
+            <ion-icon name="menu"> Installation</ion-icon>
+          </button>
+        </ion-list>
+      </ion-item>
+      <ion-item class="side-header-list">
+        <ion-card-header class="side-header-list">
+          History
+        </ion-card-header>
+        <ion-list class="side-list">
+          <button class="btn-side-menu" ion-item (click)="open('PreparationpoPage')" menuClose>
+            <ion-icon name="add"> Movement</ion-icon>
+          </button>
+        </ion-list>
+      </ion-item>
+      <ion-item class="side-header-list">
+        <ion-card-header class="side-header-list">
+          Report
+        </ion-card-header>
+        <ion-list class="side-list">
+          <button class="btn-side-menu" ion-item (click)="open('PreparationpoPage')" menuClose>
+            <ion-icon name="add"> Movement</ion-icon>
+          </button>
+        </ion-list>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<!-- the main content -->
+<ion-nav [root]="rootPage" main #content></ion-nav>
