@@ -16,6 +16,7 @@ export class PurchasingorderPage {
   items = [];
   halaman = 0;
   totaldata: any;
+  public toggled: boolean = false;
 
   constructor(public navCtrl: NavController, public api: ApiProvider, public toastCtrl: ToastController,
     public alertCtrl: AlertController, public formBuilder: FormBuilder, public navParams: NavParams,
@@ -28,11 +29,10 @@ export class PurchasingorderPage {
        postingdate: ['', Validators.compose([Validators.required])] 
      });*/
     this.getPO();
-
+    this.toggled = false;
 
   }
   getPO() {
-
     return new Promise(resolve => {
       let offset = 30 * this.halaman
       console.log('offset', this.halaman);
@@ -92,6 +92,10 @@ export class PurchasingorderPage {
 
     })
   }
+  toggleSearch() {
+    this.toggled = this.toggled ? false : true;
+}
+
 
 }
 

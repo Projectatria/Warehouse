@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { ModalController, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { HomePage } from '../home/home';
 /**
@@ -19,12 +19,17 @@ export class DetailpoPage {
   private receiving = [];
   searchrcv: any;
   halaman = 0;
+  public toggled: boolean = false
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider,
+              public modalCtrl: ModalController) {
 
     this.po = navParams.get('param');
     this.getReceiving();  
+    this.toggled = false;
+    
   }
+
   getReceiving() {
 
     return new Promise(resolve => {
@@ -89,5 +94,12 @@ export class DetailpoPage {
 
     })
   }
+  showLocation() {
+    let locationModal = this.modalCtrl.create('LocationPage');
+    locationModal.present();
+  }
+  toggleSearch() {
+    this.toggled = this.toggled ? false : true;
+}
 
 }   

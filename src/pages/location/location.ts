@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { ViewController, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 
 @IonicPage()
@@ -10,7 +10,7 @@ import { ApiProvider } from '../../providers/api/api';
 export class LocationPage {
   private location_master = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, private viewCtrl : ViewController) {
   }
 
   ionViewDidLoad() {
@@ -21,6 +21,9 @@ export class LocationPage {
     this.api.get('table/location_master',{params:{limit:100}}).subscribe(val => {
       this.location_master = val['data'];
     });
+  }
+  closeLocation() {
+    this.viewCtrl.dismiss();
   }
  
 }

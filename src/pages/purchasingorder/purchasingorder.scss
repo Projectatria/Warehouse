@@ -61,7 +61,7 @@ ion-fab-list {
 }
  .header-menu {
      padding: 0px;
-     height: 135px;
+     height: 70px;
  }
  .header-title-menu {
     text-align: left;
@@ -100,10 +100,6 @@ ion-fab-list {
     text-align: center;
     border-color: #ee1c26;  
 }
-.content-search {
-    background: #ee1c26;    
-    padding: 5px;
-}
 .side-title {
     text-align: center;
     margin-right: 80px;
@@ -115,4 +111,7 @@ ion-fab-list {
     color: #ffffff;
     text-align: center;
     font-size: 17px;
+}
+.content-data-item {
+    margin-top: 10px;
 }

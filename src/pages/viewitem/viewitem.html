@@ -13,39 +13,62 @@
     </ion-slide>
   </ion-slides>
   <div *ngFor="let item of items">
-    <div>
+    <div style="background:#dedede;">
       <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
-        <div class="text-description">
+        <div class="text-description" style="text-align:center;padding-bottom:10px;">
           {{item.description}}
         </div>
       </ion-item>
       <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
-        <div style="text-align:center;">
-          <button style="background:transparent;">
-            <ion-icon name="ios-basket" style="font-size:50px;color:#66c56c;"></ion-icon>
-          </button>
+        <!--<div class="info-left" style="text-align:left;height:0px;margin-left:15%;">
+          <div style="color:#66c56c;font-weight:bold;">165{{item.height}}</div>
           <br>
-          <div style="color:#66c56c">{{item.item_no}}</div>
+          <div style="color:#66c56c">Height</div>
         </div>
+        <div class="info-right" style="text-align:right;height:0px;margin-right:15%;">
+          <div style="color:#66c56c;font-weight:bold;">165{{item.weight}}</div>
+          <br>
+          <div style="color:#66c56c">Weight</div>
+        </div>
+        <div class="info-center" style="text-align:center;">
+          <div style="color:#66c56c;font-weight:bold;">165{{item.width}}</div>
+          <br>
+          <div style="color:#66c56c">Width</div>
+        </div>-->
+        <ion-grid>
+          <ion-row>
+            <ion-col style="text-align:center;border-right:1px solid #dedede;background:#fff;color:#66c56c">
+              {{item.width}}
+              <br><br>
+              Width
+            </ion-col>
+            <ion-col style="text-align:center;border-right:1px solid #dedede;background:#fff;color:#66c56c">
+              {{item.height}}
+              <br><br>
+              Height
+            </ion-col>
+            <ion-col style="text-align:center;background:#fff;color:#66c56c">
+              {{item.weight_actual}}
+              <br><br>
+              Weight 
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-item>
-      <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
-        <div style="text-align:center;">
-          <button style="background:transparent;">
-            <ion-icon name="ios-basket" style="font-size:50px;color:#66c56c;"></ion-icon>
-          </button>
-          <br>
-          <div style="color:#66c56c">{{item.item_no}}</div>
-        </div>
-      </ion-item>
-      <ion-item style="border-bottom: 1px #dedede solid;" no-lines>
-        <div style="text-align:center;">
-          <button style="background:transparent;">
-            <ion-icon name="ios-basket" style="font-size:50px;color:#66c56c;"></ion-icon>
-          </button>
-          <br>
-          <div style="color:#66c56c">{{item.item_no}}</div>
-        </div>
+      <ion-item style="border-bottom: 1px #dedede solid;border-top: 1px #dedede solid;margin-top:10px;margin-bottom:10px;" no-lines>
+       <ion-grid>
+         <ion-row>
+          <ion-col style="text-align:center;background:#fff;color:#66c56c">
+             {{item.qty}}
+             <br><br>
+             QTY
+           </ion-col>
+         </ion-row>
+       </ion-grid>
       </ion-item>
     </div>
   </div>
 </ion-content>
+<ion-footer>
+  <button ion-button block color="secondary">Putaway</button>
+</ion-footer>

@@ -3,20 +3,13 @@
   <ion-header class="side-header-logo">
     <ion-navbar class="header-navbar">
       <button ion-button menuToggle color="light">
-        <ion-icon name="menu"></ion-icon>
+        <ion-icon name="menu" style="font-size:30px;"></ion-icon>
       </button>
       <ion-title class="side-title">
-        <img src="assets/imgs/logoatriawhite.png" height="45" />
+        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
       </ion-title>
     </ion-navbar>
   </ion-header>
-
-
-
-
-
-
-  
   <ion-content class="side-content">
     <ion-list>
       <ion-item class="side-header-list">
@@ -25,21 +18,16 @@
         </ion-card-header>
         <ion-list class="side-list">
           <button class="btn-side-menu" ion-item (click)="open('PurchasingorderPage')" menuClose>
-            <!--<ion-icon name="ios-list"> Purchasing Order</ion-icon>-->
-            <img class="icon-list" src="assets/imgs/icons/po.png">
-            <div>Purchasing Order</div>
+            <ion-icon name="md-archive" style="font-size:20px;"> Purchasing Order</ion-icon>
           </button>
           <button class="btn-side-menu" ion-item (click)="open('ReceivingPage')" menuClose>
-            <img class="icon-list" src="assets/imgs/icons/receiving.png">
-            <div>Receiving</div>
+            <ion-icon name="md-clipboard" style="font-size:20px;"> Receiving</ion-icon>
           </button>
           <button class="btn-side-menu" ion-item (click)="open('QcinPage')" menuClose>
-            <img class="icon-list" src="assets/imgs/icons/qc.png">
-            <div>Quality Control</div>
+            <ion-icon name="md-checkbox-outline" style="font-size:20px;"> Quality Control</ion-icon>
           </button>
           <button class="btn-side-menu" ion-item (click)="open('PutawayPage')" menuClose>
-            <img class="icon-list" src="assets/imgs/icons/putaway4.png">
-            <div>Put Away</div>
+            <ion-icon name="md-cube" style="font-size:20px;"> Put Away</ion-icon>
           </button>
         </ion-list>
       </ion-item>
@@ -49,20 +37,16 @@
         </ion-card-header>
         <ion-list class="side-list">
           <button class="btn-side-menu" ion-item (click)="open('MovementPage')" menuClose>
-              <img class="icon-list" src="assets/imgs/icons/movement.png">
-              <div>Movement</div>
-            </button>
+            <ion-icon name="md-git-compare" style="font-size:20px;"> Movement</ion-icon>
+          </button>
           <button class="btn-side-menu" ion-item (click)="open('TransferorderPage')" menuClose>
-              <img class="icon-list" src="assets/imgs/icons/transferorder.png">
-              <div>Transfer Order</div>
+            <ion-icon name="md-git-merge" style="font-size:20px;"> Transfer Order</ion-icon>
           </button>
           <button class="btn-side-menu" ion-item (click)="open('PickingPage')" menuClose>
-              <img class="icon-list" src="assets/imgs/icons/picking.png">
-              <div>Picking</div>
+            <ion-icon name="md-paper" style="font-size:20px;"> Picking</ion-icon>
           </button>
           <button class="btn-side-menu" ion-item (click)="open('QcoutPage')" menuClose>
-              <img class="icon-list" src="assets/imgs/icons/qcout.png">
-              <div>Quality Control</div>
+            <ion-icon name="md-checkbox-outline" style="font-size:20px;"> Quality Control</ion-icon>
           </button>
         </ion-list>
       </ion-item>
