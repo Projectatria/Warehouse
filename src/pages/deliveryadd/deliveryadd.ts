@@ -27,13 +27,19 @@ export class DeliveryaddPage {
     'receipt_name': [
       { type: 'required', message: 'kolom tidak boleh kosong' }
     ],
-    'address': [
+    'state': [
+      { type: 'required', message: 'kolom tidak boleh kosong' }
+    ],
+    'delivery_date': [
       { type: 'required', message: 'kolom tidak boleh kosong' }
     ],
     'hp_no': [
       { type: 'required', message: 'kolom tidak boleh kosong' },
       { type: 'pattern', message: 'Harus angka' },
       { type: 'minlength', message: 'Karakter terlalu sedikit' },
+    ],
+    'address': [
+      { type: 'required', message: 'kolom tidak boleh kosong' }
     ],
     'latitude': [
       { type: 'required', message: 'kolom tidak boleh kosong' }
@@ -55,8 +61,10 @@ export class DeliveryaddPage {
       delivery_no: ['', Validators.compose([Validators.required])],
       invoice_no: ['', Validators.compose([Validators.required])],
       receipt_name: ['', Validators.compose([Validators.required])],
-      address: ['', Validators.compose([Validators.required])],
+      state: ['', Validators.compose([Validators.required])],
+      delivery_date: ['', Validators.compose([Validators.required])],
       hp_no: ['', Validators.compose([Validators.required, Validators.minLength(6), Validators.pattern(/^[0-9]+$/)])],
+      address: ['', Validators.compose([Validators.required])],
       latitude: ['', Validators.compose([Validators.required])],
       longitude: ['', Validators.compose([Validators.required])],
     })
@@ -76,6 +84,8 @@ export class DeliveryaddPage {
         "delivery_no": this.myForm.value.delivery_no,
         "invoice_no": this.myForm.value.invoice_no,
         "receipt_name": this.myForm.value.receipt_name,
+        "state": this.myForm.value.state,
+        "delivery_date": this.myForm.value.delivery_date,
         "hp_no": this.myForm.value.hp_no,
         "address": this.myForm.value.address,
         "latitude": this.myForm.value.latitude,
@@ -106,7 +116,7 @@ export class DeliveryaddPage {
     let openMapModal = this.modal.create('MapmodalPage', this.modal, { cssClass: "modal-fullscreen" });
     openMapModal.present();
   }
-  closeDeliveryadd(){
+  closeDeliveryadd() {
     this.navCtrl.pop();
   }
 

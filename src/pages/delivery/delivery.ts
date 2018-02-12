@@ -11,11 +11,13 @@ import { HttpHeaders } from "@angular/common/http";
 })
 export class DeliveryPage {
 
-  private items = [];
+  private deliverys = [];
+  private delivery1
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, private modal: ModalController) {
     this.api.get('table/delivery').subscribe(val => {
-      this.items = val['data'];
+      this.deliverys = val['data'];
+      this.delivery1 = val['data'];
     })
 
   
@@ -23,6 +25,18 @@ export class DeliveryPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad DeliveryPage');
+  }
+  getSearchDelivery(ev: any) {
+    console.log(ev)
+    let val = ev.target.value;
+
+    if (val && val.trim() != '') {
+      this.deliverys = this.delivery1.filter(delivery => {
+        return delivery.delivery_no.toLowerCase().indexOf(val.toLowerCase()) > -1 || delivery.invoice_no.toLowerCase().indexOf(val.toLowerCase()) > -1 || delivery.state.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.deliverys = this.delivery1;
+    }
   }
 
   addDelivery() {

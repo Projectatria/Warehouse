@@ -1,0 +1,20 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Status</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-fab right bottom>
+    <button ion-fab color="primary" (click)="scanBarcode()">
+      <ion-icon name="barcode"></ion-icon>
+    </button>
+  </ion-fab>
+  <ion-searchbar placeholder="Masukan Nomor Invoice" [(ngModel)]="barcode"></ion-searchbar>
+  <ion-buttons end>
+    <button ion-button round (click)="cariInvoice()">Cari</button>
+  </ion-buttons>
+</ion-content>

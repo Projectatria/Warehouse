@@ -1,33 +1,28 @@
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle color="light">
-      <ion-icon name="menu"></ion-icon>
-    </button>
     <ion-title>
       Loading
     </ion-title>
+    <ion-buttons end>
+      <button ion-fab mini (click)="addLoading()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-fab top right edge>
-    <button ion-fab mini (click)="addLoading()">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </ion-fab>
-  <ion-grid>
-    <ion-row wrap>
-      <ion-col col-3 *ngFor="let item of items">
-          <div class="title">
-            Loading Number: {{item.loading_no}}<br>
-            Invoice Number: {{item.invoice_no}}<br>
-            QC Number: {{item.qc_no}}<br>
-            State: {{item.state}}<br>
-            Loading Date: {{item.date}}<br>
-            Latitude: {{item.latitude}}<br>
-            Longitude: {{item.longitude}}
-          </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+<ion-content class="content-menu" no-padding>
+  <ion-searchbar (ionInput)="getSearchLoading($event)" placeholder="Search Loading No"></ion-searchbar>
+  <ion-list>
+    <ion-item *ngFor="let loading of loadings">
+      <ion-avatar item-start>
+        <img src="http://101.255.60.202/webapi/img/{{loading.state}}" alt="">
+      </ion-avatar>
+      <h2>Loading No : {{loading.loading_no}}</h2>
+      <p>Invoice No : {{loading.invoice_no}}</p>
+      <p>{{loading.state}} |
+        <ion-note>{{loading.loading_date}}</ion-note>
+      </p>
+    </ion-item>
+  </ion-list>
 </ion-content>
