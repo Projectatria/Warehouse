@@ -1,14 +1,4 @@
-<!--
 <ion-header class="header-menu">
-  <ion-navbar class="header-navbar">
-    <button ion-button menuToggle color="light">
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title class="header-title-menu">Location</ion-title>
-  </ion-navbar>
-</ion-header>
--->
-<ion-header>
   <div class="cls-modal" (click)="closeLocation()" padding>
     <button ion-button clear style="color:#ffffff;">Close</button>
   </div>
@@ -27,33 +17,18 @@
         </button>
       </div>
       <div class="fc-center">
-        Location
+        <ion-select placeholder="Location Room">
+          <ion-option *ngFor="let locroom of location_room" value="{{locroom.location_room}}">Room {{locroom.location_room}}</ion-option>
+        </ion-select>
       </div>
     </ion-card-header>
     <ion-card-content>
       <div class="grid-location">
         <ion-grid>
           <ion-row>
-            <ion-col class="col-location" col-2>
-              <div>3x2</div>
+            <ion-col *ngFor="let locarea of location_area" class="col-location" col-2>
+              <button ion-button clear full (click)="doSelectLoc()" color={{locarea.status}}>{{locarea.location_area}}</button>
             </ion-col>
-            <ion-col class="col-location" col-2 style="color:#faffff;background-color:#979797">2</ion-col>
-            <ion-col class="col-location" col-2>3</ion-col>
-            <ion-col class="col-location" col-2>4</ion-col>
-            <ion-col class="col-location" col-2>5</ion-col>
-            <ion-col class="col-location" col-2>6</ion-col>
-            <ion-col class="col-location" col-2>7</ion-col>
-            <ion-col class="col-location" col-2>8</ion-col>
-            <ion-col class="col-location" col-2>9</ion-col>
-            <ion-col class="col-location" col-2>10</ion-col>
-            <ion-col class="col-location" col-2>11</ion-col>
-            <ion-col class="col-location" col-2>12</ion-col>
-            <ion-col class="col-location" col-2>13</ion-col>
-            <ion-col class="col-location" col-2>14</ion-col>
-            <ion-col class="col-location" col-2>15</ion-col>
-            <ion-col class="col-location" col-2>16</ion-col>
-            <ion-col class="col-location" col-2>17</ion-col>
-            <ion-col class="col-location" col-2>18</ion-col>
           </ion-row>
         </ion-grid>
       </div>
