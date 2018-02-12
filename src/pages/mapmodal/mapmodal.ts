@@ -1,5 +1,5 @@
 import { Component, NgZone } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, ViewController } from 'ionic-angular';
 import { ApiProvider } from "../../providers/api/api";
 
 declare var google;
@@ -26,7 +26,8 @@ export class MapmodalPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public event: Events,
-    public api: ApiProvider
+    public api: ApiProvider,
+    public viewCtrl: ViewController
   ) {
     this.zone = new NgZone({ enableLongStackTrace: false })
   }
@@ -79,7 +80,11 @@ export class MapmodalPage {
     this.latitude = this.marker.getPosition().lat();
     this.longitude = this.marker.getPosition().lng();
   }
-  pickLocation() {
-
+  pickLocation(address, latitude, longitude) {
+    console.log(address, latitude, longitude);
+    this.navCtrl.push('DeliveryaddPage', {
+      param: address, latitude, longitude
+    });
+    this.viewCtrl.dismiss();
   }
 }

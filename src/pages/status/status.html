@@ -13,8 +13,8 @@
       <ion-icon name="barcode"></ion-icon>
     </button>
   </ion-fab>
-  <ion-searchbar placeholder="Masukan Nomor Invoice" [(ngModel)]="barcode"></ion-searchbar>
+  <ion-searchbar placeholder="Masukan Nomor Invoice" [(ngModel)]="invoice_no"></ion-searchbar>
   <ion-buttons end>
-    <button ion-button round (click)="cariInvoice()">Cari</button>
+    <button ion-button round (click)="cariInvoice(invoice_no)">Cari</button>
   </ion-buttons>
 </ion-content>

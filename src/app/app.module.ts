@@ -10,6 +10,7 @@ import { UsertableComponent } from '../components/usertable/usertable';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HomePage } from '../pages/home/home';
+import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { HomePage } from '../pages/home/home';
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    ApiProvider
+    ApiProvider,
+    BarcodeScanner
   ]
 })
 export class AppModule {

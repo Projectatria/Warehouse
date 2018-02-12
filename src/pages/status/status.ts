@@ -9,7 +9,7 @@ import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-sca
 })
 export class StatusPage {
 
-  barcode: string='';
+  invoice_no: string='';
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private barcodeScanner: BarcodeScanner) {
   }
@@ -25,13 +25,16 @@ export class StatusPage {
 
       this.barcodeScanner.scan(options).then((barcodeData) => {
     // Success! Barcode data is here
-    this.barcode=barcodeData.text;
+    this.invoice_no=barcodeData.text;
    }, (err) => {
        // An error occurred
    });
   }
 
-  cariInvoice(){
-    
+  cariInvoice(invoice_no){
+    console.log(invoice_no);
+    this.navCtrl.push('StatusdetailPage', {
+      param: invoice_no
+    });
   }
 }

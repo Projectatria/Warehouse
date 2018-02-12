@@ -12,6 +12,7 @@ import { HttpHeaders } from "@angular/common/http";
 export class DeliveryaddPage {
 
   myForm: FormGroup;
+  address:'';
   error_messages = {
     'delivery_no': [
       { type: 'required', message: 'Harus di isi' }
@@ -57,6 +58,7 @@ export class DeliveryaddPage {
     public api: ApiProvider,
     private modal: ModalController
   ) {
+    this.address = navParams.get('param');
     this.myForm = fb.group({
       delivery_no: ['', Validators.compose([Validators.required])],
       invoice_no: ['', Validators.compose([Validators.required])],
@@ -73,6 +75,7 @@ export class DeliveryaddPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad DeliveryaddPage');
+    console.log(this.address);
   }
   insertDelivery() {
     if (!this.myForm.valid) { return }
