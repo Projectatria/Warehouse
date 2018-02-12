@@ -33,6 +33,9 @@ export class ReceivingcustaddPage {
     'receiver_name': [
       { type: 'required', message: 'Silahkan pilih tanggal' }
     ],
+    'state': [
+      { type: 'required', message: 'kolom tidak boleh kosong' }
+    ],
     'latitude': [
       { type: 'required', message: 'kolom tidak boleh kosong' }
     ],
@@ -48,6 +51,7 @@ export class ReceivingcustaddPage {
       receivingcust_date: ['', Validators.compose([Validators.required])],
       receivingcust_time: ['', Validators.compose([Validators.required])],
       receiver_name: ['', Validators.compose([Validators.required])],
+      state: ['', Validators.compose([Validators.required])],
       latitude: ['', Validators.compose([Validators.required])],
       longitude: ['', Validators.compose([Validators.required])],
     })
@@ -69,6 +73,7 @@ export class ReceivingcustaddPage {
         "receivingcust_date": this.myForm.value.receivingcust_date,
         "receivingcust_time": this.myForm.value.receivingcust_time,
         "receiver_name": this.myForm.value.receiver_name,
+        "state": this.myForm.value.state,
         "latitude": this.myForm.value.latitude,
         "longitude": this.myForm.value.longitude
       },
@@ -92,6 +97,10 @@ export class ReceivingcustaddPage {
       () => {
         console.log("The POST observable is now completed.");
       });
+  }
+
+  closeReceivingcustadd(){
+    this.navCtrl.pop();
   }
 
 }

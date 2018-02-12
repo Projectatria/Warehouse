@@ -14,7 +14,7 @@ export class TruckPage {
   private truck1=[];
 
   constructor(public navCtrl: NavController, public api: ApiProvider, public navParams: NavParams, private modal: ModalController) {
-    this.api.get('table/truck').subscribe(val => {
+    this.api.get('table/truck', {params: {limit: 30}}).subscribe(val => {
       this.trucks = val['data'];
       this.truck1 = val['data'];
     })

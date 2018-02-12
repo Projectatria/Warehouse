@@ -1,5 +1,5 @@
 <ion-content class="background">
-  <img class="logo" height="100" src="assets/imgs/atria.png">
+  <img class="logo" height="100" src="http://101.255.60.202/webapi/img/logoatriawhite">
   <ion-buttons end>
       <button ion-button clear (click)="closeInstallationadd()">Cancel</button>
     </ion-buttons>
@@ -27,7 +27,7 @@
         </ion-item>
         <testing [messages]="error_messages.state" [control]="myForm.get('state')"></testing>
         <ion-item>
-          <ion-label stacked>Staff Name</ion-label>
+          <ion-label stacked>Installer Name</ion-label>
           <ion-input formControlName="staff_name" type="text" [(ngModel)]="staff_name"></ion-input>
         </ion-item>
         <testing [messages]="error_messages.staff_name" [control]="myForm.get('staff_name')"></testing>

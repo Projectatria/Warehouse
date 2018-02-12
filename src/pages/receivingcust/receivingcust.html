@@ -3,15 +3,29 @@
     <ion-title>
       Receiving Customer
     </ion-title>
+    <ion-buttons end>
+        <button ion-fab mini (click)="addReceiving()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
+<ion-content class="content-menu" no-padding>
+    <ion-searchbar (ionInput)="getSearchReceivingcust($event)" placeholder="Search Receiving Customer No"></ion-searchbar>
+    <ion-list>
+      <ion-item *ngFor="let receivingcust of receivingcusts">
+        <ion-avatar item-start>
+          <img src="http://101.255.60.202/webapi/img/{{receivingcust.state}}" alt="">
+        </ion-avatar>
+        <h2>Receiving Customer No : {{receivingcust.receivingcust_no}}</h2>
+        <p>Invoice No : {{receivingcust.invoice_no}}</p>
+        <p>{{receivingcust.state}} | <ion-note>{{receivingcust.receivingcust_time}}</ion-note></p>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
 <ion-content padding>
-  <ion-fab top right edge>
-    <button ion-fab mini (click)="addReceiving()">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </ion-fab>
   <ion-grid>
     <ion-row wrap>
       <ion-col col-3 *ngFor="let item of items">

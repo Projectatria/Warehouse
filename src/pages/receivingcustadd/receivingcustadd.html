@@ -1,5 +1,8 @@
 <ion-content class="background">
-  <img class="logo" height="100" src="assets/imgs/atria.png">
+  <img class="logo" height="100" src="http://101.255.60.202/webapi/img/logoatriawhite">
+  <ion-buttons end>
+      <button ion-button clear (click)="closeReceivingcustadd()">Cancel</button>
+    </ion-buttons>
   <div class="form">
     <form [formGroup]="myForm">
       <ion-list>
@@ -29,6 +32,11 @@
         </ion-item>
         <testing [messages]="error_messages.receiver_name" [control]="myForm.get('receiver_name')"></testing>
         <ion-item>
+          <ion-label stacked>State</ion-label>
+          <ion-input formControlName="state" type="text" [(ngModel)]="state"></ion-input>
+        </ion-item>
+        <testing [messages]="error_messages.state" [control]="myForm.get('state')"></testing>
+        <ion-item>
           <ion-label stacked>Latitude</ion-label>
           <ion-input formControlName="latitude" type="text" [(ngModel)]="latitude"></ion-input>
         </ion-item>
@@ -38,7 +46,7 @@
           <ion-input formControlName="longitude" type="text" [(ngModel)]="longitude"></ion-input>
         </ion-item>
         <testing [messages]="error_messages.longitude" [control]="myForm.get('longitude')"></testing>
-        
+
       </ion-list>
       <button ion-button (click)="insertReceiving()" type="submit" block round>SAVE</button>
     </form>
