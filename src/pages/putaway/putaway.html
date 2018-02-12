@@ -21,7 +21,11 @@
           <ion-option *ngFor="let loc of location" value="{{loc.location_code}}">{{loc.location_name}}</ion-option>
         </ion-select>
       </ion-item>
-      <button item-end class="btn-go-location" ion-button color="primary" round (click)="doLocation(location_name)">GO</button>
+      <ion-item>
+        <ion-label stacked style="text-align:center;">Location No.</ion-label>
+        <ion-input disabled="true" type="text"></ion-input>
+      </ion-item>
+      <button item-end class="btn-go-location" ion-button color="primary" round (click)="doLocation(location_name)">GO Location</button>
     </ion-list>
   </div>
   <ion-fab class="fixed-div" right bottom>

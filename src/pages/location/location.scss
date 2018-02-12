@@ -1,11 +1,5 @@
 page-location {
-    .header-menu {
-        padding: 0px;
-        height: 70px;
-    }
-    .header-navbar {
 
-    }
     .header-title-menu {
        text-align: left;
        font-size: 17px;
@@ -52,8 +46,12 @@ page-location {
    .title-header-location {
        text-align: center;
    }
-   .cls-modal {
-       color: #ffffff;
-       font-size: 15px;
-   }
+   ion-select {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: -webkit-inline-box;
+    overflow: hidden;
+    max-width: 80%;
+}
 }
