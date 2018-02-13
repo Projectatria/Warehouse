@@ -5,6 +5,15 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-datetime type="datetime-local" displayFormat="YYYY-MM-DD, hh:mm:ss" max="2099-12-31" [(ngModel)]="myDate"  ></ion-datetime>
-    <!-- <ion-datetime displayFormat="YYYY-MM-DD, hh:mm:ss" [(ngModel)]="myDate"></ion-datetime> -->
+  <ion-datetime type="datetime-local" displayFormat="YYYY-MM-DD, hh:mm:ss" max="2099-12-31" [(ngModel)]="myDate"></ion-datetime>
+  <ion-select>
+    <ion-option *ngFor="let prov of provinsi" value="{{prov.nama}}" placeholder="Provinsi">{{prov.nama}}</ion-option>
+  </ion-select>
+  <ion-select>
+    <ion-option *ngFor="let kab of kabupaten" value="{{kab.nama}}" placeholder="Kab/Kota">{{kab.nama}}</ion-option>
+  </ion-select>
+  <ion-select>
+    <ion-option *ngFor="let kec of kecamatan" value="{{kec.nama}}" placeholder="Kecamatan">{{kec.nama}}</ion-option>
+  </ion-select>
+  <!-- <ion-datetime displayFormat="YYYY-MM-DD, hh:mm:ss" [(ngModel)]="myDate"></ion-datetime> -->
 </ion-content>
