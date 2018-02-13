@@ -22,11 +22,6 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-card>
-    <ion-card-header class="header-title-menu">
-      Preparation Purchasing Order
-    </ion-card-header>
-    <ion-card-content class="content-body-menu">
       <ion-list class="content-list-menu">
         <ion-item class="content-data-item" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
           <ion-avatar item-start>
@@ -39,19 +34,12 @@
           <ion-note>{{po.posting_date}}</ion-note>
         </ion-item>
       </ion-list>
-      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content>
           loadingSpinner="bubbles" loadingText="Loading more data...">
         </ion-infinite-scroll-content>
       </ion-infinite-scroll>
-    </ion-card-content>
-    <ion-row class="cardfooter">
-        <ion-col>
-              <p style="text-align:center;">Showing {{halaman}} to {{offset}} of {{totaldata}} entries</p>
-        </ion-col>
-      </ion-row>
-  </ion-card>
-
+ 
   <!--  <div class="content-menu-grid">
     <ion-grid>
       <ion-row>
@@ -86,10 +74,28 @@
       </ion-row>
     </ion-grid>
   </div>-->
-  <ion-fab class="fixed-div" right bottom>
+  <!--<ion-fab class="fixed-div" right bottom>
     <button ion-fab color="light" (click)="doAddPO()">
       <ion-icon name="md-add"></ion-icon>
     </button>
+  </ion-fab>-->
+  <ion-fab class="fixed-div" bottom right >
+    <button ion-fab color="light">
+      <ion-icon name="md-settings"></ion-icon>
+    </button>
+    <ion-fab-list side="top" (click)="doAddPO();">
+      <button ion-fab color="sun">
+          <ion-icon name="md-add"></ion-icon>
+      </button>
+      <button ion-fab color="secondary"> 
+          <ion-icon name="md-sync"></ion-icon>
+      </button>
+      <button ion-fab color="primary">
+          <ion-icon name="md-trash"></ion-icon>  
+        </button>
+    </ion-fab-list>
   </ion-fab>
-  <!--<ion-toolbar class="toolbar-scroll" *ngIf="this.halaman==-1">Search Completed {{totaldata}}</ion-toolbar>
-</ion-content>-->
+</ion-content>
+<ion-footer>
+    <ion-toolbar class="toolbar-scroll">Showing {{halaman}} of {{totaldata}} entries</ion-toolbar>
+</ion-footer>

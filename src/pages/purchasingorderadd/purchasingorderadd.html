@@ -17,18 +17,13 @@
       <ion-input formControlName="orderno" type="text"></ion-input>
     </ion-item>
     <testing [messages]="error_messages.orderno" [control]="myForm.get('orderno')"></testing>
-    <ion-item no-lines style="font-size:15px;">
+    <ion-item style="font-size:15px;">
       <ion-label floating>Vendor No</ion-label>
       <ion-select formControlName="vendorno" >
-        <ion-option *ngFor="let ven of vendor" value="{{ven.vendor_no}}">{{ven.vendor_no}}</ion-option>
+        <ion-option *ngFor="let ven of vendor" value="{{ven.vendor_no}}">{{ven.vendor_no}} {{ven.name}}</ion-option>
       </ion-select>
     </ion-item>
     <testing [messages]="error_messages.vendorno" [control]="myForm.get('vendorno')"></testing>
-    <ion-item no-lines style="font-size:15px;"> 
-      <ion-label floating>Vendor Name</ion-label>
-      <ion-input formControlName="vendorname" disabled type="text"></ion-input>
-    </ion-item>
-    <testing [messages]="error_messages.vendorname" [control]="myForm.get('vendorname')"></testing>
     <ion-item style="font-size:15px;">
       <ion-label floating>Transfer Date</ion-label>
       <ion-datetime formControlName="transferdate" displayFormat="DD MMMM YYYY" min="2018" max="2020-10-31" [(ngModel)]="myDate"></ion-datetime>

@@ -37,7 +37,10 @@ export class PurchasingorderPage {
      });*/
     this.getPO();
     this.toggled = false;
-
+    /*let self = this;
+    setInterval( () => {
+      this.getPO();
+    }, 10);*/
   }
   getPO() {
     return new Promise(resolve => {
@@ -66,7 +69,6 @@ export class PurchasingorderPage {
     })
 
   }
-
   getSearchPO(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
@@ -104,7 +106,6 @@ export class PurchasingorderPage {
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
 }
-
 
 }
 

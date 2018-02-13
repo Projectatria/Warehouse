@@ -96,3 +96,37 @@ ion-header {
         height: 100%;
     }
 }
+.alert-md .alert-wrapper {
+    border-radius: 2px;
+    max-width: 90%;
+    background: #ee1c26;
+    color: #ffffff;
+}
+.alert-md [aria-checked=true] .alert-radio-label {
+    color: #ffffff;
+}
+.alert-md .alert-button {
+    text-align: right;
+    text-align: end;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #ffffff;
+    background-color: transparent;
+    margin: 0 8px 0 0;
+    padding: 10px;
+}
+.fab-list-active {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: block;
+}
+.fab-in-list.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(0.8);
+}
+

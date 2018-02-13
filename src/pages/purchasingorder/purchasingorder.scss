@@ -69,6 +69,7 @@ ion-fab-list {
     font-family: "Roboto", "Helvetica Neue", sans-serif;
     background: #ee1c26;
     color: #ffffff;
+    margin-top:3px;
 }
  .content-header-title-list {
     font-size: 15px;
@@ -87,11 +88,11 @@ ion-fab-list {
    // background: #ff2323;
  }
 .content-menu {
-    margin-left: 0px;
+    margin-left: 3px;
     margin-top: 0px;
     padding-top: 0px;
     height: 100%;
-    background: #dedede;
+    background: #ffffff;
 }
 .content-footer-body-list {
     font-family: "Roboto", "Helvetica Neue", sans-serif;
@@ -107,11 +108,11 @@ ion-fab-list {
 }
 .toolbar-scroll {
     font-family: "Roboto", "Helvetica Neue", sans-serif;
-    font-weight: bold;
     background: #ee1c26;
     color: #ffffff;
     text-align: center;
-    font-size: 17px;
+    font-size: 15px;
+    min-height:30%;
 }
 .content-data-item {
     margin-top: 10px;

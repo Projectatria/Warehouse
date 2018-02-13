@@ -32,9 +32,6 @@ export class PurchasingorderaddPage {
     'vendorno': [
       { type: 'required', message: 'Vendor No Must Be Fill' }
     ],
-    'vendorname': [
-      { type: 'required', message: 'Vendor Name Must Be Fill' }
-    ],
     'transferdate': [
       { type: 'required', message: 'Transfer Date Must Be Fill' }
     ],
@@ -55,7 +52,6 @@ export class PurchasingorderaddPage {
       docno: ['', Validators.compose([Validators.required])],
       orderno: ['', Validators.compose([Validators.required])],
       vendorno: ['', Validators.compose([Validators.required])],
-      vendorname: [''],
       transferdate: ['', Validators.compose([Validators.required])],
       locationcode: ['', Validators.compose([Validators.required])],
     })
