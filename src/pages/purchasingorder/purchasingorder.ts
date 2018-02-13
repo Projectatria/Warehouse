@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuController, IonicPage, NavController, ToastController, NavParams } from 'ionic-angular';
+import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
@@ -18,9 +18,16 @@ export class PurchasingorderPage {
   totaldata: any;
   public toggled: boolean = false;
 
-  constructor(public navCtrl: NavController, public api: ApiProvider, public toastCtrl: ToastController,
-    public alertCtrl: AlertController, public formBuilder: FormBuilder, public navParams: NavParams,
-    public menu: MenuController) {
+  constructor(
+    public navCtrl: NavController, 
+    public api: ApiProvider, 
+    public toastCtrl: ToastController,
+    public alertCtrl: AlertController, 
+    public formBuilder: FormBuilder, 
+    public navParams: NavParams,
+    public menu: MenuController,
+    public modalCtrl: ModalController
+  ) {
     /* this.form = this.formBuilder.group({
        dccode: ['', Validators.compose([Validators.required])],
        docno: ['', Validators.compose([Validators.required])],
@@ -83,9 +90,11 @@ export class PurchasingorderPage {
       param: po.order_no
     });
   }
-  doHome() {
-    this.navCtrl.setRoot(HomePage);
+  doAddPO() {
+    let locationModal = this.modalCtrl.create('PurchasingorderaddPage',  this.modalCtrl, { cssClass: "modal-fullscreen" });
+    locationModal.present(); 
   }
+  
   doInfinite(infiniteScroll) {
     this.getPO().then(response => {
       infiniteScroll.complete();

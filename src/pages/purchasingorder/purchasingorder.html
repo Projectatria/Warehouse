@@ -1,11 +1,13 @@
 <ion-header class="header-menu">
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
-      <button ion-button clear><img src="assets/imgs/searching.png" height="25" (click)="toggleSearch()" /></button>
+      <button ion-button clear>
+        <img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" />
+      </button>
     </div>
     <div *ngIf="toggled" style="text-align:right;height:0px;">
-        <button ion-button clear style="color:#ffffff;background:transparent;" (click)="toggleSearch()">Batal</button>
-      </div>
+      <button ion-button clear style="color:#ffffff;background:transparent;" (click)="toggleSearch()">Batal</button>
+    </div>
     <button *ngIf="!toggled" ion-button menuToggle color="light">
       <ion-icon name="menu" style="font-size:30px;"></ion-icon>
     </button>
@@ -20,23 +22,36 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-list class="content-list-menu">
-    <ion-item class="content-data-item" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
-      <ion-avatar item-start>
-        <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
-      </ion-avatar>
-      <h2>No Order : {{po.order_no}}</h2>
-      <br/>
-      <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
-      <br/>
-      <ion-note>{{po.posting_date}}</ion-note>
-    </ion-item>
-  </ion-list>
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-    <ion-infinite-scroll-content>
-      loadingSpinner="bubbles" loadingText="Loading more data...">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+  <ion-card>
+    <ion-card-header class="header-title-menu">
+      Preparation Purchasing Order
+    </ion-card-header>
+    <ion-card-content class="content-body-menu">
+      <ion-list class="content-list-menu">
+        <ion-item class="content-data-item" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
+          <ion-avatar item-start>
+            <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+          </ion-avatar>
+          <h2>No Order : {{po.order_no}}</h2>
+          <br/>
+          <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
+          <br/>
+          <ion-note>{{po.posting_date}}</ion-note>
+        </ion-item>
+      </ion-list>
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content>
+          loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-card-content>
+    <ion-row class="cardfooter">
+        <ion-col>
+              <p style="text-align:center;">Showing {{halaman}} to {{offset}} of {{totaldata}} entries</p>
+        </ion-col>
+      </ion-row>
+  </ion-card>
+
   <!--  <div class="content-menu-grid">
     <ion-grid>
       <ion-row>
@@ -72,9 +87,9 @@
     </ion-grid>
   </div>-->
   <ion-fab class="fixed-div" right bottom>
-    <button ion-fab color="light" (click)="doHome()">
-      <ion-icon name="ios-home"></ion-icon>
+    <button ion-fab color="light" (click)="doAddPO()">
+      <ion-icon name="md-add"></ion-icon>
     </button>
   </ion-fab>
-  <ion-toolbar class="toolbar-scroll" *ngIf="this.halaman==-1">Search Completed {{totaldata}}</ion-toolbar>
-</ion-content>
+  <!--<ion-toolbar class="toolbar-scroll" *ngIf="this.halaman==-1">Search Completed {{totaldata}}</ion-toolbar>
+</ion-content>-->
