@@ -4,6 +4,8 @@ import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
 import { HomePage } from '../home/home';
+import { HttpHeaders } from "@angular/common/http";
+import { PurchasingorderupdatePage } from '../purchasingorderupdate/purchasingorderupdate';
 
 @IonicPage()
 @Component({
@@ -17,13 +19,14 @@ export class PurchasingorderPage {
   halaman = 0;
   totaldata: any;
   public toggled: boolean = false;
+  orderno = '';
 
   constructor(
-    public navCtrl: NavController, 
-    public api: ApiProvider, 
+    public navCtrl: NavController,
+    public api: ApiProvider,
     public toastCtrl: ToastController,
-    public alertCtrl: AlertController, 
-    public formBuilder: FormBuilder, 
+    public alertCtrl: AlertController,
+    public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
     public modalCtrl: ModalController
@@ -93,10 +96,10 @@ export class PurchasingorderPage {
     });
   }
   doAddPO() {
-    let locationModal = this.modalCtrl.create('PurchasingorderaddPage',  this.modalCtrl, { cssClass: "modal-fullscreen" });
-    locationModal.present(); 
+    let locationModal = this.modalCtrl.create('PurchasingorderaddPage', this.modalCtrl, { cssClass: "modal-fullscreen" });
+    locationModal.present();
   }
-  
+
   doInfinite(infiniteScroll) {
     this.getPO().then(response => {
       infiniteScroll.complete();
@@ -105,7 +108,35 @@ export class PurchasingorderPage {
   }
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
+  }
+  doUpdatePO(po) {
+    let locationModal = this.modalCtrl.create('PurchasingorderupdatePage', {param: po}, { cssClass: "modal-fullscreen" });
+    locationModal.present();
+  }
+  doDeletePO(po) {
+    console.log({ param: po.order_no });
+    this.api.delete("table/purchasing_order",
+      {
+        "order_no": { param: po.order_no }
+      })
+      .subscribe(
+      (val) => {
+        console.log("DELETE call successful value returned in body",
+          val);
+      },
+      response => {
+        console.log("DELETE call in error", response);
+      },
+      () => {
+        console.log("The DELETE observable is now completed.");
+      });
+  }
+  doRefresh(refresher) {
+    this.api.get("table/purchasing_order").subscribe(val => {
+      this.purchasing_order = val['data'];              
+      this.totaldata = val['count'];
+      this.searchpo = this.purchasing_order;
+      refresher.complete();
+    });
+  }
 }
-
-}
-

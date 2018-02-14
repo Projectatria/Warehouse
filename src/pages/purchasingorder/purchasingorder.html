@@ -1,8 +1,9 @@
 <ion-header class="header-menu">
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
-      <button ion-button clear>
-        <img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" />
+      <button ion-button clear color="light" (click)="toggleSearch()">
+        <!--<img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" />-->
+        <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
       </button>
     </div>
     <div *ngIf="toggled" style="text-align:right;height:0px;">
@@ -22,80 +23,50 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-      <ion-list class="content-list-menu">
-        <ion-item class="content-data-item" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
-          <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
-          </ion-avatar>
-          <h2>No Order : {{po.order_no}}</h2>
-          <br/>
-          <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
-          <br/>
-          <ion-note>{{po.posting_date}}</ion-note>
-        </ion-item>
-      </ion-list>
-        <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-        <ion-infinite-scroll-content>
-          loadingSpinner="bubbles" loadingText="Loading more data...">
-        </ion-infinite-scroll-content>
-      </ion-infinite-scroll>
- 
-  <!--  <div class="content-menu-grid">
-    <ion-grid>
-      <ion-row>
-        <ion-col *ngFor="let po of purchasing_order" col-12 col-md-6 col-lg-4 col-xl-3>
-          <div class="content-menu-list">
-            <button class="btn-header-title-list" ion-button color="darkitem" block (click)="doNext()">
-              <div class="content-header-title-list">
-                No.Order : {{po.order_no}}
-              </div>
-            </button>
-            <div class="content-body-list">
-              <ion-list>
-                No.Doc : {{po.doc_no}}
-              </ion-list>
-              <ion-list>
-                No.Vendor : {{po.vendor_no}}
-              </ion-list>
-              <ion-list>
-                Vendor Status : {{po.vendor_status}}
-              </ion-list>
-              <ion-list>
-                Posting Date : {{po.posting_date}}
-              </ion-list>
-            </div>
-            <ion-row>
-              <ion-col class="content-footer-body-list">
-                Location Code : {{po.location_code}}
-              </ion-col>
-            </ion-row>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>-->
-  <!--<ion-fab class="fixed-div" right bottom>
-    <button ion-fab color="light" (click)="doAddPO()">
-      <ion-icon name="md-add"></ion-icon>
-    </button>
-  </ion-fab>-->
-  <ion-fab class="fixed-div" bottom right >
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>
+      pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+    </ion-refresher-content>
+  </ion-refresher>
+  <ion-list class="content-list-menu">
+    <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+      <ion-avatar item-start>
+        <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+      </ion-avatar>
+      <div no-padding (click)="viewDetail(po)">
+        <h2>No Order : {{po.order_no}}</h2>
+        <br/>
+        <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
+        <br/>
+        <ion-note>{{po.posting_date}}</ion-note>
+      </div>
+      <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
+        <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
+      </button>
+      <button item-end ion-button clear color="delima" (click)="doDeletePO(po)">
+        <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content>
+      loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-fab class="fixed-div" bottom right>
     <button ion-fab color="light">
       <ion-icon name="md-settings"></ion-icon>
     </button>
-    <ion-fab-list side="top" (click)="doAddPO();">
-      <button ion-fab color="sun">
-          <ion-icon name="md-add"></ion-icon>
-      </button>
-      <button ion-fab color="secondary"> 
-          <ion-icon name="md-sync"></ion-icon>
+    <ion-fab-list side="top">
+      <button ion-fab color="sun" (click)="doAddPO();">
+        <ion-icon name="md-add"></ion-icon>
       </button>
       <button ion-fab color="primary">
-          <ion-icon name="md-trash"></ion-icon>  
-        </button>
+        <ion-icon name="md-trash"></ion-icon>
+      </button>
     </ion-fab-list>
   </ion-fab>
 </ion-content>
 <ion-footer>
-    <ion-toolbar class="toolbar-scroll">Showing {{halaman}} of {{totaldata}} entries</ion-toolbar>
+  <ion-toolbar class="toolbar-scroll">Showing {{totaldata}} entries</ion-toolbar>
 </ion-footer>

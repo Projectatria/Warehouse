@@ -5,22 +5,16 @@ import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 
 
-/**
- * Generated class for the PurchasingorderaddPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
-  selector: 'page-purchasingorderadd',
-  templateUrl: 'purchasingorderadd.html',
+  selector: 'page-purchasingorderupdate',
+  templateUrl: 'purchasingorderupdate.html',
 })
-export class PurchasingorderaddPage {
+export class PurchasingorderupdatePage {
   myForm: FormGroup;
   private vendor = [];
   private nextno = '';
+  private datapo = '';
 
   error_messages = {
     'docno': [
@@ -56,6 +50,7 @@ export class PurchasingorderaddPage {
       locationcode: ['', Validators.compose([Validators.required])],
     })
     this.getVendor();
+    this.datapo = navParams.get('param');
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {
@@ -63,16 +58,13 @@ export class PurchasingorderaddPage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderaddPage');
-    console.log(this.nextno);
+    console.log('ionViewDidLoad PurchasingorderupdatePage');
+    console.log(this.datapo);
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   insertPO() {
-    this.getNextNo().subscribe(val => {
-      this.nextno = val['nextno'];
-
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -112,9 +104,5 @@ export class PurchasingorderaddPage {
         () => {
           console.log("The POST observable is now completed.");
         });
-    });
-  }
-  getNextNo() {
-    return this.api.get('nextno/purchasing_order/po_id')
   }
 }

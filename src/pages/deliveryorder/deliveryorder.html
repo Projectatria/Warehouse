@@ -6,14 +6,15 @@
 
 <ion-content padding>
   <ion-datetime type="datetime-local" displayFormat="YYYY-MM-DD, hh:mm:ss" max="2099-12-31" [(ngModel)]="myDate"></ion-datetime>
-  <ion-select>
-    <ion-option *ngFor="let prov of provinsi" value="{{prov.nama}}" placeholder="Provinsi">{{prov.nama}}</ion-option>
+  <ion-select [(ngModel)]="provid" (change)="onChangeProv()">
+    <ion-option *ngFor="let prov of provinsi" value="{{prov.id}}" placeholder="Provinsi">{{prov.nama}}</ion-option>
   </ion-select>
-  <ion-select>
-    <ion-option *ngFor="let kab of kabupaten" value="{{kab.nama}}" placeholder="Kab/Kota">{{kab.nama}}</ion-option>
+  <ion-select [(ngModel)]="kabid">
+    <ion-option *ngFor="let kab of kabupaten" value="{{kab.id}}" placeholder="Kab/Kota">{{kab.nama}}</ion-option>
   </ion-select>
-  <ion-select>
-    <ion-option *ngFor="let kec of kecamatan" value="{{kec.nama}}" placeholder="Kecamatan">{{kec.nama}}</ion-option>
+  <ion-select [(ngModel)]="kecid">
+    <ion-option *ngFor="let kec of kecamatan" value="{{kec.id}}" placeholder="Kecamatan">{{kec.nama}}</ion-option>
   </ion-select>
   <!-- <ion-datetime displayFormat="YYYY-MM-DD, hh:mm:ss" [(ngModel)]="myDate"></ion-datetime> -->
+  <p *ngFor="let prov of provinsi" >{{prov.nama}}</p>
 </ion-content>
