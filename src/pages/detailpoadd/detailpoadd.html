@@ -1,0 +1,44 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar">
+    <ion-title style="text-align:center;">
+      <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content class="content-menu" padding>
+    <form [formGroup]="myForm">
+    <ion-item class="item-input" no-lines style="font-size:15px;">
+      <ion-label floating>Doc No</ion-label>
+      <ion-input formControlName="docno" type="text"></ion-input>
+    </ion-item>
+    <testing [messages]="error_messages.docno" [control]="myForm.get('docno')"></testing>
+    <ion-item class="item-input" no-lines style="font-size:15px;">
+      <ion-label floating>Order No</ion-label>
+      <ion-input formControlName="orderno" type="text"></ion-input>
+    </ion-item>
+    <testing [messages]="error_messages.orderno" [control]="myForm.get('orderno')"></testing>
+    <ion-item class="item-input" style="font-size:15px;">
+      <ion-label floating>Item No</ion-label>
+      <ion-select formControlName="itemno" >
+        <ion-option *ngFor="let item of items" value="{{item.item_no}}" (ionSelect)="onChange(item)">{{item.item_no}} {{item.description}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <testing [messages]="error_messages.itemno" [control]="myForm.get('itemno')"></testing>
+    <ion-item class="item-input" no-lines style="font-size:15px;">
+        <ion-label floating>QTY</ion-label>
+        <ion-input formControlName="qty" type="text"></ion-input>
+      </ion-item>
+    <testing [messages]="error_messages.qty" [control]="myForm.get('qty')"></testing>
+    <ion-item class="item-input" style="font-size:15px;">
+        <ion-label floating>Unit</ion-label>
+        <ion-select formControlName="unit" >
+          <ion-option value="PCS">PCS</ion-option>
+        </ion-select>
+      </ion-item>
+      <testing [messages]="error_messages.unit" [control]="myForm.get('unit')"></testing>
+    </form>
+</ion-content>
+<ion-footer>
+  <button ion-button full (click)="insertPODetail()" [disabled]="!myForm.valid">Insert</button>
+  <button ion-button color="danger" full (click)="closeModal()">Cancel</button>
+</ion-footer>

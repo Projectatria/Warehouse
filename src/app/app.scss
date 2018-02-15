@@ -153,9 +153,14 @@ ion-header {
     background: #dedede;
     text-align: center;
 }
+.alert-md .alert-message, .alert-md .alert-input-group {
+    color: #ffffff;
+    padding: 0 24px 24px;
+}
 .alert-message {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
+   
 }
 .fab-list-active {
     display: -webkit-box;

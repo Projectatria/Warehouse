@@ -1,58 +1,81 @@
 <ion-header class="header-menu">
-    <ion-navbar class="header-navbar" style="width:100%;">
-      <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
-        <button ion-button clear><img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" /></button>
-      </div>
-      <div *ngIf="toggled" style="text-align:right;height:0px;">
-          <button ion-button clear style="color:#ffffff;background:transparent;" (click)="toggleSearch()">Batal</button>
-        </div>
-      <button ion-button menuToggle color="light">
-        <ion-icon name="menu" style="font-size:30px;"></ion-icon>
+  <ion-navbar class="header-navbar" style="width:100%;">
+    <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
+      <button ion-button clear color="light" (click)="toggleSearch()">
+       <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
       </button>
-      <ion-title class="side-title">
-        <div *ngIf="!toggled" class="logo-atria">
-          <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
-        </div>
-        <div *ngIf="toggled" class="content-search" style="width:100%;">
-          <ion-searchbar (ionInput)="getSearchRCV($event)" placeholder="Search"></ion-searchbar>
-        </div>
-      </ion-title>
-    </ion-navbar>
-  </ion-header>
-  <ion-content class="content-menu" no-padding>
-  <ion-list>
-    <div class="content-data">
-      <ion-list>
-        <ion-item class="content-data-item" *ngFor="let rcv of receiving" no-lines>
-          <div class="thumbnail-content-data" item-start>
-            <ion-thumbnail>
-              <img src="http://101.255.60.202/webapi/img/c2">
-            </ion-thumbnail>
-          </div>
-          <h2>{{rcv.item_no}}</h2>
-          <p>
-            {{rcv.description}}
-          </p>
-          <hr/>
-          <ion-note>{{rcv.qty}} {{rcv.unit}}</ion-note>
-          <div class="btn-content-data" item-end>
-            <button ion-button clear (click)="viewItem(rcv)">View</button>
-            <button ion-button color="danger" outline (click)="putAway(rcv)">Putaway</button>
-          </div>
-        </ion-item>
-      </ion-list>
     </div>
-  </ion-list>
+    <div *ngIf="toggled" style="text-align:right;height:0px;">
+      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="toggleSearch()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
+    </div>
+    <button *ngIf="!toggled" ion-button menuToggle color="light">
+      <ion-icon name="menu" style="font-size:30px;"></ion-icon>
+    </button>
+    <ion-title class="side-title">
+      <div *ngIf="!toggled" class="logo-atria">
+        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+      </div>
+      <div *ngIf="toggled" class="content-search" style="width:100%;">
+        <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
+      </div>
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content class="content-menu" no-padding>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>
+      pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+    </ion-refresher-content>
+  </ion-refresher>
+  <ion-segment [(ngModel)]="detailpo">
+    <ion-segment-button value="detailpoitem">
+      Detail Items PO
+    </ion-segment-button>
+    <ion-segment-button value="history">
+      History
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="detailpo">
+    <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
+      <ion-item class="content-data-item" *ngFor="let detailpo of purchasing_order_detail">
+        <ion-avatar item-start>
+          <img src="http://101.255.60.202/webapi/img/" alt="">
+        </ion-avatar>
+        <div no-padding>
+          <h2>No Item : {{detailpo.item_no}}</h2>
+          <br/>
+          <p style="color:#ffffff;">Order No {{detailpo.order_no}} Description {{detailpo.description}} </p>
+          <br/>
+          <ion-note>{{detailpo.transfer_date}}</ion-note>
+        </div>
+        <button item-end ion-button clear color="secondary" (click)="doUpdatePODetail(detailpo)">
+          <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
+        </button>
+        <button item-end ion-button clear color="delima" (click)="doDeletePODetail(detailpo)">
+          <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
+        </button>
+      </ion-item>
+    </ion-list>
+    <ion-list *ngSwitchCase="'history'">
+      <ion-item>
+
+      </ion-item>
+    </ion-list>
+  </div>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content>
-      loadingSpinner="bubbles"
-      loadingText="Loading more data...">
+      loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
-  <ion-fab class="fixed-div" right bottom>
-    <button ion-fab color="light" (click)="doHome()">
-      <ion-icon name="ios-home"></ion-icon>
+  <ion-fab class="fixed-div" bottom right>
+    <button ion-fab color="greenlake" (click)="doAddPODetail()">
+      <ion-icon name="md-add"></ion-icon>
     </button>
   </ion-fab>
-  <ion-toolbar class="toolbar-scroll" *ngIf="this.halaman==-1">Search Completed</ion-toolbar>  
 </ion-content>
+<ion-footer>
+  <ion-toolbar class="toolbar-scroll">Showing {{totaldata}} entries</ion-toolbar>
+</ion-footer>
