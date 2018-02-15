@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuController, Platform } from 'ionic-angular';
+import { MenuController, Platform} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
@@ -23,5 +23,8 @@ export class MyApp {
   open(pageName) {
     this.rootPage = pageName;
   };
+  doHome() {
+    this.rootPage = HomePage;
+  }
 }
 

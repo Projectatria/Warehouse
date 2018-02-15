@@ -153,6 +153,10 @@ ion-header {
     background: #dedede;
     text-align: center;
 }
+.alert-message {
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
 .fab-list-active {
     display: -webkit-box;
     display: -webkit-flex;

@@ -3,9 +3,7 @@ import { ModalController, MenuController, IonicPage, NavController, ToastControl
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
-import { HomePage } from '../home/home';
 import { HttpHeaders } from "@angular/common/http";
-import { PurchasingorderupdatePage } from '../purchasingorderupdate/purchasingorderupdate';
 
 @IonicPage()
 @Component({
@@ -102,49 +100,68 @@ export class PurchasingorderPage {
       infiniteScroll.complete();
 
     })
-  } 
+  }
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
   doUpdatePO(po) {
-    let locationModal = this.modalCtrl.create('PurchasingorderupdatePage', 
-    {
-     poid: po.po_id,
-     docno: po.doc_no,
-     orderno: po.order_no,
-     vendorno: po.vendor_no,
-     transferdate: po.transfer_date,
-     locationcode: po.location_code,
-     description: po.posting_desc
-    },
-    { cssClass: "modal-fullscreen" });
+    let locationModal = this.modalCtrl.create('PurchasingorderupdatePage',
+      {
+        poid: po.po_id,
+        docno: po.doc_no,
+        orderno: po.order_no,
+        vendorno: po.vendor_no,
+        transferdate: po.transfer_date,
+        locationcode: po.location_code,
+        description: po.posting_desc
+      },
+      { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
   doDeletePO(po) {
-    const headers = new HttpHeaders()
-    .set("Content-Type", "application/json");
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Delete',
+      message: 'Do you want to Delete?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
 
-    this.api.delete("table/purchasing_order",{params:{filter:'po_id='+ "'" + po.po_id + "'"}, headers})
-      .subscribe( 
-      (val) => {
-        console.log("DELETE call successful value returned in body",
-          val);
-          this.api.get("table/purchasing_order").subscribe(val => {
-            this.purchasing_order = val['data'];              
-            this.totaldata = val['count'];
-            this.searchpo = this.purchasing_order;
-          });
-      },
-      response => {
-        console.log("DELETE call in error", response);
-      },
-      () => {
-        console.log("The DELETE observable is now completed.");
-      });
+            this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
+              .subscribe(
+                (val) => {
+                  console.log("DELETE call successful value returned in body",
+                    val);
+                  this.api.get("table/purchasing_order").subscribe(val => {
+                    this.purchasing_order = val['data'];
+                    this.totaldata = val['count'];
+                    this.searchpo = this.purchasing_order;
+                  });
+                },
+                response => {
+                  console.log("DELETE call in error", response);
+                },
+                () => {
+                  console.log("The DELETE observable is now completed.");
+                });
+          }
+        }
+      ]
+    });
+    alert.present();
   }
   doRefresh(refresher) {
     this.api.get("table/purchasing_order").subscribe(val => {
-      this.purchasing_order = val['data'];              
+      this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       this.searchpo = this.purchasing_order;
       refresher.complete();

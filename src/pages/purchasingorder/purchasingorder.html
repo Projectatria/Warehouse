@@ -48,7 +48,7 @@
         <div no-padding (click)="viewDetail(po)">
           <h2>No Order : {{po.order_no}}</h2>
           <br/>
-          <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
+          <p style="color:#ffffff;">Document {{po.doc_no}} Description {{po.posting_desc}} </p>
           <br/>
           <ion-note>{{po.posting_date}}</ion-note>
         </div>
@@ -72,7 +72,7 @@
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
   <ion-fab class="fixed-div" bottom right>
-    <button ion-fab color="primary" (click)="doAddPO()">
+    <button ion-fab color="greenlake" (click)="doAddPO()">
       <ion-icon name="md-add"></ion-icon>
     </button>
   </ion-fab>

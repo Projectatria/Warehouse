@@ -13,7 +13,12 @@
   <ion-content class="side-content">
     <ion-list>
       <ion-item class="side-header-list">
-        <ion-card-header class="side-header-list"> 
+        <ion-list class="side-list">
+        <button class="btn-side-menu" ion-item (click)="doHome()" menuClose>
+          <ion-icon name="md-home" style="font-size:20px;"> Home</ion-icon>
+        </button>
+      </ion-list>
+        <ion-card-header class="side-header-list">
           IN
         </ion-card-header>
         <ion-list class="side-list">

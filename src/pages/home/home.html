@@ -34,7 +34,7 @@
           <ion-col class="col" col-12 col-md-6 c col-xl-3>
             <ion-item class="item-list" no-lines>
               <ion-thumbnail item-start>
-                <img src="http://101.255.60.202/webapi/img/poicon">
+                <img src="http://101.255.60.202/webapi/img/popo">
               </ion-thumbnail>
               <button ion-button clear color="light" (click)="doPreparationPO()">Preparation PO</button>
             </ion-item>
@@ -42,7 +42,7 @@
           <ion-col class="col" col-12 col-md-6 c col-xl-3>
             <ion-item class="item-list" no-lines>
               <ion-thumbnail item-start>
-                <img src="http://101.255.60.202/webapi/img/receiving">
+                <img src="http://101.255.60.202/webapi/img/receiving2">
               </ion-thumbnail>
               <button ion-button clear color="light">Receiving</button>
             </ion-item>
@@ -50,7 +50,7 @@
           <ion-col class="col" col-12 col-md-6 c col-xl-3>
             <ion-item class="item-list" no-lines>
               <ion-thumbnail item-start>
-                <img src="http://101.255.60.202/webapi/img/qc">
+                <img src="http://101.255.60.202/webapi/img/qc2">
               </ion-thumbnail>
                 <button ion-button clear color="light">Quality Control</button>
             </ion-item>
@@ -58,19 +58,88 @@
           <ion-col class="col" col-12 col-md-6 col-xl-3>
             <ion-item class="item-list" no-lines>
               <ion-thumbnail item-start>
-                <img src="http://101.255.60.202/webapi/img/putaway">
+                <img src="http://101.255.60.202/webapi/img/putaway3">
               </ion-thumbnail>
               <button ion-button clear color="light">Put Away</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/movement">
+              </ion-thumbnail>
+              <button ion-button clear color="light">Movement</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/to2">
+              </ion-thumbnail>
+              <button ion-button clear color="light">Transfer Order</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/picking">
+              </ion-thumbnail>
+              <button ion-button clear color="light">Picking</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/return">
+              </ion-thumbnail>
+              <button ion-button clear color="light">Return</button>
             </ion-item>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ion-list>
 
-    <ion-list *ngSwitchCase="'delivery'">
-      <ion-item>
-      </ion-item>
-    </ion-list>
+
+    
+    <ion-list *ngSwitchCase="'delivery'" style="border-top:1px solid;border-bottom:1px solid;border-color:#dedede;">
+        <img src="http://101.255.60.202/webapi/img/delivery2" style="width:100%;" />
+        <ion-grid>
+          <ion-row>
+            <ion-col class="col" col-12 col-md-6 c col-xl-3>
+              <ion-item class="item-list" no-lines>
+                <ion-thumbnail item-start>
+                  <img src="http://101.255.60.202/webapi/img/poicon">
+                </ion-thumbnail>
+                <button ion-button clear color="light" (click)="doPreparationPO()">Preparation PO</button>
+              </ion-item>
+            </ion-col>
+            <ion-col class="col" col-12 col-md-6 c col-xl-3>
+              <ion-item class="item-list" no-lines>
+                <ion-thumbnail item-start>
+                  <img src="http://101.255.60.202/webapi/img/receiving">
+                </ion-thumbnail>
+                <button ion-button clear color="light">Receiving</button>
+              </ion-item>
+            </ion-col>
+            <ion-col class="col" col-12 col-md-6 c col-xl-3>
+              <ion-item class="item-list" no-lines>
+                <ion-thumbnail item-start>
+                  <img src="http://101.255.60.202/webapi/img/qc">
+                </ion-thumbnail>
+                  <button ion-button clear color="light">Quality Control</button>
+              </ion-item>
+            </ion-col>
+            <ion-col class="col" col-12 col-md-6 col-xl-3>
+              <ion-item class="item-list" no-lines>
+                <ion-thumbnail item-start>
+                  <img src="http://101.255.60.202/webapi/img/putaway">
+                </ion-thumbnail>
+                <button ion-button clear color="light">Put Away</button>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-list>
   </div>
 
 </ion-content>
