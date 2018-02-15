@@ -8,5 +8,69 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content padding>
+<ion-content class="content">
+  <ion-segment [(ngModel)]="atria">
+    <ion-segment-button value="home">
+      Home
+    </ion-segment-button>
+    <ion-segment-button value="warehouse">
+      Warehouse
+    </ion-segment-button>
+    <ion-segment-button value="delivery">
+      Delivery
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="atria">
+    <ion-list *ngSwitchCase="'home'">
+      <ion-item>
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'warehouse'" style="border-top:1px solid;border-bottom:1px solid;border-color:#dedede;">
+      <img src="http://101.255.60.202/webapi/img/warehouseicon" style="width:100%;" />
+      <ion-grid>
+        <ion-row>
+          <ion-col class="col" col-12 col-md-6 c col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/poicon">
+              </ion-thumbnail>
+              <button ion-button clear color="light" (click)="doPreparationPO()">Preparation PO</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 c col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/receiving">
+              </ion-thumbnail>
+              <button ion-button clear color="light">Receiving</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 c col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/qc">
+              </ion-thumbnail>
+                <button ion-button clear color="light">Quality Control</button>
+            </ion-item>
+          </ion-col>
+          <ion-col class="col" col-12 col-md-6 col-xl-3>
+            <ion-item class="item-list" no-lines>
+              <ion-thumbnail item-start>
+                <img src="http://101.255.60.202/webapi/img/putaway">
+              </ion-thumbnail>
+              <button ion-button clear color="light">Put Away</button>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'delivery'">
+      <ion-item>
+      </ion-item>
+    </ion-list>
+  </div>
+
 </ion-content>

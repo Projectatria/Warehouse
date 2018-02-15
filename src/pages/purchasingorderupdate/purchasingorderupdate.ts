@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewController, IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 
@@ -14,7 +14,14 @@ export class PurchasingorderupdatePage {
   myForm: FormGroup;
   private vendor = [];
   private nextno = '';
-  private datapo = '';
+  private poid = '';
+  private docno = '';
+  private orderno = '';
+  private vendorno = '';
+  private transferdate = '';
+  private locationcode = '';
+  private description = '';
+  private purchasing_order = [];
 
   error_messages = {
     'docno': [
@@ -34,6 +41,7 @@ export class PurchasingorderupdatePage {
       { type: 'required', message: 'Location Code Must Be Fill' }
     ]
   }
+  ven:any = {};
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -41,16 +49,29 @@ export class PurchasingorderupdatePage {
     public fb: FormBuilder,
     public api: ApiProvider,
     public alertCtrl: AlertController
-  ) {
+  ) { 
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
       orderno: ['', Validators.compose([Validators.required])],
       vendorno: ['', Validators.compose([Validators.required])],
       transferdate: ['', Validators.compose([Validators.required])],
       locationcode: ['', Validators.compose([Validators.required])],
+      description: ['', Validators.compose([Validators.required])],
     })
     this.getVendor();
-    this.datapo = navParams.get('param');
+    this.poid = navParams.get('poid')
+    this.docno = navParams.get('docno');
+    this.orderno = navParams.get('orderno');
+    this.vendorno = navParams.get('vendorno');
+    this.transferdate = navParams.get('transferdate');
+    this.locationcode = navParams.get('locationcode');
+    this.description = navParams.get('description');
+    this.myForm.get('docno').setValue(this.docno);
+    this.myForm.get('orderno').setValue(this.orderno);
+    this.myForm.get('vendorno').setValue(this.vendorno);
+    this.myForm.get('transferdate').setValue(this.transferdate);
+    this.myForm.get('locationcode').setValue(this.locationcode);
+    this.myForm.get('description').setValue(this.description);
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {
@@ -59,50 +80,51 @@ export class PurchasingorderupdatePage {
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad PurchasingorderupdatePage');
-    console.log(this.datapo);
+    console.log(this.poid);
+    
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
-  insertPO() {
+  onChange(ven) {
+    console.log('Testing',ven);
+    this.ven = ven;
+  }
+  updatePO() {
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
-      this.api.post("table/purchasing_order",
+      this.api.put("table/purchasing_order",
         {
-          "po_id": this.nextno,
+          "po_id": this.poid,
           "doc_no": this.myForm.value.docno,
           "order_no": this.myForm.value.orderno,
-          "batch_no": '',
           "vendor_no": this.myForm.value.vendorno,
-          "vendor_status": '',
+          "vendor_status": this.ven.gen_bus_posting_group,
           "transfer_date": this.myForm.value.transferdate,
           "posting_date": this.myForm.value.transferdate,
-          "posting_desc": '',
-          "location_code": this.myForm.value.locationcode,
-          "status": '',
-          "user_id": '',
-          "chronology_no": ''
+          "posting_desc": this.myForm.value.description,
+          "location_code": this.myForm.value.locationcode
         },
         { headers })
         .subscribe(
         (val) => {
-          console.log("POST call successful value returned in body",
+          console.log("Update call successful value returned in body",
             val);
           this.myForm.reset()
           let alert = this.alertCtrl.create({
             title: 'Sukses',
-            subTitle: 'Insert Sukses',
+            subTitle: 'Update Sukses',
             buttons: ['OK']
           });
           alert.present();
           this.viewCtrl.dismiss();
         },
         response => {
-          console.log("POST call in error", response);
+          console.log("Update call in error", response);
         },
         () => {
-          console.log("The POST observable is now completed.");
+          console.log("The Update observable is now completed.");
         });
   }
 }

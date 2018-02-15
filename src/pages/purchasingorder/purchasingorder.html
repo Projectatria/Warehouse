@@ -7,7 +7,9 @@
       </button>
     </div>
     <div *ngIf="toggled" style="text-align:right;height:0px;">
-      <button ion-button clear style="color:#ffffff;background:transparent;" (click)="toggleSearch()">Batal</button>
+      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="toggleSearch()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
     </div>
     <button *ngIf="!toggled" ion-button menuToggle color="light">
       <ion-icon name="menu" style="font-size:30px;"></ion-icon>
@@ -28,43 +30,51 @@
       pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
     </ion-refresher-content>
   </ion-refresher>
-  <ion-list class="content-list-menu">
-    <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
-      <ion-avatar item-start>
-        <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
-      </ion-avatar>
-      <div no-padding (click)="viewDetail(po)">
-        <h2>No Order : {{po.order_no}}</h2>
-        <br/>
-        <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
-        <br/>
-        <ion-note>{{po.posting_date}}</ion-note>
-      </div>
-      <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
-        <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
-      </button>
-      <button item-end ion-button clear color="delima" (click)="doDeletePO(po)">
-        <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
-      </button>
-    </ion-item>
-  </ion-list>
+  <ion-segment [(ngModel)]="po">
+    <ion-segment-button value="preparationpo">
+      Preparation PO
+    </ion-segment-button>
+    <ion-segment-button value="history">
+      History
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="po">
+    <ion-list class="content-list-menu" *ngSwitchCase="'preparationpo'">
+      <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+        <ion-avatar item-start>
+          <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+        </ion-avatar>
+        <div no-padding (click)="viewDetail(po)">
+          <h2>No Order : {{po.order_no}}</h2>
+          <br/>
+          <p>Document {{po.doc_no}} Description {{po.posting_desc}} </p>
+          <br/>
+          <ion-note>{{po.posting_date}}</ion-note>
+        </div>
+        <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
+          <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
+        </button>
+        <button item-end ion-button clear color="delima" (click)="doDeletePO(po)">
+          <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
+        </button>
+      </ion-item>
+    </ion-list>
+    <ion-list *ngSwitchCase="'history'">
+      <ion-item>
+
+      </ion-item>
+    </ion-list>
+  </div>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content>
       loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
   <ion-fab class="fixed-div" bottom right>
-    <button ion-fab color="light">
-      <ion-icon name="md-settings"></ion-icon>
+    <button ion-fab color="primary" (click)="doAddPO()">
+      <ion-icon name="md-add"></ion-icon>
     </button>
-    <ion-fab-list side="top">
-      <button ion-fab color="sun" (click)="doAddPO();">
-        <ion-icon name="md-add"></ion-icon>
-      </button>
-      <button ion-fab color="primary">
-        <ion-icon name="md-trash"></ion-icon>
-      </button>
-    </ion-fab-list>
   </ion-fab>
 </ion-content>
 <ion-footer>

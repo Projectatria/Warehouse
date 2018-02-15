@@ -20,6 +20,7 @@ import { HttpHeaders } from "@angular/common/http";
 export class PurchasingorderaddPage {
   myForm: FormGroup;
   private vendor = [];
+  private location = [];
   private nextno = '';
 
   error_messages = {
@@ -38,8 +39,12 @@ export class PurchasingorderaddPage {
     ],
     'locationcode': [
       { type: 'required', message: 'Location Code Must Be Fill' }
+    ],
+    'description': [
+      { type: 'required', message: 'Description Must Be Fill' }
     ]
   }
+  ven:any = {};
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -54,12 +59,19 @@ export class PurchasingorderaddPage {
       vendorno: ['', Validators.compose([Validators.required])],
       transferdate: ['', Validators.compose([Validators.required])],
       locationcode: ['', Validators.compose([Validators.required])],
+      description: ['', Validators.compose([Validators.required])],
     })
     this.getVendor();
+    this.getLocation();
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {
       this.vendor = val['data'];
+    });
+  }
+  getLocation() {
+    this.api.get('table/location', { params: { limit: 100 } }).subscribe(val => {
+      this.location = val['data'];
     });
   }
   ionViewDidLoad() {
@@ -68,6 +80,10 @@ export class PurchasingorderaddPage {
   }
   closeModal() {
     this.viewCtrl.dismiss();
+  }
+  onChange(ven) {
+    console.log('Testing',ven);
+    this.ven = ven;
   }
   insertPO() {
     this.getNextNo().subscribe(val => {
@@ -81,16 +97,16 @@ export class PurchasingorderaddPage {
           "po_id": this.nextno,
           "doc_no": this.myForm.value.docno,
           "order_no": this.myForm.value.orderno,
-          "batch_no": '',
+          "batch_no": this.myForm.value.transferdate,
           "vendor_no": this.myForm.value.vendorno,
-          "vendor_status": '',
+          "vendor_status": this.ven.gen_bus_posting_group,
           "transfer_date": this.myForm.value.transferdate,
           "posting_date": this.myForm.value.transferdate,
-          "posting_desc": '',
+          "posting_desc": this.myForm.value.description,
           "location_code": this.myForm.value.locationcode,
-          "status": '',
-          "user_id": '',
-          "chronology_no": ''
+          "status": '1',
+          "user_id": '123',
+          "chronology_no": '1'
         },
         { headers })
         .subscribe(

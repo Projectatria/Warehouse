@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams } from 'ionic-angular';
+import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
@@ -20,7 +20,7 @@ export class PurchasingorderPage {
   totaldata: any;
   public toggled: boolean = false;
   orderno = '';
-
+  po: string = "preparationpo";
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -40,10 +40,7 @@ export class PurchasingorderPage {
      });*/
     this.getPO();
     this.toggled = false;
-    /*let self = this;
-    setInterval( () => {
-      this.getPO();
-    }, 10);*/
+    this.po = "preparationpo"
   }
   getPO() {
     return new Promise(resolve => {
@@ -105,24 +102,38 @@ export class PurchasingorderPage {
       infiniteScroll.complete();
 
     })
-  }
+  } 
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
   doUpdatePO(po) {
-    let locationModal = this.modalCtrl.create('PurchasingorderupdatePage', {param: po}, { cssClass: "modal-fullscreen" });
+    let locationModal = this.modalCtrl.create('PurchasingorderupdatePage', 
+    {
+     poid: po.po_id,
+     docno: po.doc_no,
+     orderno: po.order_no,
+     vendorno: po.vendor_no,
+     transferdate: po.transfer_date,
+     locationcode: po.location_code,
+     description: po.posting_desc
+    },
+    { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
   doDeletePO(po) {
-    console.log({ param: po.order_no });
-    this.api.delete("table/purchasing_order",
-      {
-        "order_no": { param: po.order_no }
-      })
-      .subscribe(
+    const headers = new HttpHeaders()
+    .set("Content-Type", "application/json");
+
+    this.api.delete("table/purchasing_order",{params:{filter:'po_id='+ "'" + po.po_id + "'"}, headers})
+      .subscribe( 
       (val) => {
         console.log("DELETE call successful value returned in body",
           val);
+          this.api.get("table/purchasing_order").subscribe(val => {
+            this.purchasing_order = val['data'];              
+            this.totaldata = val['count'];
+            this.searchpo = this.purchasing_order;
+          });
       },
       response => {
         console.log("DELETE call in error", response);

@@ -16,9 +16,14 @@ import { ApiProvider } from '../../providers/api/api';
   templateUrl: 'home.html',
 })
 export class HomePage {
-  collection=[];
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, 
-              public menu: MenuController) {
+  atria: string = "warehouse";
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public api: ApiProvider, 
+    public menu: MenuController) 
+  {
+    this.atria = "warehouse";
     
   }
 
@@ -26,4 +31,7 @@ export class HomePage {
     console.log('ionViewDidLoad HomePage');
   }
 
+  doPreparationPO() {
+    this.navCtrl.push('PurchasingorderPage');
+  }
 }

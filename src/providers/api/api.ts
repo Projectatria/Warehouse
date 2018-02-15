@@ -13,7 +13,6 @@ export class ApiProvider {
   private api_url = 'http://101.255.60.202/webapi5/api';
 
   constructor(public http: HttpClient) {
-    console.log('Hello ApiProvider Provider');
   }
 
   get(endpoint: string, params?: any) {

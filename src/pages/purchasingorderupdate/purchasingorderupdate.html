@@ -20,13 +20,13 @@
     <ion-item style="font-size:15px;">
       <ion-label floating>Vendor No</ion-label>
       <ion-select formControlName="vendorno" >
-        <ion-option *ngFor="let ven of vendor" value="{{ven.vendor_no}}">{{ven.vendor_no}} {{ven.name}}</ion-option>
+        <ion-option *ngFor="let ven of vendor" value="{{ven.vendor_no}}" (ionSelect)="onChange(ven)">{{ven.vendor_no}} {{ven.name}}</ion-option>
       </ion-select>
     </ion-item>
     <testing [messages]="error_messages.vendorno" [control]="myForm.get('vendorno')"></testing>
     <ion-item style="font-size:15px;">
       <ion-label floating>Transfer Date</ion-label>
-      <ion-datetime formControlName="transferdate" displayFormat="DD MMMM YYYY" min="2018" max="2020-10-31" [(ngModel)]="myDate"></ion-datetime>
+      <ion-datetime formControlName="transferdate" displayFormat="DD MMMM YYYY" min="2018" max="2020-10-31"></ion-datetime>
     </ion-item>
     <testing [messages]="error_messages.transferdate" [control]="myForm.get('transferdate')"></testing>
     <ion-item no-lines style="font-size:15px;">
@@ -34,9 +34,13 @@
       <ion-input formControlName="locationcode" type="text"></ion-input>
     </ion-item>
     <testing [messages]="error_messages.locationcode" [control]="myForm.get('locationcode')"></testing>
-    </form>
+    <ion-item style="font-size:15px">
+      <ion-label floating>Description</ion-label>
+      <ion-textarea formControlName="description" type="textarea"></ion-textarea>
+    </ion-item>
+  </form>
 </ion-content>
 <ion-footer>
-  <button ion-button full (click)="updatePO()">Update</button>
+  <button ion-button full (click)="updatePO()" [disabled]="!myForm.valid">Update</button>
   <button ion-button color="danger" full (click)="closeModal()">Cancel</button>
 </ion-footer>
