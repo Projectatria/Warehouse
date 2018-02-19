@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewController, IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { ModalController, ViewController, IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
@@ -14,10 +14,10 @@ import { HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-detailpoupdate',
-  templateUrl: 'detailpoupdate.html',
+  selector: 'page-detailpoactionupdate',
+  templateUrl: 'detailpoactionupdate.html',
 })
-export class DetailpoupdatePage {
+export class DetailpoactionupdatePage {
   myForm: FormGroup;
   private items = [];
   private nextno = '';
@@ -26,7 +26,8 @@ export class DetailpoupdatePage {
   private orderno = '';
   private itemno = '';
   private qty = '';
-  private unit = '';
+  private receivingpic = '';
+  private locationplan = '';
 
   error_messages = {
     'docno': [
@@ -42,8 +43,11 @@ export class DetailpoupdatePage {
     'qty': [
       { type: 'required', message: 'Transfer Date Must Be Fill' }
     ],
-    'unit': [
-      { type: 'required', message: 'Location Code Must Be Fill' }
+    'receivingpic': [
+      { type: 'required', message: 'Receiving PIC Must Be Fill' }
+    ],
+    'locationplan': [
+      { type: 'required', message: 'Location Plan Must Be Fill' }
     ]
     
   }
@@ -54,14 +58,16 @@ export class DetailpoupdatePage {
     public viewCtrl: ViewController,
     public fb: FormBuilder,
     public api: ApiProvider,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public modalCtrl: ModalController
   ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
       orderno: ['', Validators.compose([Validators.required])],
       itemno: ['', Validators.compose([Validators.required])],
       qty: ['', Validators.compose([Validators.required])],
-      unit: ['', Validators.compose([Validators.required])],
+      receivingpic: ['', Validators.compose([Validators.required])],
+      locationplan: ['', Validators.compose([Validators.required])],
     })
     this.getItems();
     this.detailno = navParams.get('detailno')
@@ -69,12 +75,14 @@ export class DetailpoupdatePage {
     this.orderno = navParams.get('orderno');
     this.itemno = navParams.get('itemno');
     this.qty = navParams.get('qty');
-    this.unit = navParams.get('unit');
+    this.receivingpic = navParams.get('receivingpic');
+    this.locationplan = navParams.get('locationplan');
     this.myForm.get('docno').setValue(this.docno);
     this.myForm.get('orderno').setValue(this.orderno);
     this.myForm.get('itemno').setValue(this.itemno);
     this.myForm.get('qty').setValue(this.qty);
-    this.myForm.get('unit').setValue(this.unit);
+    this.myForm.get('receivingpic').setValue(this.receivingpic);
+    this.myForm.get('locationplan').setValue(this.locationplan);
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {
@@ -103,7 +111,9 @@ export class DetailpoupdatePage {
           "order_no": this.myForm.value.orderno,
           "item_no": this.myForm.value.itemno,
           "qty": this.myForm.value.qty,
-          "unit": this.myForm.value.unit
+          "position": this.myForm.value.locationplan,
+          "receiving_pic": this.myForm.value.receivingpic,
+          "status": '2'
         },
         { headers })
         .subscribe(
@@ -125,5 +135,10 @@ export class DetailpoupdatePage {
         () => {
           console.log("The Update observable is now completed.");
         });
+  }
+  showLocation(){
+    let locationModal = this.modalCtrl.create('LocationPage', 
+    { cssClass: "modal-fullscreen" });
+    locationModal.present();
   }
 }

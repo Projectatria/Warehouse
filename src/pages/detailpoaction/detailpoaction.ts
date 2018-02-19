@@ -7,18 +7,18 @@ import { HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-detailpo',
-  templateUrl: 'detailpo.html',
+  selector: 'page-detailpoaction',
+  templateUrl: 'detailpoaction.html',
 })
-export class DetailpoPage {
+export class DetailpoactionPage {
   private purchasing_order_detail = [];
   searchpodetail: any;
   items = [];
   halaman = 0;
   totaldata: any;
   public toggled: boolean = false;
+  docno = '';
   orderno = '';
-  docno = ''
   batchno = '';
   locationcode = '';
   transferdate = '';
@@ -35,7 +35,7 @@ export class DetailpoPage {
   ) {
     this.getPODetail();
     this.toggled = false;
-    this.detailpo = "detailpoitem"
+    this.detailpo = "detailpoitem";
     this.docno = navParams.get('docno');
     this.orderno = navParams.get('orderno');
     this.batchno = navParams.get('batchno');
@@ -87,18 +87,6 @@ export class DetailpoPage {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
   };
-  doAddPODetail(docno,orderno,batchno,locationcode,transferdate) {
-    let locationModal = this.modalCtrl.create('DetailpoaddPage', 
-    {
-      docno: docno,
-      orderno: orderno,
-      batchno: batchno,
-      locationcode: locationcode,
-      transferdate: transferdate
-    },
-    { cssClass: "modal-fullscreen" });
-    locationModal.present();
-  }
 
   doInfinite(infiniteScroll) {
     this.getPODetail().then(response => {
@@ -109,69 +97,27 @@ export class DetailpoPage {
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
-  doUpdatePODetail(detailpo) {
-    let locationModal = this.modalCtrl.create('DetailpoupdatePage',
-      {
-        detailno: detailpo.po_detail_no,
-        docno: detailpo.doc_no,
-        orderno: detailpo.order_no,
-        itemno: detailpo.item_no,
-        qty: detailpo.qty,  
-        unit: detailpo.unit
-      },
-      { cssClass: "modal-fullscreen" });
-    locationModal.present();
-  }
-  doDeletePODetail(detailpo) {
-    let alert = this.alertCtrl.create({
-      title: 'Confirm Delete',
-      message: 'Do you want to Delete?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Delete',
-          handler: () => {
-            const headers = new HttpHeaders()
-              .set("Content-Type", "application/json");
 
-            this.api.delete("table/purchasing_order_detail", { params: { filter: 'po_detail_no=' + "'" + detailpo.po_detail_no + "'" }, headers })
-              .subscribe(
-                (val) => {
-                  console.log("DELETE call successful value returned in body",
-                    val);
-                  this.api.get("table/purchasing_order_detail").subscribe(val => {
-                    this.purchasing_order_detail = val['data'];
-                    this.totaldata = val['count'];
-                    this.searchpodetail = this.purchasing_order_detail;
-                  });
-                },
-                response => {
-                  console.log("DELETE call in error", response);
-                },
-                () => {
-                  console.log("The DELETE observable is now completed.");
-                });
-          }
-        }
-      ]
-    });
-    alert.present();
-  }
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
+    this.api.get("table/purchasing_order_detail", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
       refresher.complete();
     });
   }
-  ionViewDidLoad() {
-    console.log(this.docno, this.orderno, this.batchno, this.locationcode, this.transferdate);
+  doActionPO(detailpo){
+    let locationModal = this.modalCtrl.create('DetailpoactionupdatePage', 
+    {
+      detailno: detailpo.po_detail_no,
+      docno: detailpo.doc_no,
+      orderno: detailpo.order_no,
+      itemno: detailpo.item_no,
+      qty: detailpo.qty,
+      receivingpic: detailpo.receiving_pic,
+      locationplan: detailpo.position 
+    }, 
+    { cssClass: "modal-fullscreen" });
+    locationModal.present();
   }
 }

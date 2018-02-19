@@ -11,6 +11,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HomePage } from '../pages/home/home';
 import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
+import { FileChooser } from "@ionic-native/file-chooser";
+import { FileOpener } from "@ionic-native/file-opener";
+import { FilePath } from "@ionic-native/file-path";
 
 @NgModule({
   declarations: [
@@ -34,7 +37,10 @@ import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-sca
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ApiProvider,
-    BarcodeScanner
+    BarcodeScanner,
+    FileChooser,
+    FileOpener,
+    FilePath
   ]
 })
 export class AppModule {

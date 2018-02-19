@@ -45,20 +45,17 @@
     <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
       <ion-item class="content-data-item" *ngFor="let detailpo of purchasing_order_detail">
         <!--<ion-avatar item-start>
-          <img src="http://101.255.60.202/webapi/img/" alt="">
-        </ion-avatar>-->
+            <img src="http://101.255.60.202/webapi/img/" alt="">
+          </ion-avatar>-->
         <div no-padding>
           <h2>No Item : {{detailpo.item_no}}</h2>
           <br/>
           <p style="color:#ffffff;">Order No {{detailpo.order_no}}</p>
           <br/>
-          <ion-note>{{detailpo.transfer_date}} | Qty : {{detailpo.qty}}</ion-note>
+          <ion-note>{{detailpo.transfer_date}} | Qty: {{detailpo.qty}} | PIC: {{detailpo.receiving_pic}} | Location: {{detailpo.position}}</ion-note>
         </div>
-        <button item-end ion-button clear color="secondary" (click)="doUpdatePODetail(detailpo)">
-          <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
-        </button>
-        <button item-end ion-button clear color="delima" (click)="doDeletePODetail(detailpo)">
-          <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
+        <button item-end ion-button clear color="secondary" (click)="doActionPO(detailpo)">
+          <ion-icon name="md-clipboard" style="font-size:30px;"></ion-icon>
         </button>
       </ion-item>
     </ion-list>
@@ -78,7 +75,7 @@
       <ion-icon name="md-apps"></ion-icon>
     </button>
     <ion-fab-list side="top">
-      <button ion-fab color="primary" (click)="doAddPODetail(docno,orderno,batchno,locationcode,transferdate)">
+      <button ion-fab color="primary" (click)="doAddPODetail()">
         <ion-icon name="md-add"></ion-icon>
       </button>
       <button ion-fab color="secondary">

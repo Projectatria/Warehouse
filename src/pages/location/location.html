@@ -1,7 +1,27 @@
 <ion-header class="header-menu">
-  <div class="cls-modal" (click)="closeLocation()" padding>
-    <button ion-button clear style="color:#ffffff;">Close</button>
-  </div>
+  <ion-navbar class="header-navbar" style="width:100%;">
+    <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
+      <button ion-button clear color="light" (click)="toggleSearch()">
+        <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
+      </button>
+    </div>
+    <div *ngIf="toggled" style="text-align:right;height:0px;">
+      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="toggleSearch()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
+    </div>
+    <button *ngIf="!toggled" ion-button menuToggle color="light">
+      <ion-icon name="menu" style="font-size:30px;"></ion-icon>
+    </button>
+    <ion-title class="side-title">
+      <div *ngIf="!toggled" class="close">
+        <button ion-button clear color="light" (click)="closeLocation()">Close</button>
+      </div>
+      <div *ngIf="toggled" class="content-search" style="width:100%;">
+        <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
+      </div>
+    </ion-title>
+  </ion-navbar>
 </ion-header>
 <ion-content class="content-location">
   <ion-card>

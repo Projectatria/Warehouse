@@ -14,6 +14,7 @@ export class LocationPage {
   private location_codearea = [];
   private location_area = [];
   private location_rack = [];
+  public toggled: boolean = false;
   
   constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, private viewCtrl : ViewController) {
   this.getLocationMaster();
@@ -21,6 +22,7 @@ export class LocationPage {
   this.getLocationCodeArea();
   this.getLocationArea();
   this.getLocationRack();
+  this.toggled = false;
   }
 
   ionViewDidLoad() {
@@ -54,4 +56,9 @@ export class LocationPage {
   closeLocation() {
     this.viewCtrl.dismiss();
   }
+  toggleSearch() {
+    this.toggled = this.toggled ? false : true;
+  }
+
+  
 }

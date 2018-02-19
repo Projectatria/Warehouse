@@ -20,8 +20,14 @@ import { HttpHeaders } from "@angular/common/http";
 export class DetailpoaddPage {
   myForm: FormGroup;
   private items = [];
+  private purchasing_order = [];
   private nextno = '';
-
+  item:any = {};
+  private orderno = '';
+  private docno = '';
+  private batchno = '';
+  private locationcode = '';
+  private transferdate = '';
   error_messages = {
     'docno': [
       { type: 'required', message: 'Doc No Must Be Fill' }
@@ -40,7 +46,6 @@ export class DetailpoaddPage {
       { type: 'required', message: 'Location Code Must Be Fill' }
     ]
   }
-  item:any = {};
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -57,6 +62,13 @@ export class DetailpoaddPage {
       unit: ['', Validators.compose([Validators.required])],
     })
     this.getItems();
+    this.orderno = navParams.get('orderno');
+    this.docno = navParams.get('orderno');
+    this.batchno = navParams.get('batchno');
+    this.locationcode = navParams.get('locationcode');
+    this.transferdate = navParams.get('transferdate');
+    this.myForm.get('docno').setValue(this.docno);
+    this.myForm.get('orderno').setValue(this.orderno);
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {
@@ -66,6 +78,7 @@ export class DetailpoaddPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad PurchasingorderaddPage');
     console.log(this.nextno);
+    console.log(this.orderno);
   }
   closeModal() {
     this.viewCtrl.dismiss();
@@ -77,7 +90,6 @@ export class DetailpoaddPage {
   insertPODetail() {
     this.getNextNo().subscribe(val => {
       this.nextno = val['nextno'];
-
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -86,11 +98,11 @@ export class DetailpoaddPage {
           "po_detail_no": this.nextno,
           "doc_no": this.myForm.value.docno,
           "order_no": this.myForm.value.orderno,
-          "batch_no": '',
+          "batch_no": this.batchno,
           "item_no": this.myForm.value.itemno,
           "description": '',
-          "location_code": '',
-          "transfer_date": '',
+          "location_code": this.locationcode,
+          "transfer_date": this.transferdate,
           "receiving_date": '',
           "qty": this.myForm.value.qty,
           "unit": this.myForm.value.unit,

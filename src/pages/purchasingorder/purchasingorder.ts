@@ -4,6 +4,9 @@ import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
 import { HttpHeaders } from "@angular/common/http";
+import { FileChooser } from "@ionic-native/file-chooser";
+import { FileOpener } from "@ionic-native/file-opener";
+import { FilePath } from "@ionic-native/file-path";
 
 @IonicPage()
 @Component({
@@ -12,10 +15,15 @@ import { HttpHeaders } from "@angular/common/http";
 })
 export class PurchasingorderPage {
   private purchasing_order = [];
+  private purchasing_order_action = [];
   searchpo: any;
+  searchpoaction: any;
   items = [];
   halaman = 0;
+  halamanaction = 0;
   totaldata: any;
+  totaldataaction: any;
+  totaldataitem: any;
   public toggled: boolean = false;
   orderno = '';
   po: string = "preparationpo";
@@ -27,7 +35,10 @@ export class PurchasingorderPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public fileChooser: FileChooser,
+    public fileOpener: FileOpener,
+    public filePath: FilePath
   ) {
     /* this.form = this.formBuilder.group({
        dccode: ['', Validators.compose([Validators.required])],
@@ -37,6 +48,7 @@ export class PurchasingorderPage {
        postingdate: ['', Validators.compose([Validators.required])] 
      });*/
     this.getPO();
+    this.getPOAction();
     this.toggled = false;
     this.po = "preparationpo"
   }
@@ -50,7 +62,7 @@ export class PurchasingorderPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: 'status=1' } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -60,6 +72,33 @@ export class PurchasingorderPage {
             }
             if (data.length == 0) {
               this.halaman = -1
+            }
+            resolve();
+          });
+      }
+    })
+
+  }
+  getPOAction() {
+    return new Promise(resolve => {
+      let offsetaction = 30 * this.halamanaction
+      console.log('offset', this.halamanaction);
+      if (this.halamanaction == -1) {
+        console.log('Data Tidak Ada')
+        resolve();
+      }
+      else {
+        this.halamanaction++;
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetaction, filter: 'status=2' } })
+          .subscribe(val => {
+            let data = val['data'];
+            for (let i = 0; i < data.length; i++) {
+              this.purchasing_order_action.push(data[i]);
+              this.totaldataaction = val['count'];
+              this.searchpoaction = this.purchasing_order_action;
+            }
+            if (data.length == 0) {
+              this.halamanaction = -1
             }
             resolve();
           });
@@ -81,13 +120,40 @@ export class PurchasingorderPage {
       this.purchasing_order = this.searchpo;
     }
   }
+  getSearchPOAction(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.purchasing_order_action = this.searchpoaction.filter(poact => {
+        return poact.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.purchasing_order_action = this.searchpoaction;
+    }
+  }
   menuShow() {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
   };
   viewDetail(po) {
     this.navCtrl.push('DetailpoPage', {
-      param: po.order_no
+      orderno: po.order_no,
+      docno: po.doc_no,
+      batchno: po.batch_no,
+      locationcode: po.location_code,
+      transferdate: po.transfer_date
+    });
+  }
+  viewDetailAction(poact) {
+    this.navCtrl.push('DetailpoactionPage', {
+      orderno: poact.order_no,
+      docno: poact.doc_no,
+      batchno: poact.batch_no,
+      locationcode: poact.location_code,
+      transferdate: poact.transfer_date
     });
   }
   doAddPO() {
@@ -97,6 +163,12 @@ export class PurchasingorderPage {
 
   doInfinite(infiniteScroll) {
     this.getPO().then(response => {
+      infiniteScroll.complete();
+
+    })
+  }
+  doInfiniteAction(infiniteScroll) {
+    this.getPOAction().then(response => {
       infiniteScroll.complete();
 
     })
@@ -141,7 +213,7 @@ export class PurchasingorderPage {
                 (val) => {
                   console.log("DELETE call successful value returned in body",
                     val);
-                  this.api.get("table/purchasing_order").subscribe(val => {
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=1' } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
                     this.searchpo = this.purchasing_order;
@@ -160,11 +232,93 @@ export class PurchasingorderPage {
     alert.present();
   }
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order").subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=1' } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       this.searchpo = this.purchasing_order;
       refresher.complete();
+    });
+  }
+
+  doRefreshAction(refresher) {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=2' } }).subscribe(val => {
+      this.purchasing_order_action = val['data'];
+      this.totaldataaction = val['count'];
+      this.searchpoaction = this.purchasing_order_action;
+      refresher.complete();
+    });
+  }
+  chooseFile() {
+    this.fileChooser.open().then(file => {
+      this.filePath.resolveNativePath(file).then(resolvedFilePath => {
+        this.fileOpener.open(resolvedFilePath, 'application/pdf').then(value => {
+          alert('Sukses')
+        }).catch(err => {
+          alert(JSON.stringify(err));
+        });
+      }).catch(err => {
+        alert(JSON.stringify(err));
+      })
+    })
+  }
+
+  doPostingPO(po) {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Posting',
+      message: 'Do you want to Posting?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Posting',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/purchasing_order",
+              {
+                "po_id": po.po_id,
+                "status": '2',
+                "user_id": ''
+              },
+              { headers })
+              .subscribe(
+                (val) => {
+                  console.log("Posting call successful value returned in body",
+                    val);
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Posting Sukses',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=1' } }).subscribe(val => {
+                    this.purchasing_order = val['data'];
+                    this.totaldata = val['count'];
+                    this.searchpo = this.purchasing_order;
+                  });
+
+                },
+                response => {
+                  console.log("Posting call in error", response);
+                },
+                () => {
+                  console.log("The Posting observable is now completed.");
+                });
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+  totalItem() {
+    this.api.get("table/purchasing_order_detail", { params: { limit: 100, filter: 'order_no' + this.orderno } }).subscribe(val => {
+      this.totaldataitem = val['count'];
     });
   }
 }

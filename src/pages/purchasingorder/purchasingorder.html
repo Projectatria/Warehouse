@@ -25,14 +25,12 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>
-      pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
-    </ion-refresher-content>
-  </ion-refresher>
   <ion-segment [(ngModel)]="po">
     <ion-segment-button value="preparationpo">
       Preparation PO
+    </ion-segment-button>
+    <ion-segment-button value="purchasingorder">
+      Purchasing Order
     </ion-segment-button>
     <ion-segment-button value="history">
       History
@@ -41,6 +39,14 @@
 
   <div [ngSwitch]="po">
     <ion-list class="content-list-menu" *ngSwitchCase="'preparationpo'">
+      <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <div>
+        <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
+      </div>
       <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
         <ion-avatar item-start>
           <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
@@ -55,28 +61,72 @@
         <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
           <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
         </button>
-        <button item-end ion-button clear color="delima" (click)="doDeletePO(po)">
+        <button item-end ion-button clear color="primary" (click)="doDeletePO(po)">
           <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
         </button>
+        <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
+          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+        </button>
       </ion-item>
+      <ion-fab class="fixed-div" bottom right>
+        <button ion-fab color="greenlake">
+          <ion-icon name="md-apps"></ion-icon>
+        </button>
+        <ion-fab-list side="top">
+          <button ion-fab color="primary" (click)="doAddPO()">
+            <ion-icon name="md-add"></ion-icon>
+          </button>
+          <button ion-fab color="secondary">
+            <ion-icon name="md-download"></ion-icon>
+          </button>
+          <button ion-fab color="danger" (click)="chooseFile()">
+            <ion-icon name="md-cloud-upload"></ion-icon>
+          </button>
+        </ion-fab-list>
+      </ion-fab>
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content>
+          loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-list>
+
+    <ion-list class="content-list-menu" *ngSwitchCase="'purchasingorder'">
+      <ion-refresher (ionRefresh)="doRefreshAction($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <div>
+        <ion-item no-lines class="toolbar-scroll">Showing {{totaldataaction}} entries</ion-item>
+      </div>
+      <ion-item class="content-data-item" *ngFor="let poact of purchasing_order_action">
+        <ion-avatar item-start>
+          <img src="http://101.255.60.202/webapi/img/{{poact.vendor_status}}" alt="">
+        </ion-avatar>
+        <div no-padding (click)="viewDetailAction(poact)">
+          <h2>No Order : {{poact.order_no}}</h2>
+          <br/>
+          <p style="color:#ffffff;">Document {{poact.doc_no}} Description {{poact.posting_desc}} </p>
+          <br/>
+          <ion-note>{{poact.posting_date}} | Items : {{poact.total_item}}</ion-note>
+        </div>
+        <button item-end ion-button clear color="delima" (click)="doPostingPO(poact)">
+          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+        </button>
+      </ion-item>
+      <ion-infinite-scroll (ionInfinite)="doInfiniteAction($event)">
+        <ion-infinite-scroll-content>
+          loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-list>
+
     <ion-list *ngSwitchCase="'history'">
       <ion-item>
 
       </ion-item>
     </ion-list>
+
   </div>
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-    <ion-infinite-scroll-content>
-      loadingSpinner="bubbles" loadingText="Loading more data...">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-  <ion-fab class="fixed-div" bottom right>
-    <button ion-fab color="greenlake" (click)="doAddPO()">
-      <ion-icon name="md-add"></ion-icon>
-    </button>
-  </ion-fab>
 </ion-content>
-<ion-footer>
-  <ion-toolbar class="toolbar-scroll">Showing {{totaldata}} entries</ion-toolbar>
-</ion-footer>

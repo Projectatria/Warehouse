@@ -9,12 +9,12 @@
     <form [formGroup]="myForm">
     <ion-item class="item-input" no-lines style="font-size:15px;">
       <ion-label floating>Doc No</ion-label>
-      <ion-input formControlName="docno" type="text"></ion-input>
+      <ion-input formControlName="docno" disabled="true" type="text"></ion-input>
     </ion-item>
     <testing [messages]="error_messages.docno" [control]="myForm.get('docno')"></testing>
     <ion-item class="item-input" no-lines style="font-size:15px;">
       <ion-label floating>Order No</ion-label>
-      <ion-input formControlName="orderno" type="text"></ion-input>
+      <ion-input formControlName="orderno" disabled="true" type="text"></ion-input>
     </ion-item>
     <testing [messages]="error_messages.orderno" [control]="myForm.get('orderno')"></testing>
     <ion-item class="item-input" style="font-size:15px;">
