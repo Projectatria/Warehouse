@@ -34,4 +34,7 @@ export class HomePage {
   doPreparationPO() {
     this.navCtrl.push('PurchasingorderPage');
   }
+  doReceiving() {
+    this.navCtrl.push('ReceivingPage');
+  }
 }

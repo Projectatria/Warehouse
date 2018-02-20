@@ -7,20 +7,22 @@ import { HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-receiving',
-  templateUrl: 'receiving.html',
+  selector: 'page-receivingdetail',
+  templateUrl: 'receivingdetail.html',
 })
-export class ReceivingPage {
-  private purchasing_order = [];
-  searchpo: any;
+export class ReceivingdetailPage {
+  private receiving = [];
+  searchrcv: any;
   items = [];
   halaman = 0;
-  halamanaction = 0;
   totaldata: any;
-  totaldataitem: any;
   public toggled: boolean = false;
+  docno = '';
   orderno = '';
-  rcv: string = "receiving";
+  batchno = '';
+  locationcode = '';
+  transferdate = '';
+  detailrcv: string = "detailreceiving";
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -31,18 +33,22 @@ export class ReceivingPage {
     public menu: MenuController,
     public modalCtrl: ModalController
   ) {
-    /* this.form = this.formBuilder.group({
-       dccode: ['', Validators.compose([Validators.required])],
-       docno: ['', Validators.compose([Validators.required])],
-       orderno: ['', Validators.compose([Validators.required])],
-       vendorno: ['', Validators.compose([Validators.required])],
-       postingdate: ['', Validators.compose([Validators.required])] 
-     });*/
-    this.getPO();
+    this.getRCV();
     this.toggled = false;
-    this.rcv = "receiving"
+    this.detailrcv = "detailreceiving";
+    this.docno = navParams.get('docno');
+    this.orderno = navParams.get('orderno');
+    this.batchno = navParams.get('batchno');
+    this.locationcode = navParams.get('locationcode');
+    this.transferdate = navParams.get('transferdate');
   }
-  getPO() {
+  getRCV(){
+    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+      this.receiving = val['data'];
+      this.totaldata = val['count'];
+    })
+  }
+  getRCVDetail() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
       console.log('offset', this.halaman);
@@ -52,13 +58,13 @@ export class ReceivingPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: 'status=3' } })
+        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" }})
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
-              this.purchasing_order.push(data[i]);
+              this.receiving.push(data[i]);
               this.totaldata = val['count'];
-              this.searchpo = this.purchasing_order;
+              this.searchrcv = this.receiving;
             }
             if (data.length == 0) {
               this.halaman = -1
@@ -69,39 +75,27 @@ export class ReceivingPage {
     })
 
   }
-  getSearchPO(ev: any) {
+  getSearchRCV(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
-      this.purchasing_order = this.searchpo.filter(po => {
-        return po.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      this.receiving = this.searchrcv.filter(detailrcv => {
+        return detailrcv.item_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
       })
     } else {
-      this.purchasing_order = this.searchpo;
+      this.receiving = this.searchrcv;
     }
   }
-
   menuShow() {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
   };
-  viewDetail(po) {
-    this.navCtrl.push('ReceivingdetailPage', {
-      orderno: po.order_no,
-      docno: po.doc_no,
-      batchno: po.batch_no,
-      locationcode: po.location_code,
-      transferdate: po.transfer_date,
-      totalitem: po.total_item,
-      poid: po.po_id
-    });
-  }
 
   doInfinite(infiniteScroll) {
-    this.getPO().then(response => {
+    this.getRCVDetail().then(response => {
       infiniteScroll.complete();
 
     })
@@ -109,20 +103,19 @@ export class ReceivingPage {
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
- 
+
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=3' } }).subscribe(val => {
-      this.purchasing_order = val['data'];
+    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
+      this.receiving = val['data'];
       this.totaldata = val['count'];
-      this.searchpo = this.purchasing_order;
+      this.searchrcv = this.receiving;
       refresher.complete();
     });
   }
-
-  doPostingPO(po) {
+  doPostRCV(detailrcv){
     let alert = this.alertCtrl.create({
       title: 'Confirm Posting',
-      message: 'Do you want to Posting?',
+      message: 'Are you sure you want to posting  ' + detailrcv.item_no + ' ?',
       buttons: [
         {
           text: 'Cancel',
@@ -137,11 +130,10 @@ export class ReceivingPage {
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
 
-            this.api.put("table/purchasing_order",
+            this.api.put("table/receiving",
               {
-                "po_id": po.po_id,
-                "status": '4',
-                "user_id": ''
+                "receiving": detailrcv.receiving_no,
+                "status": '3'
               },
               { headers })
               .subscribe(
@@ -154,10 +146,10 @@ export class ReceivingPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=1' } }).subscribe(val => {
-                    this.purchasing_order = val['data'];
+                  this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+                    this.receiving = val['data'];
                     this.totaldata = val['count'];
-                    this.searchpo = this.purchasing_order;
+                    this.searchrcv = this.receiving;
                   });
 
                 },
@@ -172,5 +164,36 @@ export class ReceivingPage {
       ]
     });
     alert.present();
+  }
+  doViewRCV(detailrcv){
+    let locationModal = this.modalCtrl.create('ReceivingdetailviewPage', 
+    {
+      detailno: detailrcv.receiving_no,
+      docno: detailrcv.doc_no,
+      orderno: detailrcv.order_no,
+      itemno: detailrcv.item_no,
+      qty: detailrcv.qty,
+      receivingpic: detailrcv.receiving_pic,
+      locationplan: detailrcv.position 
+    },
+    { cssClass: "modal-fullscreen" });
+    locationModal.present();
+  }
+  doUpdateRCV(detailrcv){
+    let locationModal = this.modalCtrl.create('ReceivingdetailupdatePage', 
+    {
+      detailno: detailrcv.receiving_no,
+      docno: detailrcv.doc_no,
+      orderno: detailrcv.order_no,
+      itemno: detailrcv.item_no,
+      qty: detailrcv.qty,
+      receivingpic: detailrcv.receiving_pic,
+      locationplan: detailrcv.position 
+    },
+    { cssClass: "modal-fullscreen" });
+    locationModal.present();
+  }
+  ionViewDidLoad() {
+    this.getRCVDetail();
   }
 }

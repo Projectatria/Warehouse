@@ -22,6 +22,8 @@ export class DetailpoPage {
   batchno = '';
   locationcode = '';
   transferdate = '';
+  poid = '';
+  totalitem: any;
   detailpo: string = "detailpoitem";
   constructor(
     public navCtrl: NavController,
@@ -33,7 +35,7 @@ export class DetailpoPage {
     public menu: MenuController,
     public modalCtrl: ModalController
   ) {
-    this.getPODetail();
+    this.getPOD();
     this.toggled = false;
     this.detailpo = "detailpoitem"
     this.docno = navParams.get('docno');
@@ -41,6 +43,14 @@ export class DetailpoPage {
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+    this.totalitem = navParams.get('totalitem');
+    this.poid = navParams.get('poid');
+  }
+  getPOD() {
+    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+      this.purchasing_order_detail = val['data'];
+      this.totaldata = val['count'];
+    })
   }
   getPODetail() {
     return new Promise(resolve => {
@@ -52,7 +62,7 @@ export class DetailpoPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order_detail', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" }})
+        this.api.get('table/purchasing_order_detail', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -87,16 +97,19 @@ export class DetailpoPage {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
   };
-  doAddPODetail(docno,orderno,batchno,locationcode,transferdate) {
-    let locationModal = this.modalCtrl.create('DetailpoaddPage', 
-    {
-      docno: docno,
-      orderno: orderno,
-      batchno: batchno,
-      locationcode: locationcode,
-      transferdate: transferdate
-    },
-    { cssClass: "modal-fullscreen" });
+  doAddPODetail(docno, orderno, batchno, locationcode, transferdate, totalitem, poid, totaldata) {
+    let locationModal = this.modalCtrl.create('DetailpoaddPage',
+      {
+        docno: docno,
+        orderno: orderno,
+        batchno: batchno,
+        locationcode: locationcode,
+        transferdate: transferdate,
+        totalitem: totalitem,
+        poid: poid,
+        totalcount: totaldata
+      },
+      { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
 
@@ -116,7 +129,7 @@ export class DetailpoPage {
         docno: detailpo.doc_no,
         orderno: detailpo.order_no,
         itemno: detailpo.item_no,
-        qty: detailpo.qty,  
+        qty: detailpo.qty,
         unit: detailpo.unit
       },
       { cssClass: "modal-fullscreen" });
@@ -125,7 +138,7 @@ export class DetailpoPage {
   doDeletePODetail(detailpo) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Delete',
-      message: 'Do you want to Delete?',
+      message: 'Are you sure you want to delete  ' + detailpo.order_no + ' ?',
       buttons: [
         {
           text: 'Cancel',
@@ -145,7 +158,16 @@ export class DetailpoPage {
                 (val) => {
                   console.log("DELETE call successful value returned in body",
                     val);
-                  this.api.get("table/purchasing_order_detail").subscribe(val => {
+                  this.api.delete("table/receiving", { params: { filter: 'receiving_no=' + "'" + detailpo.po_detail_no + "'" }, headers })
+                    .subscribe();
+                  this.api.put("table/purchasing_order",
+                    {
+                      "po_id": this.poid,
+                      "total_item": this.totaldata - 1
+                    },
+                    { headers })
+                    .subscribe();
+                  this.api.get("table/purchasing_order_detail", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
                     this.purchasing_order_detail = val['data'];
                     this.totaldata = val['count'];
                     this.searchpodetail = this.purchasing_order_detail;
@@ -164,7 +186,7 @@ export class DetailpoPage {
     alert.present();
   }
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
+    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
@@ -173,5 +195,6 @@ export class DetailpoPage {
   }
   ionViewDidLoad() {
     console.log(this.docno, this.orderno, this.batchno, this.locationcode, this.transferdate);
+    this.getPODetail();
   }
 }

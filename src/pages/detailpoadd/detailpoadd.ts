@@ -20,14 +20,20 @@ import { HttpHeaders } from "@angular/common/http";
 export class DetailpoaddPage {
   myForm: FormGroup;
   private items = [];
-  private purchasing_order = [];
+  private purchasing_order_detail = [];
   private nextno = '';
-  item:any = {};
+  private nextnorcv = '';
+  item: any = {};
+  private itemdesc = '';
+  private itemdiv = '';
   private orderno = '';
   private docno = '';
   private batchno = '';
   private locationcode = '';
   private transferdate = '';
+  private poid = '';
+  totalitem: any;
+  totalcount: any;
   error_messages = {
     'docno': [
       { type: 'required', message: 'Doc No Must Be Fill' }
@@ -67,6 +73,9 @@ export class DetailpoaddPage {
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+    this.totalitem = navParams.get('totalitem');
+    this.poid = navParams.get('poid');
+    this.totalcount = navParams.get('totalcount')
     this.myForm.get('docno').setValue(this.docno);
     this.myForm.get('orderno').setValue(this.orderno);
   }
@@ -75,24 +84,27 @@ export class DetailpoaddPage {
       this.items = val['data'];
     });
   }
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad PurchasingorderaddPage');
-    console.log(this.nextno);
-    console.log(this.orderno);
+    console.log('Next No', this.nextno);
+    console.log('Order No', this.orderno);
+    console.log('Total', this.totalcount);
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   onChange(item) {
-    console.log('Testing',item);
+    console.log('Testing', item);
     this.item = item;
+    this.itemdesc = item.description;
+    this.itemdiv = item.division_code;
   }
   insertPODetail() {
     this.getNextNo().subscribe(val => {
       this.nextno = val['nextno'];
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
-
       this.api.post("table/purchasing_order_detail",
         {
           "po_detail_no": this.nextno,
@@ -100,42 +112,83 @@ export class DetailpoaddPage {
           "order_no": this.myForm.value.orderno,
           "batch_no": this.batchno,
           "item_no": this.myForm.value.itemno,
-          "description": '',
+          "description": this.itemdesc,
           "location_code": this.locationcode,
           "transfer_date": this.transferdate,
-          "receiving_date": '',
           "qty": this.myForm.value.qty,
           "unit": this.myForm.value.unit,
-          "division": '',
-          "staging": '',
-          "position": '',
+          "division": this.itemdiv,
           "status": '1',
-          "receiving_pic": '',
           "chronology_no": ''
         },
         { headers })
         .subscribe(
-        (val) => {
-          console.log("POST call successful value returned in body",
-            val);
-          this.myForm.reset()
-          let alert = this.alertCtrl.create({
-            title: 'Sukses',
-            subTitle: 'Insert Sukses',
-            buttons: ['OK']
+          (val) => {
+            console.log("POST call successful value returned in body",
+              val);
+            this.api.put("table/purchasing_order",
+              {
+                "po_id": this.poid,
+                "total_item": this.totalcount + 1
+              },
+              { headers })
+              .subscribe();
+              console.log(
+                this.nextno,
+                this.myForm.value.docno,
+                this.batchno,
+                this.myForm.value.orderno,
+                this.myForm.value.itemno,
+                this.locationcode,
+                this.transferdate,
+                this.myForm.value.qty,
+                this.myForm.value.unit,
+                this.itemdiv
+              )
+              const headersrcv = new HttpHeaders()
+              .set("Content-Type", "application/json");
+              this.api.post("table/receiving",
+                {
+                  "receiving_no": this.nextno,
+                  "doc_no": this.myForm.value.docno,
+                  "order_no": this.myForm.value.orderno,
+                  "batch_no": this.batchno,
+                  "item_no": this.myForm.value.itemno,
+                  "location_code": this.locationcode,
+                  "transfer_date": this.transferdate,
+                  "receiving_date": this.transferdate,
+                  "qty": this.myForm.value.qty,
+                  "unit": this.myForm.value.unit,
+                  "division": this.itemdiv,
+                  "staging": "",
+                  "position": "",
+                  "status": "1",
+                  "receiving_pic": "",
+                  "chronology_no": ""
+                },
+                { headersrcv })
+                .subscribe();
+            this.myForm.reset()
+            let alert = this.alertCtrl.create({
+              title: 'Sukses',
+              subTitle: 'Insert Sukses',
+              buttons: ['OK']
+            });
+            alert.present();
+            this.viewCtrl.dismiss();
+          },
+          response => {
+            console.log("POST call in error", response);
+          },
+          () => {
+            console.log("The POST observable is now completed.");
           });
-          alert.present();
-          this.viewCtrl.dismiss();
-        },
-        response => {
-          console.log("POST call in error", response);
-        },
-        () => {
-          console.log("The POST observable is now completed.");
-        });
     });
   }
   getNextNo() {
     return this.api.get('nextno/purchasing_order_detail/po_detail_no')
+  }
+  getNextNoRCV() {
+    return this.api.get('nextno/receiving/receiving_no')
   }
 }

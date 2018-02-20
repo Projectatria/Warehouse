@@ -14,6 +14,7 @@ import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-sca
 import { FileChooser } from "@ionic-native/file-chooser";
 import { FileOpener } from "@ionic-native/file-opener";
 import { FilePath } from "@ionic-native/file-path";
+import {Camera} from '@ionic-native/camera';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { FilePath } from "@ionic-native/file-path";
     BarcodeScanner,
     FileChooser,
     FileOpener,
-    FilePath
+    FilePath,
+    Camera
   ]
 })
 export class AppModule {

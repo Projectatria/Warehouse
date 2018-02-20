@@ -91,7 +91,7 @@ export class DetailpoactionupdatePage {
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad PurchasingorderupdatePage');
-    console.log(this.nextno);
+    console.log(this.detailno);
   }
   closeModal() {
     this.viewCtrl.dismiss();
@@ -100,20 +100,16 @@ export class DetailpoactionupdatePage {
     console.log('Testing',item);
     this.item = item;
   }
-  updatePODetail() {
+  doUpdateReceiving() {
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
-      this.api.put("table/purchasing_order_detail",
+      this.api.put("table/receiving",
         {
-          "po_detail_no" : this.detailno,
-          "doc_no": this.myForm.value.docno,
-          "order_no": this.myForm.value.orderno,
-          "item_no": this.myForm.value.itemno,
-          "qty": this.myForm.value.qty,
+          "receiving_no" : this.detailno,
           "position": this.myForm.value.locationplan,
-          "receiving_pic": this.myForm.value.receivingpic,
-          "status": '2'
+          "status": '2',
+          "receiving_pic": this.myForm.value.receivingpic
         },
         { headers })
         .subscribe(

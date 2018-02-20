@@ -33,7 +33,7 @@ export class DetailpoactionPage {
     public menu: MenuController,
     public modalCtrl: ModalController
   ) {
-    this.getPODetail();
+    this.getPOD();
     this.toggled = false;
     this.detailpo = "detailpoitem";
     this.docno = navParams.get('docno');
@@ -41,6 +41,12 @@ export class DetailpoactionPage {
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+  }
+  getPOD(){
+    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+      this.purchasing_order_detail = val['data'];
+      this.totaldata = val['count'];
+    })
   }
   getPODetail() {
     return new Promise(resolve => {
@@ -52,7 +58,7 @@ export class DetailpoactionPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order_detail', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" }})
+        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" }})
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -99,7 +105,7 @@ export class DetailpoactionPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order_detail", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
+    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
@@ -109,7 +115,7 @@ export class DetailpoactionPage {
   doActionPO(detailpo){
     let locationModal = this.modalCtrl.create('DetailpoactionupdatePage', 
     {
-      detailno: detailpo.po_detail_no,
+      detailno: detailpo.receiving_no,
       docno: detailpo.doc_no,
       orderno: detailpo.order_no,
       itemno: detailpo.item_no,
@@ -119,5 +125,8 @@ export class DetailpoactionPage {
     }, 
     { cssClass: "modal-fullscreen" });
     locationModal.present();
+  }
+  ionViewDidLoad() {
+    this.getPODetail();
   }
 }

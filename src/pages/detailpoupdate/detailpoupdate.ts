@@ -27,6 +27,8 @@ export class DetailpoupdatePage {
   private itemno = '';
   private qty = '';
   private unit = '';
+  private itemdesc = '';
+  private itemdiv = '';
 
   error_messages = {
     'docno': [
@@ -45,9 +47,9 @@ export class DetailpoupdatePage {
     'unit': [
       { type: 'required', message: 'Location Code Must Be Fill' }
     ]
-    
+
   }
-  item:any = {};
+  item: any = {};
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -89,27 +91,43 @@ export class DetailpoupdatePage {
     this.viewCtrl.dismiss();
   }
   onChange(item) {
-    console.log('Testing',item);
+    console.log('Testing', item);
     this.item = item;
+    this.itemdesc = item.description;
+    this.itemdiv = item.division_code;
   }
   updatePODetail() {
-      const headers = new HttpHeaders()
-        .set("Content-Type", "application/json");
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
 
-      this.api.put("table/purchasing_order_detail",
-        {
-          "po_detail_no" : this.detailno,
-          "doc_no": this.myForm.value.docno,
-          "order_no": this.myForm.value.orderno,
-          "item_no": this.myForm.value.itemno,
-          "qty": this.myForm.value.qty,
-          "unit": this.myForm.value.unit
-        },
-        { headers })
-        .subscribe(
+    this.api.put("table/purchasing_order_detail",
+      {
+        "po_detail_no": this.detailno,
+        "doc_no": this.myForm.value.docno,
+        "order_no": this.myForm.value.orderno,
+        "item_no": this.myForm.value.itemno,
+        "description": this.itemdesc,
+        "division": this.itemdiv,
+        "qty": this.myForm.value.qty,
+        "unit": this.myForm.value.unit
+      },
+      { headers })
+      .subscribe(
         (val) => {
           console.log("Update call successful value returned in body",
             val);
+          this.api.put("table/receiving",
+            {
+              "receiving_no": this.detailno,
+              "doc_no": this.myForm.value.docno,
+              "order_no": this.myForm.value.orderno,
+              "item_no": this.myForm.value.itemno,
+              "division": this.itemdiv,
+              "qty": this.myForm.value.qty,
+              "unit": this.myForm.value.unit
+            },
+            { headers })
+            .subscribe();
           this.myForm.reset()
           let alert = this.alertCtrl.create({
             title: 'Sukses',

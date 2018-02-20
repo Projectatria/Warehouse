@@ -144,7 +144,9 @@ export class PurchasingorderPage {
       docno: po.doc_no,
       batchno: po.batch_no,
       locationcode: po.location_code,
-      transferdate: po.transfer_date
+      transferdate: po.transfer_date,
+      totalitem: po.total_item,
+      poid: po.po_id
     });
   }
   viewDetailAction(poact) {
@@ -193,7 +195,7 @@ export class PurchasingorderPage {
   doDeletePO(po) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Delete',
-      message: 'Do you want to Delete?',
+      message: 'Are you sure you want to delete  ' + po.order_no + ' ?',
       buttons: [
         {
           text: 'Cancel',
@@ -265,7 +267,7 @@ export class PurchasingorderPage {
   doPostingPO(po) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Posting',
-      message: 'Do you want to Posting?',
+      message: 'Are you sure you want to posting  ' + po.order_no + ' ?',
       buttons: [
         {
           text: 'Cancel',
@@ -315,10 +317,58 @@ export class PurchasingorderPage {
       ]
     });
     alert.present();
-  }
-  totalItem() {
-    this.api.get("table/purchasing_order_detail", { params: { limit: 100, filter: 'order_no' + this.orderno } }).subscribe(val => {
-      this.totaldataitem = val['count'];
+  } 
+  doPostingRCV(poact) {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Posting',
+      message: 'Are you sure you want to posting  ' + poact.order_no + ' ?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Posting',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/purchasing_order",
+              {
+                "po_id": poact.po_id,
+                "status": '3'
+              },
+              { headers })
+              .subscribe(
+                (val) => {
+                  console.log("Posting call successful value returned in body",
+                    val);
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Posting Sukses',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=2' } }).subscribe(val => {
+                    this.purchasing_order_action = val['data'];
+                    this.totaldataaction = val['count'];
+                    this.searchpoaction = this.purchasing_order_action;
+                  });
+
+                },
+                response => {
+                  console.log("Posting call in error", response);
+                },
+                () => {
+                  console.log("The Posting observable is now completed.");
+                });
+          }
+        }
+      ]
     });
+    alert.present();
   }
 }

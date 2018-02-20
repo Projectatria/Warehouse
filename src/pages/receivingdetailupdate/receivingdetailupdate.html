@@ -1,0 +1,40 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar" style="width:100%;">
+    <ion-title class="side-title">
+      <div class="close">
+        <button ion-button clear color="light" (click)="close()">Close</button>
+      </div>
+      <div class="logo-atria">
+        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+      </div>
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <img style="width:100%;border-bottom:1px solid #dedede" src="http://101.255.60.202/webapi/img/noimage/400/300" *ngIf="!photo"
+  />
+  <ion-slides style="border-bottom:1px solid" *ngIf="photo" class="content-slides-images" pager="true" style="border-bottom: 1px #dedede solid;">
+    <ion-slide *ngFor="let photo of photos; let id = index">
+      <ion-card class="block">
+        <ion-icon name="trash" class="deleteIcon" (click)="deletePhoto(id)"></ion-icon>
+        <img [src]="photo" *ngIf="photo" />
+      </ion-card>
+    </ion-slide>
+  </ion-slides>
+  <div style="border-bottom:1px solid #dedede">
+    <button style="font-size:25px;" ion-button full clear (click)="takePhoto()">  
+      <ion-icon name="ios-camera"></ion-icon>
+    </button>
+  </div>
+  <ion-list no-lines padding>
+    <ion-item class="item-rcv">
+      <ion-label floating>Description</ion-label>
+      <ion-textarea type="textarea"></ion-textarea>
+    </ion-item>
+  </ion-list>
+</ion-content>
+<ion-footer style="background:#217481;">
+  <button ion-button full color="greenlake" (click)="doSave()">
+    Save
+  </button>
+</ion-footer>

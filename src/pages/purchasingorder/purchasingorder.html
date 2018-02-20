@@ -56,7 +56,7 @@
           <br/>
           <p style="color:#ffffff;">Document {{po.doc_no}} Description {{po.posting_desc}} </p>
           <br/>
-          <ion-note>{{po.posting_date}}</ion-note>
+          <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
         </div>
         <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
           <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
@@ -111,7 +111,7 @@
           <br/>
           <ion-note>{{poact.posting_date}} | Items : {{poact.total_item}}</ion-note>
         </div>
-        <button item-end ion-button clear color="delima" (click)="doPostingPO(poact)">
+        <button item-end ion-button clear color="delima" (click)="doPostingRCV(poact)">
           <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
         </button>
       </ion-item>

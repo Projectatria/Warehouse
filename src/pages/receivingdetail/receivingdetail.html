@@ -29,33 +29,39 @@
       pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
     </ion-refresher-content>
   </ion-refresher>
-  <ion-segment [(ngModel)]="detailpo">
-    <ion-segment-button value="detailpoitem">
-      Detail Items PO
+  <ion-segment [(ngModel)]="detailrcv">
+    <ion-segment-button value="detailreceiving">
+      Detail Receiving
     </ion-segment-button>
     <ion-segment-button value="history">
       History
     </ion-segment-button>
   </ion-segment>
 
-  <div [ngSwitch]="detailpo">
-    <div>
-      <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
-    </div>
-    <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
-      <ion-item class="content-data-item" *ngFor="let detailpo of purchasing_order_detail">
+  <div [ngSwitch]="detailrcv">
+    <ion-list class="content-list-menu" *ngSwitchCase="'detailreceiving'">
+      <div>
+        <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
+      </div>
+      <ion-item class="content-data-item" *ngFor="let detailrcv of receiving">
         <!--<ion-avatar item-start>
             <img src="http://101.255.60.202/webapi/img/" alt="">
           </ion-avatar>-->
         <div no-padding>
-          <h2>No Item : {{detailpo.item_no}}</h2>
+          <h2>No Item : {{detailrcv.item_no}}</h2>
           <br/>
-          <p style="color:#ffffff;">Order No {{detailpo.order_no}}</p>
+          <p style="color:#ffffff;">Order No {{detailrcv.order_no}}</p>
           <br/>
-          <ion-note>{{detailpo.transfer_date}} | Qty: {{detailpo.qty}} | PIC: {{detailpo.receiving_pic}} | Location: {{detailpo.position}}</ion-note>
+          <ion-note>{{detailrcv.transfer_date}} | Qty: {{detailrcv.qty}} | PIC: {{detailrcv.receiving_pic}} | Location: {{detailrcv.position}}</ion-note>
         </div>
-        <button item-end ion-button clear color="secondary" (click)="doActionPO(detailpo)">
-          <ion-icon name="md-clipboard" style="font-size:30px;"></ion-icon>
+        <button item-end ion-button clear color="primary" (click)="doViewRCV(detailrcv)">
+            <ion-icon name="md-clipboard" style="font-size:30px;"></ion-icon>
+          </button>
+          <button item-end ion-button clear color="secondary" (click)="doUpdateRCV(detailrcv)">
+              <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
+            </button>
+        <button item-end ion-button clear color="delima" (click)="doPostingRCV(detailrcv)">
+          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
         </button>
       </ion-item>
     </ion-list>
