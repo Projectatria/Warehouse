@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
@@ -27,6 +27,9 @@ export class PurchasingorderPage {
   public toggled: boolean = false;
   orderno = '';
   po: string = "preparationpo";
+  private width:number;
+  private height:number;
+  
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -38,19 +41,21 @@ export class PurchasingorderPage {
     public modalCtrl: ModalController,
     public fileChooser: FileChooser,
     public fileOpener: FileOpener,
-    public filePath: FilePath
+    public filePath: FilePath,
+    private platform: Platform
   ) {
-    /* this.form = this.formBuilder.group({
-       dccode: ['', Validators.compose([Validators.required])],
-       docno: ['', Validators.compose([Validators.required])],
-       orderno: ['', Validators.compose([Validators.required])],
-       vendorno: ['', Validators.compose([Validators.required])],
-       postingdate: ['', Validators.compose([Validators.required])] 
-     });*/
     this.getPO();
     this.getPOAction();
     this.toggled = false;
     this.po = "preparationpo"
+    platform.ready().then(() => {
+      this.width = platform.width();
+      this.height = platform.height();
+  });
+  }
+  ionViewDidLoad() {
+    console.log(this.width);
+    console.log(this.height);
   }
   getPO() {
     return new Promise(resolve => {

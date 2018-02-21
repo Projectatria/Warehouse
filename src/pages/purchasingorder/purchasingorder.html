@@ -38,6 +38,8 @@
   </ion-segment>
 
   <div [ngSwitch]="po">
+
+
     <ion-list class="content-list-menu" *ngSwitchCase="'preparationpo'">
       <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content>
@@ -47,27 +49,90 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
       </div>
-      <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
-        <ion-avatar item-start>
-          <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
-        </ion-avatar>
-        <div no-padding (click)="viewDetail(po)">
-          <h2>No Order : {{po.order_no}}</h2>
-          <br/>
-          <p style="color:#ffffff;">Document {{po.doc_no}} Description {{po.posting_desc}} </p>
-          <br/>
-          <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
-        </div>
-        <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
-          <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
-        </button>
-        <button item-end ion-button clear color="primary" (click)="doDeletePO(po)">
-          <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
-        </button>
-        <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
-          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-        </button>
-      </ion-item>
+      <div *ngIf="width < 600" class="android-content">
+        <!--<ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+          <ion-avatar item-start>
+            <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+          </ion-avatar>
+          <div no-padding (click)="viewDetail(po)">
+            <h2>No Order : {{po.order_no}}</h2>
+            <br/>
+            <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+          </div>
+          <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
+            <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
+          </button>
+          <button item-end ion-button clear color="primary" (click)="doDeletePO(po)">
+            <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
+          </button>
+          <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
+            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+          </button>
+        </ion-item>-->
+        <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
+          <ion-item>
+            <ion-avatar item-start>
+              <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+            </ion-avatar>
+            <div no-padding (click)="viewDetail(po)">
+              <h2>No Order : {{po.order_no}}</h2>
+              <br/>
+              <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+            </div>
+          </ion-item>
+          <ion-item-options style="background:#dedede;" side="right">
+            <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
+              <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>Update
+            </button>
+            <button item-end ion-button clear color="primary" (click)="doDeletePO(po)">
+              <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>Delete
+            </button>
+            <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
+              <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>Posting
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </div>
+      <div *ngIf="width >= 600" class="pc-content">
+        <ion-grid padding>
+          <ion-row class="row-content">
+            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>No Order</ion-col>
+            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>No Document</ion-col>
+            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Description</ion-col>
+            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Items</ion-col>
+            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Posting Date</ion-col>
+            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Options</ion-col>
+          </ion-row>
+          <ion-row class="row-content-list" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
+            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+              {{po.order_no}}
+            </ion-col>
+            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+              {{po.doc_no}}
+            </ion-col>
+            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+              {{po.posting_desc}}
+            </ion-col>
+            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+              {{po.total_item}}
+            </ion-col>
+            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+              {{po.posting_date}}
+            </ion-col>
+            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+              <button ion-button clear color="secondary" (click)="doUpdatePO(po)">
+                <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
+              </button>
+              <button ion-button clear color="primary" (click)="doDeletePO(po)">
+                <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
+              </button>
+              <button ion-button clear color="delima" (click)="doPostingPO(po)">
+                <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
       <ion-fab class="fixed-div" bottom right>
         <button ion-fab color="greenlake">
           <ion-icon name="md-apps"></ion-icon>
@@ -91,6 +156,7 @@
       </ion-infinite-scroll>
     </ion-list>
 
+
     <ion-list class="content-list-menu" *ngSwitchCase="'purchasingorder'">
       <ion-refresher (ionRefresh)="doRefreshAction($event)">
         <ion-refresher-content>
@@ -100,21 +166,21 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldataaction}} entries</ion-item>
       </div>
-      <ion-item class="content-data-item" *ngFor="let poact of purchasing_order_action">
-        <ion-avatar item-start>
-          <img src="http://101.255.60.202/webapi/img/{{poact.vendor_status}}" alt="">
-        </ion-avatar>
-        <div no-padding (click)="viewDetailAction(poact)">
-          <h2>No Order : {{poact.order_no}}</h2>
-          <br/>
-          <p style="color:#ffffff;">Document {{poact.doc_no}} Description {{poact.posting_desc}} </p>
-          <br/>
-          <ion-note>{{poact.posting_date}} | Items : {{poact.total_item}}</ion-note>
-        </div>
-        <button item-end ion-button clear color="delima" (click)="doPostingRCV(poact)">
-          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-        </button>
-      </ion-item>
+      <div class="android-content">
+        <ion-item class="content-data-item" *ngFor="let poact of purchasing_order_action">
+          <ion-avatar item-start>
+            <img src="http://101.255.60.202/webapi/img/{{poact.vendor_status}}" alt="">
+          </ion-avatar>
+          <div no-padding (click)="viewDetailAction(poact)">
+            <h2>No Order : {{poact.order_no}}</h2>
+            <br/>
+            <ion-note>{{poact.posting_date}} | Items : {{poact.total_item}}</ion-note>
+          </div>
+          <button item-end ion-button clear color="delima" (click)="doPostingRCV(poact)">
+            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+          </button>
+        </ion-item>
+      </div>
       <ion-infinite-scroll (ionInfinite)="doInfiniteAction($event)">
         <ion-infinite-scroll-content>
           loadingSpinner="bubbles" loadingText="Loading more data...">

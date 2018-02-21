@@ -115,5 +115,20 @@ ion-fab-list {
     min-height:30%;
 }
 .content-data-item {
-    margin-top: 10px;
+    margin-top: 0px;
 }
+.row-content {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #9e9fa1;
+    background: #ffffff;
+}
+.row-content-list {
+    background: transparent;
+    color: #ffffff;
+}
+.row-content-list:hover {
+    background: #b7c400;
+    color: #ffffff;
+}
+

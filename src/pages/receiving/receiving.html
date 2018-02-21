@@ -51,9 +51,7 @@
           <div no-padding (click)="viewDetail(po)">
             <h2>No Order : {{po.order_no}}</h2>
             <br/>
-            <p style="color:#ffffff;">Document {{po.doc_no}} Description {{po.posting_desc}} </p>
-            <br/>
-            <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+            <ion-note>{{po.posting_date}} | items : {{po.total_item}} | Posting : {{po.total_item_post}}</ion-note>
           </div>
           <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
             <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>

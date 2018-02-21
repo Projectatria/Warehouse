@@ -154,7 +154,7 @@ export class ReceivingPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=1' } }).subscribe(val => {
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=3' } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
                     this.searchpo = this.purchasing_order;

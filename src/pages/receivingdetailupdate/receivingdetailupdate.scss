@@ -17,8 +17,6 @@ page-receivingdetailupdate {
         text-align: center;
         margin-left: 50px;
      }
-     .block {
-        position: relative;
         .deleteIcon {
           position: absolute !important;
           color: #ffffff !important;
@@ -27,21 +25,15 @@ page-receivingdetailupdate {
         .deleteIcon:before {
           font-size: 30px !important;
         }
-        }
+
      .item-rcv {
          background: #ffffff;
          color: #000000;
          border: 1px solid;
          border-color: #217481;
      }
-     textarea {
-        height: 100%;
-        color: inherit;
-        overflow: auto;
-        font: inherit;
-    }
-    .item-label-stacked .text-input-md, .item-label-floating .text-input-md {
-        width: 100%;
-        height: 100px;
-    }
+     .take-photo {
+        border-top:1px solid #dedede;
+        border-bottom:1px solid #dedede;
+     }
 }

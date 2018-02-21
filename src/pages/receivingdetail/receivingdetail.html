@@ -50,17 +50,15 @@
         <div no-padding>
           <h2>No Item : {{detailrcv.item_no}}</h2>
           <br/>
-          <p style="color:#ffffff;">Order No {{detailrcv.order_no}}</p>
-          <br/>
           <ion-note>{{detailrcv.transfer_date}} | Qty: {{detailrcv.qty}} | PIC: {{detailrcv.receiving_pic}} | Location: {{detailrcv.position}}</ion-note>
         </div>
         <button item-end ion-button clear color="primary" (click)="doViewRCV(detailrcv)">
             <ion-icon name="md-clipboard" style="font-size:30px;"></ion-icon>
           </button>
-          <button item-end ion-button clear color="secondary" (click)="doUpdateRCV(detailrcv)">
+          <button item-end ion-button clear color="secondary" [disabled]="detailrcv.status == 3" (click)="doUpdateRCV(detailrcv)">
               <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
             </button>
-        <button item-end ion-button clear color="delima" (click)="doPostingRCV(detailrcv)">
+        <button item-end ion-button clear color="delima" [disabled]="detailrcv.status == 3" (click)="doPostRCV(detailrcv)">
           <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
         </button>
       </ion-item>

@@ -132,7 +132,7 @@ export class ReceivingdetailPage {
 
             this.api.put("table/receiving",
               {
-                "receiving": detailrcv.receiving_no,
+                "receiving_no": detailrcv.receiving_no,
                 "status": '3'
               },
               { headers })
@@ -187,6 +187,8 @@ export class ReceivingdetailPage {
       orderno: detailrcv.order_no,
       itemno: detailrcv.item_no,
       qty: detailrcv.qty,
+      staging: detailrcv.staging,
+      description: detailrcv.receiving_description,
       receivingpic: detailrcv.receiving_pic,
       locationplan: detailrcv.position 
     },

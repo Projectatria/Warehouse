@@ -6,7 +6,7 @@
 }
 .md .menu-inner {
     background: linear-gradient(200deg, #d1d1d1 50%, #e6e6e6);
-    width: 100%;
+    width: 350px;
 }
 ion-header {
     left: 0px;
@@ -47,6 +47,10 @@ ion-header {
 }
 .btn-side-menu {
     background: #ececec;
+    color: #000000;
+}
+.btn-side-menu:hover {
+    background: #dedede;
     color: #000000;
 }
 .side-list {
