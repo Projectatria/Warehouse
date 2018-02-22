@@ -3,7 +3,7 @@ import { ViewController, IonicPage, NavController, NavParams, AlertController } 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
-
+import { UUID } from 'angular2-uuid';
 
 /**
  * Generated class for the PurchasingorderaddPage page.
@@ -22,6 +22,7 @@ export class PurchasingorderaddPage {
   private vendor = [];
   private location = [];
   private nextno = '';
+  private uuid = '';
 
   error_messages = {
     'docno': [
@@ -88,7 +89,8 @@ export class PurchasingorderaddPage {
   insertPO() {
     this.getNextNo().subscribe(val => {
       this.nextno = val['nextno'];
-
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -106,7 +108,8 @@ export class PurchasingorderaddPage {
           "location_code": this.myForm.value.locationcode,
           "status": '1',
           "user_id": '123',
-          "chronology_no": '1'
+          "chronology_no": '1',
+          "uuid": this.uuid
         },
         { headers })
         .subscribe(

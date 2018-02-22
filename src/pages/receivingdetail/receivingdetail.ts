@@ -190,7 +190,9 @@ export class ReceivingdetailPage {
       staging: detailrcv.staging,
       description: detailrcv.receiving_description,
       receivingpic: detailrcv.receiving_pic,
-      locationplan: detailrcv.position 
+      locationcode: detailrcv.location_code,
+      locationplan: detailrcv.position,
+      uuid: detailrcv.uuid 
     },
     { cssClass: "modal-fullscreen" });
     locationModal.present();

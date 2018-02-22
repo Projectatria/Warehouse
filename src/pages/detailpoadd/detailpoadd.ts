@@ -3,7 +3,7 @@ import { ViewController, IonicPage, NavController, NavParams, AlertController } 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
-
+import { UUID } from 'angular2-uuid';
 
 /**
  * Generated class for the PurchasingorderaddPage page.
@@ -32,8 +32,11 @@ export class DetailpoaddPage {
   private locationcode = '';
   private transferdate = '';
   private poid = '';
+  private uuid = '';
+  private uuid2 = '';
   totalitem: any;
   totalcount: any;
+
   error_messages = {
     'docno': [
       { type: 'required', message: 'Doc No Must Be Fill' }
@@ -103,6 +106,8 @@ export class DetailpoaddPage {
   insertPODetail() {
     this.getNextNo().subscribe(val => {
       this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
       this.api.post("table/purchasing_order_detail",
@@ -119,7 +124,8 @@ export class DetailpoaddPage {
           "unit": this.myForm.value.unit,
           "division": this.itemdiv,
           "status": '1',
-          "chronology_no": ''
+          "chronology_no": '',
+          "uuid": this.uuid
         },
         { headers })
         .subscribe(
@@ -145,6 +151,8 @@ export class DetailpoaddPage {
                 this.myForm.value.unit,
                 this.itemdiv
               )
+              let uuid2 = UUID.UUID();
+              this.uuid2 = uuid2;
               const headersrcv = new HttpHeaders()
               .set("Content-Type", "application/json");
               this.api.post("table/receiving",
@@ -164,7 +172,8 @@ export class DetailpoaddPage {
                   "position": "",
                   "status": "1",
                   "receiving_pic": "",
-                  "chronology_no": ""
+                  "chronology_no": "",
+                  "uuid": this.uuid2
                 },
                 { headersrcv })
                 .subscribe();

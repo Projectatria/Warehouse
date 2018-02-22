@@ -45,15 +45,15 @@
     </ion-list>
   </form>
   <div class="take-photo">
-    <button style="font-size:25px;" ion-button full clear (click)="takePhoto()">
+    <button style="font-size:25px;" ion-button full clear (click)="getCamera()">
       <ion-icon name="ios-camera"></ion-icon>
     </button>
   </div>
   <ion-grid>
     <ion-row>
-      <ion-col col-3 *ngFor="let photo of photos; let id = index">
-        <ion-icon name="trash" class="deleteIcon" (click)="deletePhoto(id)"></ion-icon>
-        <img [src]="photo" *ngIf="photo" />
+      <ion-col col-3 *ngFor="let photo of photos">
+        <ion-icon name="trash" class="deleteIcon" (click)="deletePhoto(photo)"></ion-icon>
+        <img src={{photo.img_src}} />
       </ion-col>
     </ion-row>
   </ion-grid>
