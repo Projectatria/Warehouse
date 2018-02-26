@@ -71,7 +71,9 @@
       loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
-  <ion-fab class="fixed-div" bottom right>
+</ion-content>
+<div [ngSwitch]="detailpo">
+  <ion-fab class="fixed-div" bottom right *ngSwitchCase="'detailpoitem'">
     <button ion-fab color="greenlake">
       <ion-icon name="md-apps"></ion-icon>
     </button>
@@ -87,4 +89,4 @@
       </button>
     </ion-fab-list>
   </ion-fab>
-</ion-content>
+</div>

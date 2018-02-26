@@ -38,10 +38,10 @@ export class DetailpoactionupdatePage {
       { type: 'required', message: 'Order No Must Be Fill' }
     ],
     'itemno': [
-      { type: 'required', message: 'Vendor No Must Be Fill' }
+      { type: 'required', message: 'Item No No Must Be Fill' }
     ],
     'qty': [
-      { type: 'required', message: 'Transfer Date Must Be Fill' }
+      { type: 'required', message: 'Qty Date Must Be Fill' }
     ],
     'receivingpic': [
       { type: 'required', message: 'Receiving PIC Must Be Fill' }

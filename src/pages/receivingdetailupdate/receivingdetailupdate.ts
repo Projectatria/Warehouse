@@ -31,7 +31,7 @@ export class ReceivingdetailupdatePage {
   private uuid = '';
   private locationcode = '';
   private photos = [];
-  private totalphoto:any;
+  private totalphoto: any;
   imageURI: string = '';
   imageFileName: string = '';
 
@@ -127,7 +127,7 @@ export class ReceivingdetailupdatePage {
     });
     confirm.present();
   }
-  getPhotos(){
+  getPhotos() {
     this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidrcv + "'" } }).subscribe(val => {
       this.photos = val['data'];
       this.totalphoto = val['count'];
@@ -173,7 +173,7 @@ export class ReceivingdetailupdatePage {
               "no": this.uuid,
               "parent": this.uuidrcv,
               "table_name": "Receiving",
-              "img_src": 'http://101.255.60.202/webapi/img/'+this.uuid,
+              "img_src": 'http://101.255.60.202/webapi/img/' + this.uuid,
               "file_name": this.uuid,
               "description": "",
               "latitude": "",
@@ -186,13 +186,13 @@ export class ReceivingdetailupdatePage {
             .subscribe(
               (val) => {
                 this.presentToast("Image uploaded successfully");
+                this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidrcv + "'" } }).subscribe(val => {
+                  this.photos = val['data'];
+                  this.totalphoto = val['count'];
+                });
               });
           this.imageURI = '';
           this.imageFileName = '';
-          this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidrcv + "'" } }).subscribe(val => {
-            this.photos = val['data'];
-            this.totalphoto = val['count'];
-          });
         }, (err) => {
           console.log(err);
           loader.dismiss();

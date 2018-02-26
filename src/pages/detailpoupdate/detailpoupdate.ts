@@ -39,13 +39,13 @@ export class DetailpoupdatePage {
       { type: 'required', message: 'Order No Must Be Fill' }
     ],
     'itemno': [
-      { type: 'required', message: 'Vendor No Must Be Fill' }
+      { type: 'required', message: 'Item No Must Be Fill' }
     ],
     'qty': [
-      { type: 'required', message: 'Transfer Date Must Be Fill' }
+      { type: 'required', message: 'Qty Date Must Be Fill' }
     ],
     'unit': [
-      { type: 'required', message: 'Location Code Must Be Fill' }
+      { type: 'required', message: 'Unit Code Must Be Fill' }
     ]
 
   }

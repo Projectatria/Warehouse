@@ -37,4 +37,7 @@ export class HomePage {
   doReceiving() {
     this.navCtrl.push('ReceivingPage');
   }
+  doQcIn() {
+    this.navCtrl.push('QcinPage');
+  }
 }

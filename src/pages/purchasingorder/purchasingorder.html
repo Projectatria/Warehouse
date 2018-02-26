@@ -2,7 +2,6 @@
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
       <button ion-button clear color="light" (click)="toggleSearch()">
-        <!--<img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" />-->
         <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
       </button>
     </div>
@@ -50,25 +49,6 @@
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
       </div>
       <div *ngIf="width < 600" class="android-content">
-        <!--<ion-item class="content-data-item" *ngFor="let po of purchasing_order">
-          <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
-          </ion-avatar>
-          <div no-padding (click)="viewDetail(po)">
-            <h2>No Order : {{po.order_no}}</h2>
-            <br/>
-            <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
-          </div>
-          <button item-end ion-button clear color="secondary" (click)="doUpdatePO(po)">
-            <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
-          </button>
-          <button item-end ion-button clear color="primary" (click)="doDeletePO(po)">
-            <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
-          </button>
-          <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
-            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-          </button>
-        </ion-item>-->
         <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
           <ion-item>
             <ion-avatar item-start>
@@ -93,33 +73,44 @@
           </ion-item-options>
         </ion-item-sliding>
       </div>
+
       <div *ngIf="width >= 600" class="pc-content">
         <ion-grid padding>
+          <ion-item no-lines>
+            <ion-label style="text-align:right;">
+              <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
+            <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter,asc)">
+              <ion-option value="order_no">Order No</ion-option>
+              <ion-option value="doc_no">Document No</ion-option>
+              <ion-option value="posting_date">Posting Date</ion-option>
+              <ion-option value="total_item">Jumlah Item</ion-option>
+            </ion-select>
+          </ion-item>
           <ion-row class="row-content">
-            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>No Order</ion-col>
-            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>No Document</ion-col>
-            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Description</ion-col>
-            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Items</ion-col>
-            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Posting Date</ion-col>
-            <ion-col padding style="background:transparent;color:#9e9fa1;border:0px;text-align:left;" col-xl-2>Options</ion-col>
+            <ion-col padding class="col-content" col-xl-2>No Order</ion-col>
+            <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Description</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Items</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Posting Date</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Options</ion-col>
           </ion-row>
-          <ion-row class="row-content-list" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
-            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+          <ion-row class="row-content-list" *ngFor="let po of purchasing_order">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
               {{po.order_no}}
             </ion-col>
-            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
               {{po.doc_no}}
             </ion-col>
-            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
               {{po.posting_desc}}
             </ion-col>
-            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
               {{po.total_item}}
             </ion-col>
-            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
               {{po.posting_date}}
             </ion-col>
-            <ion-col padding style="background:transparent;border:0px;color:#ffffff;" col-xl-2>
+            <ion-col padding class="col-content" col-xl-2>
               <button ion-button clear color="secondary" (click)="doUpdatePO(po)">
                 <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
               </button>
@@ -133,22 +124,6 @@
           </ion-row>
         </ion-grid>
       </div>
-      <ion-fab class="fixed-div" bottom right>
-        <button ion-fab color="greenlake">
-          <ion-icon name="md-apps"></ion-icon>
-        </button>
-        <ion-fab-list side="top">
-          <button ion-fab color="primary" (click)="doAddPO()">
-            <ion-icon name="md-add"></ion-icon>
-          </button>
-          <button ion-fab color="secondary">
-            <ion-icon name="md-download"></ion-icon>
-          </button>
-          <button ion-fab color="danger" (click)="chooseFile()">
-            <ion-icon name="md-cloud-upload"></ion-icon>
-          </button>
-        </ion-fab-list>
-      </ion-fab>
       <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content>
           loadingSpinner="bubbles" loadingText="Loading more data...">
@@ -179,6 +154,9 @@
           <button item-end ion-button clear color="delima" (click)="doPostingRCV(poact)">
             <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
           </button>
+          <button item-end ion-button clear color="greenlake" (click)="doListBarcode(poact)">
+            <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
+          </button>
         </ion-item>
       </div>
       <ion-infinite-scroll (ionInfinite)="doInfiniteAction($event)">
@@ -196,3 +174,21 @@
 
   </div>
 </ion-content>
+<div [ngSwitch]="po">
+  <ion-fab *ngSwitchCase="'preparationpo'" class="fixed-div" bottom right>
+    <button ion-fab color="greenlake">
+      <ion-icon name="md-apps"></ion-icon>
+    </button>
+    <ion-fab-list side="top">
+      <button ion-fab class="fab-list" color="primary" (click)="doAddPO()">
+        <ion-icon name="md-add"></ion-icon>
+      </button>
+      <button ion-fab class="fab-list" color="secondary">
+        <ion-icon name="md-download"></ion-icon>
+      </button>
+      <button ion-fab class="fab-list" color="danger" (click)="chooseFile()">
+        <ion-icon name="md-cloud-upload"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
+</div>

@@ -10,7 +10,35 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content padding>
-<button ion-button full (click)="getImage()">Camera</button>
-<button ion-button full (click)="insertUUID()">Insert</button>
+<ion-content>
+  <ion-slides style="border-bottom:1px solid" class="content-slides-images" pager="true" style="border-bottom: 1px #dedede solid;">
+    <ion-slide *ngFor="let photo of photos">
+      <img src={{photo.img_src}} />
+    </ion-slide>
+  </ion-slides>
+  <div class="detail-extra" style="border-bottom:1px solid;border-color:#dedede;">
+    <ion-item style="font-size:20px;">
+      Detail
+    </ion-item>
+    <ion-grid padding>
+      <ion-row>
+        <ion-col col-3>No Order</ion-col>
+        <ion-col col-3>: {{orderno}}</ion-col>
+        <ion-col col-3>Item No</ion-col>
+        <ion-col col-3>: {{itemno}}</ion-col>
+        <ion-col col-3>Qty</ion-col>
+        <ion-col col-3>: {{qty}}</ion-col>
+        <ion-col col-3>Staging</ion-col>
+        <ion-col col-3>: {{staging}}</ion-col>
+        <ion-col col-3>Location Code</ion-col>
+        <ion-col col-3>: {{locationcode}}</ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div class="detail-extra" style="border-bottom:1px solid;border-color:#dedede;">
+    <ion-item style="font-size:20px;">
+      Description
+    </ion-item>
+    <ion-textarea style="padding-left:15px;" type="textarea" disabled="true" [(ngModel)]="description"></ion-textarea>
+  </div>
 </ion-content>

@@ -50,7 +50,7 @@ ion-header {
     color: #000000;
 }
 .btn-side-menu:hover {
-    background: #dedede;
+    background: #e4e4e4;
     color: #000000;
 }
 .side-list {
@@ -193,17 +193,39 @@ ion-header {
     font-weight: bold;
     line-height: 4.5rem;
     text-transform: uppercase;
-    color: #ffffff;
+    color: #000000;
     background-color: transparent;
     opacity: 0.4;
     transition: 100ms all linear;
     padding: 0 6px;
 }
 .item-md {
-    color: #ffffff;
-    background-color: #9e9fa1;
+    color: #000000;
+    background-color: #ffffff;
 }
 .bar-button-default-md, .bar-button-clear-md-default, .bar-button-md-default {
     color: #ffffff;
     background-color: transparent;
+}
+.swiper-pagination-bullet-active {
+    background: #ffffff;
+    opacity: 1;
+}
+.fixed-div {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
+.fab-list {
+    text-align: center;
+    border-radius: 50%;
+    position: fixed;
+    z-index: 0;
+    display: block;
+    overflow: hidden;
+    width: 60px;
+    height: 60px;
+    font-size: 14px;
+    line-height: 56px;
 }

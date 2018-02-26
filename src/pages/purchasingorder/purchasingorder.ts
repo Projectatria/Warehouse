@@ -27,9 +27,9 @@ export class PurchasingorderPage {
   public toggled: boolean = false;
   orderno = '';
   po: string = "preparationpo";
-  private width:number;
-  private height:number;
-  
+  private width: number;
+  private height: number;
+
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -51,7 +51,7 @@ export class PurchasingorderPage {
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
-  });
+    });
   }
   ionViewDidLoad() {
     console.log(this.width);
@@ -183,6 +183,7 @@ export class PurchasingorderPage {
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
+
   doUpdatePO(po) {
     let locationModal = this.modalCtrl.create('PurchasingorderupdatePage',
       {
@@ -322,7 +323,7 @@ export class PurchasingorderPage {
       ]
     });
     alert.present();
-  } 
+  }
   doPostingRCV(poact) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Posting',
@@ -376,4 +377,21 @@ export class PurchasingorderPage {
     });
     alert.present();
   }
+  doFilter(filter) {
+    this.api.get("table/purchasing_order", { params: { filter: 'status=1', sort: filter } }).subscribe(val => {
+      this.purchasing_order = val['data'];
+      this.totaldata = val['count'];
+      console.log(this.purchasing_order);
+      console.log(this.totaldata);
+    });
+  }
+  doListBarcode(poact) {
+    let locationModal = this.modalCtrl.create('BarcodelistPage', {
+      batchno: poact.batch_no,
+      orderno: poact.order_no
+    },
+      { cssClass: "modal-fullscreen" });
+    locationModal.present();
+  }
+
 }

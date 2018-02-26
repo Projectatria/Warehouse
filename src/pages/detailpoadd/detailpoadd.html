@@ -1,8 +1,13 @@
 <ion-header class="header-menu">
   <ion-navbar class="header-navbar">
-    <ion-title style="text-align:center;">
-      <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
-    </ion-title>
+      <ion-title class="side-title">
+          <div class="close">
+            <button ion-button clear color="light" (click)="closeModal()">Close</button>
+          </div>
+          <div class="logo-atria">
+            <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+          </div>
+        </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" padding>
@@ -38,7 +43,8 @@
       <testing [messages]="error_messages.unit" [control]="myForm.get('unit')"></testing>
     </form>
 </ion-content>
-<ion-footer>
-  <button ion-button full (click)="insertPODetail()" [disabled]="!myForm.valid" color="greenlake">Insert</button>
-  <button ion-button color="danger" full (click)="closeModal()">Cancel</button>
-</ion-footer>
+<ion-footer style="background:#217481;">
+    <button ion-button full color="greenlake" [disabled]="!myForm.valid" (click)="insertPODetail()">
+      Insert
+    </button>
+  </ion-footer>

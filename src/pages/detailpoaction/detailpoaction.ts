@@ -4,6 +4,7 @@ import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
 import { HttpHeaders } from "@angular/common/http";
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
 @IonicPage()
 @Component({
@@ -23,6 +24,7 @@ export class DetailpoactionPage {
   locationcode = '';
   transferdate = '';
   detailpo: string = "detailpoitem";
+  barcode: {};
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -31,7 +33,8 @@ export class DetailpoactionPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    private barcodeScanner: BarcodeScanner
   ) {
     this.getPOD();
     this.toggled = false;
@@ -128,5 +131,21 @@ export class DetailpoactionPage {
   }
   ionViewDidLoad() {
     this.getPODetail();
+  }
+  /*doBarcode(detailpo) {
+    this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE,
+      detailpo.item_no).then((res) => {
+        console.log(res)
+        this.barcode = res;
+      }, (err) => {
+        console.log(err);
+      })
+  }*/
+  doListBarcode(detailpo) {
+    let locationModal = this.modalCtrl.create('BarcodePage', {
+    barcode: detailpo.item_no
+    },
+    { cssClass: "modal-fullscreen" });
+    locationModal.present();
   }
 }

@@ -1,0 +1,28 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar" style="width:100%;">
+    <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
+      <button ion-button clear color="light" (click)="doPrint()">
+        <ion-icon name="md-print" style="font-size:35px;"></ion-icon>
+      </button>
+    </div>
+    <button ion-button clear color="light" (click)="closeModal()">
+      Close
+    </button>
+    <ion-title class="side-title">
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content class="content-barcode">
+  <ion-card>
+    <ion-card-header style="text-align:center;">
+      No Order : {{orderno}} - Batch Number : {{batchno}} - Total Item : {{totaldata}}
+    </ion-card-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col style="border:1px solid;border-color:#dedede;" col-12 col-md-6 col-lg-4 *ngFor="let bar of barcode">
+          <ngx-barcode [bc-value]="bar.batch_no+'-'+bar.item_no" [bc-display-value]="true"></ngx-barcode>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</ion-content>

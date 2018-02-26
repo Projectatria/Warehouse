@@ -16,6 +16,8 @@ import { FileOpener } from "@ionic-native/file-opener";
 import { FilePath } from "@ionic-native/file-path";
 import {Camera} from '@ionic-native/camera';
 import { FileTransfer } from '@ionic-native/file-transfer';
+import { QRCodeModule } from 'angular2-qrcode';
+import { NgxBarcodeModule } from 'ngx-barcode';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { FileTransfer } from '@ionic-native/file-transfer';
     BrowserModule,  
     IonicModule.forRoot(MyApp),
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    QRCodeModule,
+    NgxBarcodeModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

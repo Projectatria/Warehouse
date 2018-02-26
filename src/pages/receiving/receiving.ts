@@ -136,7 +136,13 @@ export class ReceivingPage {
           handler: () => {
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
-
+              this.api.patch("table/qc_in",
+              {
+                "order_no": po.order_no,
+                "status": '1'
+              },
+              { headers })
+              .subscribe();
             this.api.put("table/purchasing_order",
               {
                 "po_id": po.po_id,

@@ -55,6 +55,9 @@
         <button item-end ion-button clear color="secondary" (click)="doActionPO(detailpo)">
           <ion-icon name="md-clipboard" style="font-size:30px;"></ion-icon>
         </button>
+        <button item-end ion-button clear color="greenlake" (click)="doListBarcode(detailpo)">
+          <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
+        </button>
       </ion-item>
     </ion-list>
     <ion-list *ngSwitchCase="'history'">

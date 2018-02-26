@@ -17,14 +17,6 @@ page-receivingdetailupdate {
         text-align: center;
         margin-left: 50px;
      }
-        .deleteIcon {
-          position: absolute !important;
-          color: #ffffff !important;
-          margin-left: 80% !important;
-        }
-        .deleteIcon:before {
-          font-size: 30px !important;
-        }
 
      .item-rcv {
          background: #ffffff;
@@ -35,5 +27,12 @@ page-receivingdetailupdate {
      .take-photo {
         border-top:1px solid #dedede;
         border-bottom:1px solid #dedede;
+     }
+     .deleteIcon {
+         background: #217481;
+         color: #ffffff;
+         text-align: center;
+         font-size: 20px;
+         height: 2  0px;
      }
 }
