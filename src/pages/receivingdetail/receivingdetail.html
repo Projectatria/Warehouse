@@ -33,8 +33,8 @@
     <ion-segment-button value="detailreceiving">
       Detail Receiving
     </ion-segment-button>
-    <ion-segment-button value="history">
-      History
+    <ion-segment-button value="receivingsubmit">
+      Submit Receiving
     </ion-segment-button>
   </ion-segment>
 
@@ -43,35 +43,60 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
       </div>
-      <ion-item class="content-data-item" *ngFor="let detailrcv of receiving">
-        <!--<ion-avatar item-start>
+      <ion-item-sliding class="content-data-item" *ngFor="let detailrcv of receiving">
+        <ion-item>
+          <!--<ion-avatar item-start>
             <img src="http://101.255.60.202/webapi/img/" alt="">
           </ion-avatar>-->
-        <div no-padding>
-          <h2>No Item : {{detailrcv.item_no}}</h2>
-          <br/>
-          <ion-note>{{detailrcv.transfer_date}} | Qty: {{detailrcv.qty}} | PIC: {{detailrcv.receiving_pic}} | Location: {{detailrcv.position}}</ion-note>
-        </div>
-        <button item-end ion-button clear color="primary" (click)="doViewRCV(detailrcv)">
+          <div no-padding>
+            <h2>No Item : {{detailrcv.item_no}}</h2>
+            <br/>
+            <ion-note>{{detailrcv.transfer_date}} | Qty: {{detailrcv.qty}} | PIC: {{detailrcv.receiving_pic}} | Location: {{detailrcv.position}}</ion-note>
+          </div>
+        </ion-item>
+        <ion-item-options style="background:#ffffff;border:0px;" side="left">
+          <button item-end ion-button clear color="primary" (click)="doViewRCV(detailrcv)">
             <ion-icon name="md-clipboard" style="font-size:30px;"></ion-icon>
           </button>
           <button item-end ion-button clear color="secondary" [disabled]="detailrcv.status == 3" (click)="doUpdateRCV(detailrcv)">
-              <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
-            </button>
-        <button item-end ion-button clear color="delima" [disabled]="detailrcv.status == 3" (click)="doPostRCV(detailrcv)">
-          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-        </button>
-      </ion-item>
+            <ion-icon name="md-sync" style="font-size:30px;"></ion-icon>
+          </button>
+          <button item-end ion-button clear color="delima" [disabled]="detailrcv.status == 3" (click)="doPostRCV(detailrcv)">
+            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
     </ion-list>
-    <ion-list *ngSwitchCase="'history'">
-      <ion-item>
 
+    <ion-list *ngSwitchCase="'receivingsubmit'">
+      <ion-item>
       </ion-item>
     </ion-list>
   </div>
+
+  <div id="myModal" class="modal">
+    <div class="header-content">
+    </div>
+    <div class="modal-content">
+      <ion-list>
+        <ion-item>
+          <ion-label>Doc No</ion-label>
+          <ion-input type="text"></ion-input>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content>
       loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>
+<div [ngSwitch]="detailrcv">
+  <ion-fab *ngSwitchCase="'detailreceiving'" class="fixed-div" bottom right>
+    <button ion-fab color="greenlake" (click)="doSaveBarcode()">
+      <ion-icon name="md-barcode"></ion-icon>
+    </button>
+  </ion-fab>
+</div>

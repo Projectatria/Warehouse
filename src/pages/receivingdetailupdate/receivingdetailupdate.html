@@ -1,15 +1,17 @@
 <ion-header class="header-menu">
-  <ion-navbar class="header-navbar" style="width:100%;">
-    <ion-title class="side-title">
-      <div class="close">
-        <button ion-button clear color="light" (click)="close()">Close</button>
+    <ion-navbar class="header-navbar" style="width:100%;">
+      <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
+        <button ion-button clear color="light" (click)="getCamera()">
+          <ion-icon name="md-camera" style="font-size:35px;"></ion-icon>
+        </button>
       </div>
-      <div class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
-      </div>
-    </ion-title>
-  </ion-navbar>
-</ion-header>
+      <button ion-button clear color="light" (click)="closeModal()">
+        Close
+      </button>
+      <ion-title class="side-title">
+      </ion-title>
+    </ion-navbar>
+  </ion-header>
 <ion-content>
   <form [formGroup]="myForm">
     <ion-list no-lines padding>
@@ -26,6 +28,10 @@
         <ion-input formControlName="qty" type="text" disabled="true"></ion-input>
       </ion-item>
       <ion-item class="item-rcv">
+          <ion-label floating>Qty Receiving</ion-label>
+          <ion-input formControlName="qtyreceiving" type="text"></ion-input>
+        </ion-item>
+      <ion-item class="item-rcv">
         <ion-label floating>Staging</ion-label>
         <ion-input formControlName="staging" type="text"></ion-input>
       </ion-item>
@@ -36,16 +42,13 @@
       </ion-item>
     </ion-list>
   </form>
-  <div class="take-photo">
-    <button style="font-size:25px;" ion-button full clear (click)="getCamera()">
-      <ion-icon name="ios-camera"></ion-icon>
-    </button>
-  </div>
-  <ion-grid>
+  <ion-grid padding>
     <ion-row>
       <ion-col col-3 *ngFor="let photo of photos" style="padding:1px;">
         <img src={{photo.img_src}} />
-        <button ion-button full class="deleteIcon" no-lines (click)="deletePhoto(photo)"><ion-icon name="trash" ></ion-icon></button>
+        <button ion-button full class="deleteIcon" no-lines (click)="deletePhoto(photo)">
+          <ion-icon name="trash"></ion-icon>
+        </button>
       </ion-col>
     </ion-row>
   </ion-grid>

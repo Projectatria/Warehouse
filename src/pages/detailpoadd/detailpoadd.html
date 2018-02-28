@@ -38,6 +38,7 @@
         <ion-label floating>Unit</ion-label>
         <ion-select formControlName="unit" >
           <ion-option value="PCS">PCS</ion-option>
+          <ion-option value="PART">PART</ion-option>
         </ion-select>
       </ion-item>
       <testing [messages]="error_messages.unit" [control]="myForm.get('unit')"></testing>

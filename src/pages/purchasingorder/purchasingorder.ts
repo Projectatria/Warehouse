@@ -15,18 +15,15 @@ import { FilePath } from "@ionic-native/file-path";
 })
 export class PurchasingorderPage {
   private purchasing_order = [];
-  private purchasing_order_action = [];
   searchpo: any;
   searchpoaction: any;
   items = [];
   halaman = 0;
-  halamanaction = 0;
   totaldata: any;
-  totaldataaction: any;
   totaldataitem: any;
   public toggled: boolean = false;
   orderno = '';
-  po: string = "preparationpo";
+  po: string = "purchasingorder";
   private width: number;
   private height: number;
 
@@ -45,9 +42,8 @@ export class PurchasingorderPage {
     private platform: Platform
   ) {
     this.getPO();
-    this.getPOAction();
     this.toggled = false;
-    this.po = "preparationpo"
+    this.po = "purchasingorder"
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
@@ -84,33 +80,7 @@ export class PurchasingorderPage {
     })
 
   }
-  getPOAction() {
-    return new Promise(resolve => {
-      let offsetaction = 30 * this.halamanaction
-      console.log('offset', this.halamanaction);
-      if (this.halamanaction == -1) {
-        console.log('Data Tidak Ada')
-        resolve();
-      }
-      else {
-        this.halamanaction++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetaction, filter: 'status=2' } })
-          .subscribe(val => {
-            let data = val['data'];
-            for (let i = 0; i < data.length; i++) {
-              this.purchasing_order_action.push(data[i]);
-              this.totaldataaction = val['count'];
-              this.searchpoaction = this.purchasing_order_action;
-            }
-            if (data.length == 0) {
-              this.halamanaction = -1
-            }
-            resolve();
-          });
-      }
-    })
-
-  }
+  
   getSearchPO(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
@@ -125,20 +95,7 @@ export class PurchasingorderPage {
       this.purchasing_order = this.searchpo;
     }
   }
-  getSearchPOAction(ev: any) {
-    console.log(ev)
-    // set val to the value of the searchbar
-    let val = ev.target.value;
-
-    // if the value is an empty string don't filter the items
-    if (val && val.trim() != '') {
-      this.purchasing_order_action = this.searchpoaction.filter(poact => {
-        return poact.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
-      })
-    } else {
-      this.purchasing_order_action = this.searchpoaction;
-    }
-  }
+ 
   menuShow() {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
@@ -154,15 +111,7 @@ export class PurchasingorderPage {
       poid: po.po_id
     });
   }
-  viewDetailAction(poact) {
-    this.navCtrl.push('DetailpoactionPage', {
-      orderno: poact.order_no,
-      docno: poact.doc_no,
-      batchno: poact.batch_no,
-      locationcode: poact.location_code,
-      transferdate: poact.transfer_date
-    });
-  }
+  
   doAddPO() {
     let locationModal = this.modalCtrl.create('PurchasingorderaddPage', this.modalCtrl, { cssClass: "modal-fullscreen" });
     locationModal.present();
@@ -174,12 +123,7 @@ export class PurchasingorderPage {
 
     })
   }
-  doInfiniteAction(infiniteScroll) {
-    this.getPOAction().then(response => {
-      infiniteScroll.complete();
-
-    })
-  }
+  
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
@@ -248,14 +192,7 @@ export class PurchasingorderPage {
     });
   }
 
-  doRefreshAction(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=2' } }).subscribe(val => {
-      this.purchasing_order_action = val['data'];
-      this.totaldataaction = val['count'];
-      this.searchpoaction = this.purchasing_order_action;
-      refresher.complete();
-    });
-  }
+  
   chooseFile() {
     this.fileChooser.open().then(file => {
       this.filePath.resolveNativePath(file).then(resolvedFilePath => {
@@ -324,59 +261,7 @@ export class PurchasingorderPage {
     });
     alert.present();
   }
-  doPostingRCV(poact) {
-    let alert = this.alertCtrl.create({
-      title: 'Confirm Posting',
-      message: 'Are you sure you want to posting  ' + poact.order_no + ' ?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Posting',
-          handler: () => {
-            const headers = new HttpHeaders()
-              .set("Content-Type", "application/json");
-
-            this.api.put("table/purchasing_order",
-              {
-                "po_id": poact.po_id,
-                "status": '3'
-              },
-              { headers })
-              .subscribe(
-                (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
-                  let alert = this.alertCtrl.create({
-                    title: 'Sukses',
-                    subTitle: 'Posting Sukses',
-                    buttons: ['OK']
-                  });
-                  alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=2' } }).subscribe(val => {
-                    this.purchasing_order_action = val['data'];
-                    this.totaldataaction = val['count'];
-                    this.searchpoaction = this.purchasing_order_action;
-                  });
-
-                },
-                response => {
-                  console.log("Posting call in error", response);
-                },
-                () => {
-                  console.log("The Posting observable is now completed.");
-                });
-          }
-        }
-      ]
-    });
-    alert.present();
-  }
+  
   doFilter(filter) {
     this.api.get("table/purchasing_order", { params: { filter: 'status=1', sort: filter } }).subscribe(val => {
       this.purchasing_order = val['data'];
@@ -384,14 +269,6 @@ export class PurchasingorderPage {
       console.log(this.purchasing_order);
       console.log(this.totaldata);
     });
-  }
-  doListBarcode(poact) {
-    let locationModal = this.modalCtrl.create('BarcodelistPage', {
-      batchno: poact.batch_no,
-      orderno: poact.order_no
-    },
-      { cssClass: "modal-fullscreen" });
-    locationModal.present();
   }
 
 }

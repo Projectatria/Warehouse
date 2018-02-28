@@ -44,7 +44,10 @@ export class ReceivingdetailupdatePage {
       { type: 'required', message: 'Staging Must Be Fill' }
     ],
     'description': [
-      { type: 'required', message: 'descrption Code Must Be Fill' }
+      { type: 'required', message: 'Descrption Code Must Be Fill' }
+    ],
+    'qtyreceiving': [
+      { type: 'required', message: 'Qty Must Be Fill' }
     ]
   }
   constructor(
@@ -64,6 +67,7 @@ export class ReceivingdetailupdatePage {
       orderno: [''],
       itemno: [''],
       qty: [''],
+      qtyreceiving: [''],
       staging: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])],
     })
@@ -86,7 +90,7 @@ export class ReceivingdetailupdatePage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad ReceivingdetailupdatePage');
   }
-  close() {
+  closeModal() {
     this.viewCtrl.dismiss();
   }
   deletePhoto(photo) {
@@ -228,6 +232,7 @@ export class ReceivingdetailupdatePage {
         //"receiving_date": '',
         "receiving_description": this.myForm.value.description,
         "staging": this.myForm.value.staging,
+        "qty_receiving" : this.myForm.value.qtyreceiving,
         "receiving_pic": 'Aji'
       },
       { headers })

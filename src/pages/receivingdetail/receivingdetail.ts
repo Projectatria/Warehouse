@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
-import { FormBuilder } from "@angular/forms";
 import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
+import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @IonicPage()
 @Component({
@@ -12,6 +13,7 @@ import { UUID } from 'angular2-uuid';
   templateUrl: 'receivingdetail.html',
 })
 export class ReceivingdetailPage {
+  myFormBarcode: FormGroup;
   private receiving = [];
   private receiving_post = [];
   searchrcv: any;
@@ -20,6 +22,7 @@ export class ReceivingdetailPage {
   totaldata: any;
   totaldata_post: any;
   public toggled: boolean = false;
+  public barcode: boolean = false;
   docno = '';
   orderno = '';
   batchno = '';
@@ -29,6 +32,11 @@ export class ReceivingdetailPage {
   detailrcv: string = "detailreceiving";
   private uuid = '';
   private nextno = '';
+  public scannedText: string;
+  public buttonText: string;
+  public loading: boolean;
+  private eventId: number;
+  public eventTitle: string;
 
   constructor(
     public navCtrl: NavController,
@@ -38,11 +46,16 @@ export class ReceivingdetailPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    private barcodeScanner: BarcodeScanner
   ) {
+    this.myFormBarcode = formBuilder.group({
+      docno: ['', Validators.compose([Validators.required])],
+    })
     this.getRCV();
     this.getTotalPost();
     this.toggled = false;
+    this.barcode = false;
     this.detailrcv = "detailreceiving";
     this.poid = navParams.get('poid');
     this.docno = navParams.get('docno');
@@ -253,9 +266,31 @@ export class ReceivingdetailPage {
   }
   ionViewDidLoad() {
     this.getRCVDetail();
-    console.log('Total', this.receiving_post, this.totaldata_post)
+    console.log('Total', this.receiving_post, this.totaldata_post);
+    this.loading = false;
   }
   getNextNo() {
     return this.api.get('nextno/qc_in/qc_no')
+  }
+  doScanBarcode() {
+    this.buttonText = "Loading..";
+    this.loading = true;
+
+    this.barcodeScanner.scan().then((barcodeData) => {
+      if (barcodeData.cancelled) {
+        console.log("User cancelled the action!");
+        this.loading = false;
+        return false;
+      }
+    }, (err) => {
+      console.log(err);
+    });
+  }
+  doSaveBarcode() {
+    document.getElementById("myModal").style.display = "block";
+  }
+
+  offOverlay() {
+    document.getElementById("myModal").style.display = "none";
   }
 }

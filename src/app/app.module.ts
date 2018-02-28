@@ -18,6 +18,7 @@ import {Camera} from '@ionic-native/camera';
 import { FileTransfer } from '@ionic-native/file-transfer';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgxBarcodeModule } from 'ngx-barcode';
+import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { NgxBarcodeModule } from 'ngx-barcode';
     HttpClientModule,
     NgxPaginationModule,
     QRCodeModule,
-    NgxBarcodeModule
+    NgxBarcodeModule,
+    Angular2FontawesomeModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
