@@ -89,5 +89,5 @@
     <allow-navigation href="http://192.168.99.211:8100" />
     <plugin name="cordova-plugin-file-transfer" spec="~1.7.1" />
     <plugin name="phonegap-plugin-barcodescanner" spec="^7.0.2" />
-    <engine name="android" spec="^7.0.0" />
+    <engine name="android" spec="7.0.0" />
 </widget>

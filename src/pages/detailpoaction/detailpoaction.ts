@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
-import { FormBuilder } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpHeaders } from "@angular/common/http";
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
@@ -12,7 +12,9 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner';
   templateUrl: 'detailpoaction.html',
 })
 export class DetailpoactionPage {
+  myFormModal: FormGroup;
   private purchasing_order_detail = [];
+  private users = [];
   searchpodetail: any;
   items = [];
   halaman = 0;
@@ -23,6 +25,7 @@ export class DetailpoactionPage {
   batchno = '';
   locationcode = '';
   transferdate = '';
+  receivingno = '';
   detailpo: string = "detailpoitem";
   barcode: {};
   constructor(
@@ -36,6 +39,9 @@ export class DetailpoactionPage {
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner
   ) {
+    this.myFormModal = formBuilder.group({
+      pic: [''],
+    })
     this.getPOD();
     this.toggled = false;
     this.detailpo = "detailpoitem";
@@ -45,7 +51,7 @@ export class DetailpoactionPage {
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
   }
-  getPOD(){
+  getPOD() {
     this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
@@ -61,7 +67,7 @@ export class DetailpoactionPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" }})
+        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -108,25 +114,25 @@ export class DetailpoactionPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" }}).subscribe(val => {
+    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
       refresher.complete();
     });
   }
-  doActionPO(detailpo){
-    let locationModal = this.modalCtrl.create('DetailpoactionupdatePage', 
-    {
-      detailno: detailpo.receiving_no,
-      docno: detailpo.doc_no,
-      orderno: detailpo.order_no,
-      itemno: detailpo.item_no,
-      qty: detailpo.qty,
-      receivingpic: detailpo.receiving_pic,
-      locationplan: detailpo.position 
-    }, 
-    { cssClass: "modal-fullscreen" });
+  doActionPO(detailpo) {
+    let locationModal = this.modalCtrl.create('DetailpoactionupdatePage',
+      {
+        detailno: detailpo.receiving_no,
+        docno: detailpo.doc_no,
+        orderno: detailpo.order_no,
+        itemno: detailpo.item_no,
+        qty: detailpo.qty,
+        receivingpic: detailpo.receiving_pic,
+        locationplan: detailpo.position
+      },
+      { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
   ionViewDidLoad() {
@@ -143,9 +149,54 @@ export class DetailpoactionPage {
   }*/
   doListBarcode(detailpo) {
     let locationModal = this.modalCtrl.create('BarcodePage', {
-    barcode: detailpo.item_no
+      barcode: detailpo.item_no
     },
-    { cssClass: "modal-fullscreen" });
+      { cssClass: "modal-fullscreen" });
     locationModal.present();
+  }
+  doOpenToTL(detailpo) {
+    this.getUsers();
+    document.getElementById("myModal").style.display = "block";
+    this.receivingno = detailpo.receiving_no;
+  }
+  doOffToTL() {
+    document.getElementById("myModal").style.display = "none";
+    this.myFormModal.reset()
+  }
+  getUsers() {
+    this.api.get('table/user_role', { params: { limit: 100 } }).subscribe(val => {
+      this.users = val['data'];
+    });
+  }
+  doSendToTL() {
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+
+    this.api.put("table/receiving",
+      {
+        "receiving_no": this.receivingno,
+        "receiving_pic": this.myFormModal.value.pic
+      },
+      { headers })
+      .subscribe(
+        (val) => {
+          console.log("Update call successful value returned in body",
+            val);
+          document.getElementById("myModal").style.display = "none";
+          this.myFormModal.reset()
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.getPOD();
+        },
+        response => {
+          console.log("Update call in error", response);
+        },
+        () => {
+          console.log("The Update observable is now completed.");
+        });
   }
 }

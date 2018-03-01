@@ -19,8 +19,10 @@
     </ion-card-header>
     <ion-grid>
       <ion-row>
-        <ion-col style="border:1px solid;border-color:#dedede;" col-12 col-md-6 col-lg-4 *ngFor="let bar of barcode">
-          <ngx-barcode [bc-value]="bar.batch_no+'-'+bar.item_no" [bc-display-value]="true"></ngx-barcode>
+        <!-- <ion-col style="border:1px solid;border-color:#dedede;" col-12 col-md-6 col-lg-4 col-xl-3 col-xl-2 *ngFor="let bar of barcode"> -->
+        <ion-col style="border:1px solid;border-color:#dedede;" col-1 *ngFor="let bar of barcode">
+          <!-- <ngx-barcode [bc-value]="bar.batch_no+'-'+bar.item_no" [bc-display-value]="true"></ngx-barcode> -->
+          <qr-code [(value)]="bar.item_no" size="125" [level]="H"></qr-code>
         </ion-col>
       </ion-row>
     </ion-grid>

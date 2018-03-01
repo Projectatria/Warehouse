@@ -123,7 +123,7 @@ export class DetailpoaddPage {
           "qty": this.myForm.value.qty,
           "unit": this.myForm.value.unit,
           "division": this.itemdiv,
-          "status": '1',
+          "status": 'open',
           "chronology_no": '',
           "uuid": this.uuid
         },
@@ -170,7 +170,7 @@ export class DetailpoaddPage {
                   "division": this.itemdiv,
                   "staging": "",
                   "position": "",
-                  "status": "1",
+                  "status": "open",
                   "receiving_pic": "",
                   "chronology_no": "",
                   "uuid": this.uuid2

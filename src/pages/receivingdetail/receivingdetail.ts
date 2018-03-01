@@ -4,7 +4,7 @@ import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
-import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @IonicPage()
@@ -13,14 +13,17 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   templateUrl: 'receivingdetail.html',
 })
 export class ReceivingdetailPage {
-  myFormBarcode: FormGroup;
   private receiving = [];
   private receiving_post = [];
+  private resultbarcode = [];
+  data = {};
+  option: BarcodeScannerOptions;
   searchrcv: any;
   items = [];
   halaman = 0;
   totaldata: any;
   totaldata_post: any;
+  totalresultbarcode: any;
   public toggled: boolean = false;
   public barcode: boolean = false;
   docno = '';
@@ -29,6 +32,7 @@ export class ReceivingdetailPage {
   locationcode = '';
   transferdate = '';
   poid = '';
+  qty = '1';
   detailrcv: string = "detailreceiving";
   private uuid = '';
   private nextno = '';
@@ -37,6 +41,7 @@ export class ReceivingdetailPage {
   public loading: boolean;
   private eventId: number;
   public eventTitle: string;
+  private barcodedata: any;
 
   constructor(
     public navCtrl: NavController,
@@ -49,9 +54,6 @@ export class ReceivingdetailPage {
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner
   ) {
-    this.myFormBarcode = formBuilder.group({
-      docno: ['', Validators.compose([Validators.required])],
-    })
     this.getRCV();
     this.getTotalPost();
     this.toggled = false;
@@ -275,22 +277,55 @@ export class ReceivingdetailPage {
   doScanBarcode() {
     this.buttonText = "Loading..";
     this.loading = true;
-
+    this.option = {
+      prompt: "Please scan your code"
+    }
     this.barcodeScanner.scan().then((barcodeData) => {
       if (barcodeData.cancelled) {
         console.log("User cancelled the action!");
         this.loading = false;
         return false;
       }
+      this.data = barcodeData;
+      let alert = this.alertCtrl.create({
+        title: barcodeData.text,
+        inputs: [
+          {
+            name: 'qty',
+            placeholder: 'Qty',
+            value: '1'
+          }
+        ],
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: data => {
+              console.log('Cancel clicked');
+            }
+          },
+          {
+            text: 'OK',
+            handler: data => {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+
+              this.api.put("table/receiving",
+                {
+                  "order_no": this.orderno,
+                  "item_no": barcodeData.text,
+                  "qty_receiving": + 1
+                },
+                { headers })
+                .subscribe();
+            }
+          }
+        ]
+      });
+      alert.present();
+
     }, (err) => {
       console.log(err);
     });
-  }
-  doSaveBarcode() {
-    document.getElementById("myModal").style.display = "block";
-  }
-
-  offOverlay() {
-    document.getElementById("myModal").style.display = "none";
   }
 }

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { ViewController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
-import { FormBuilder } from "@angular/forms";
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
@@ -11,6 +11,7 @@ import { HttpHeaders } from "@angular/common/http";
   templateUrl: 'receiving.html',
 })
 export class ReceivingPage {
+  myFormModal: FormGroup;
   private purchasing_order = [];
   private purchasing_order_action = [];
   searchpo: any;
@@ -36,16 +37,10 @@ export class ReceivingPage {
     public navParams: NavParams,
     public menu: MenuController,
     public modalCtrl: ModalController,
-    private platform: Platform
+    public platform: Platform,
+    public viewCtrl: ViewController
 
   ) {
-    /* this.form = this.formBuilder.group({
-       dccode: ['', Validators.compose([Validators.required])],
-       docno: ['', Validators.compose([Validators.required])],
-       orderno: ['', Validators.compose([Validators.required])],
-       vendorno: ['', Validators.compose([Validators.required])],
-       postingdate: ['', Validators.compose([Validators.required])] 
-     });*/
     this.getPO();
     this.getPOAction();
     this.toggled = false;
@@ -65,7 +60,7 @@ export class ReceivingPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: 'status=3' } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: "status='inpg'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -92,7 +87,7 @@ export class ReceivingPage {
       }
       else {
         this.halamanaction++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetaction, filter: 'status=2' } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetaction, filter: "status='inp1'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -178,7 +173,7 @@ export class ReceivingPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=3' } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='inpg'" } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       this.searchpo = this.purchasing_order;
@@ -186,7 +181,7 @@ export class ReceivingPage {
     });
   }
   doRefreshAction(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=2' } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='inp1'" } }).subscribe(val => {
       this.purchasing_order_action = val['data'];
       this.totaldataaction = val['count'];
       this.searchpoaction = this.purchasing_order_action;
@@ -210,17 +205,10 @@ export class ReceivingPage {
           handler: () => {
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
-            this.api.patch("table/qc_in",
-              {
-                "order_no": po.order_no,
-                "status": '1'
-              },
-              { headers })
-              .subscribe();
             this.api.put("table/purchasing_order",
               {
                 "po_id": po.po_id,
-                "status": '4',
+                "status": 'inpg',
                 "user_id": ''
               },
               { headers })
@@ -234,7 +222,7 @@ export class ReceivingPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=3' } }).subscribe(val => {
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='inpg'" } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
                     this.searchpo = this.purchasing_order;
@@ -274,7 +262,7 @@ export class ReceivingPage {
             this.api.put("table/purchasing_order",
               {
                 "po_id": poact.po_id,
-                "status": '3'
+                "status": 'inpg'
               },
               { headers })
               .subscribe(
@@ -287,7 +275,7 @@ export class ReceivingPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: 'status=2' } }).subscribe(val => {
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='inp1'" } }).subscribe(val => {
                     this.purchasing_order_action = val['data'];
                     this.totaldataaction = val['count'];
                     this.searchpoaction = this.purchasing_order_action;

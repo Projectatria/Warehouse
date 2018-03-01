@@ -2,7 +2,7 @@
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
       <button ion-button clear color="light" (click)="toggleSearch()">
-        <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
+        <ion-icon name="md-search" style="font-size:25px;"></ion-icon>
       </button>
     </div>
     <div *ngIf="toggled" style="text-align:right;height:0px;">
@@ -45,13 +45,14 @@
       </div>
       <ion-item-sliding class="content-data-item" *ngFor="let detailrcv of receiving">
         <ion-item>
-          <!--<ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/" alt="">
-          </ion-avatar>-->
+          <ion-avatar item-start>
+            <img src="http://101.255.60.202/webapi/img/noimage" alt="">
+          </ion-avatar>
           <div no-padding>
             <h2>No Item : {{detailrcv.item_no}}</h2>
-            <br/>
-            <ion-note>{{detailrcv.transfer_date}} | Qty: {{detailrcv.qty}} | PIC: {{detailrcv.receiving_pic}} | Location: {{detailrcv.position}}</ion-note>
+            <ion-note>PIC : {{detailrcv.receiving_pic}}</ion-note><br/>
+            <ion-note>Location : {{detailrcv.position}}</ion-note><br/>
+            <ion-note>Qty : {{detailrcv.qty}} | Qty Receiving: {{detailrcv.qty_receiving}}</ion-note><br/>
           </div>
         </ion-item>
         <ion-item-options style="background:#ffffff;border:0px;" side="left">
@@ -73,29 +74,19 @@
       </ion-item>
     </ion-list>
   </div>
-
-  <div id="myModal" class="modal">
-    <div class="header-content">
-    </div>
-    <div class="modal-content">
-      <ion-list>
-        <ion-item>
-          <ion-label>Doc No</ion-label>
-          <ion-input type="text"></ion-input>
-        </ion-item>
-      </ion-list>
-    </div>
-  </div>
-
+  
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content>
       loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+
 </ion-content>
+
+
 <div [ngSwitch]="detailrcv">
   <ion-fab *ngSwitchCase="'detailreceiving'" class="fixed-div" bottom right>
-    <button ion-fab color="greenlake" (click)="doSaveBarcode()">
+    <button ion-fab color="greenlake" (click)="doScanBarcode()">
       <ion-icon name="md-barcode"></ion-icon>
     </button>
   </ion-fab>

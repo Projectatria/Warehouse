@@ -106,7 +106,7 @@ export class PurchasingorderaddPage {
           "posting_date": this.myForm.value.transferdate,
           "posting_desc": this.myForm.value.description,
           "location_code": this.myForm.value.locationcode,
-          "status": '1',
+          "status": 'open',
           "user_id": '123',
           "chronology_no": '1',
           "uuid": this.uuid

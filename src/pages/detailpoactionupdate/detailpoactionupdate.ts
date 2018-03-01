@@ -108,7 +108,7 @@ export class DetailpoactionupdatePage {
         {
           "receiving_no" : this.detailno,
           "position": this.myForm.value.locationplan,
-          "status": '2',
+          "status": 'inpg',
           "receiving_pic": this.myForm.value.receivingpic
         },
         { headers })

@@ -3,7 +3,7 @@
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
       <button ion-button clear color="light" (click)="toggleSearch()">
         <!--<img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" />-->
-        <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
+        <ion-icon name="md-search" style="font-size:25px;"></ion-icon>
       </button>
     </div>
     <div *ngIf="toggled" style="text-align:right;height:0px;">
@@ -27,7 +27,7 @@
 <ion-content class="content-menu" no-padding>
   <ion-segment [(ngModel)]="rcv">
     <ion-segment-button value="preparationreceiving">
-      Preparation Receiving
+      Preparation
     </ion-segment-button>
     <ion-segment-button value="receiving">
       Receiving
@@ -50,18 +50,18 @@
       <div *ngIf="width < 600" class="android-content">
         <ion-item class="content-data-item" *ngFor="let poact of purchasing_order_action">
           <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/{{poact.vendor_status}}" alt="">
+            <img src="http://101.255.60.202/webapi/img/noimage" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailAction(poact)">
             <h2>No Order : {{poact.order_no}}</h2>
             <br/>
             <ion-note>{{poact.posting_date}} | Items : {{poact.total_item}}</ion-note>
           </div>
-          <button item-end ion-button clear color="delima" (click)="doPostingRCV(poact)">
-            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-          </button>
           <button item-end ion-button clear color="greenlake" (click)="doListBarcode(poact)">
             <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
+          </button>
+          <button item-end ion-button clear color="delima" (click)="doPostingRCV(poact)">
+            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
           </button>
         </ion-item>
       </div>
@@ -86,26 +86,29 @@
             <ion-col padding class="col-content" col-xl-2>Options</ion-col>
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let poact of purchasing_order_action">
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(poact)">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailAction(poact)">
               {{poact.order_no}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(poact)">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailAction(poact)">
               {{poact.doc_no}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(poact)">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailAction(poact)">
               {{poact.total_item}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(poact)">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailAction(poact)">
               {{poact.posting_date}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(poact)">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailAction(poact)">
               {{poact.status}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2>
-              <button ion-button clear color="secondary" (click)="doUpdatePO(poact)">
+              <button *ngIf="poact.status == 'inpg'" item-end ion-button clear color="greenlake" (click)="doUpdateAction(poact)">
                 <ion-icon name="md-sync" style="font-size:30px;"></ion-icon>
               </button>
-              <button ion-button clear color="delima" (click)="doPostingPO(poact)">
+              <button *ngIf="poact.status == 'inpg'" item-end ion-button clear color="greenlake" (click)="doListBarcode(poact)">
+                <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
+              </button>
+              <button *ngIf="poact.status == 'inp1'" item-end ion-button clear color="greenlake" (click)="doPostingRCV(poact)">
                 <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
               </button>
             </ion-col>
@@ -131,11 +134,10 @@
       <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
         <ion-item>
           <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+            <img src="http://101.255.60.202/webapi/img/noimage" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetail(po)">
             <h2>No Order : {{po.order_no}}</h2>
-            <br/>
             <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
           </div>
         </ion-item>
@@ -159,5 +161,4 @@
     </ion-list>
 
   </div>
-
 </ion-content>

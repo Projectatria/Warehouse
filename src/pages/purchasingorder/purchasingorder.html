@@ -2,7 +2,7 @@
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
       <button ion-button clear color="light" (click)="toggleSearch()">
-        <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
+        <ion-icon name="md-search" style="font-size:25px;"></ion-icon>
       </button>
     </div>
     <div *ngIf="toggled" style="text-align:right;height:0px;">
@@ -48,11 +48,10 @@
         <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
           <ion-item>
             <ion-avatar item-start>
-              <img src="http://101.255.60.202/webapi/img/{{po.vendor_status}}" alt="">
+              <img src="http://101.255.60.202/webapi/img/noimage" alt="">
             </ion-avatar>
             <div no-padding (click)="viewDetail(po)">
               <h2>No Order : {{po.order_no}}</h2>
-              <br/>
               <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
             </div>
           </ion-item>
