@@ -19,6 +19,7 @@ import { FileTransfer } from '@ionic-native/file-transfer';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgxBarcodeModule } from 'ngx-barcode';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
     NgxPaginationModule,
     QRCodeModule,
     NgxBarcodeModule,
-    Angular2FontawesomeModule
+    Angular2FontawesomeModule,
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [

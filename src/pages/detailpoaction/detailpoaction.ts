@@ -15,10 +15,13 @@ export class DetailpoactionPage {
   myFormModal: FormGroup;
   private purchasing_order_detail = [];
   private users = [];
+  private locations = [];
   searchpodetail: any;
+  poid = '';
   items = [];
   halaman = 0;
   totaldata: any;
+  totaldatalocation: any;
   public toggled: boolean = false;
   docno = '';
   orderno = '';
@@ -26,6 +29,11 @@ export class DetailpoactionPage {
   locationcode = '';
   transferdate = '';
   receivingno = '';
+  status = '';
+  batch = '';
+  item = '';
+  position = '';
+  qty = '';
   detailpo: string = "detailpoitem";
   barcode: {};
   constructor(
@@ -41,18 +49,21 @@ export class DetailpoactionPage {
   ) {
     this.myFormModal = formBuilder.group({
       pic: [''],
+      location: [''],
     })
     this.getPOD();
     this.toggled = false;
     this.detailpo = "detailpoitem";
+    this.poid = navParams.get('poid');
     this.docno = navParams.get('docno');
     this.orderno = navParams.get('orderno');
     this.batchno = navParams.get('batchno');
+    this.status = navParams.get('status');
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
   }
   getPOD() {
-    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
     })
@@ -67,7 +78,7 @@ export class DetailpoactionPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" } })
+        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -114,7 +125,7 @@ export class DetailpoactionPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
@@ -130,7 +141,8 @@ export class DetailpoactionPage {
         itemno: detailpo.item_no,
         qty: detailpo.qty,
         receivingpic: detailpo.receiving_pic,
-        locationplan: detailpo.position
+        locationplan: detailpo.position,
+        status: detailpo.status
       },
       { cssClass: "modal-fullscreen" });
     locationModal.present();
@@ -148,16 +160,55 @@ export class DetailpoactionPage {
       })
   }*/
   doListBarcode(detailpo) {
-    let locationModal = this.modalCtrl.create('BarcodePage', {
-      barcode: detailpo.item_no
+    let locationModal = this.modalCtrl.create('BarcodelistPage', {
+      batchno: detailpo.batch_no,
+      orderno: detailpo.order_no,
+      itemno: detailpo.item_no,
+      qty: detailpo.qty
     },
       { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
   doOpenToTL(detailpo) {
-    this.getUsers();
-    document.getElementById("myModal").style.display = "block";
-    this.receivingno = detailpo.receiving_no;
+    this.batch = detailpo.batch_no;
+    this.item = detailpo.item_no;
+    this.position = detailpo.position;
+    this.qty = detailpo.qty;
+    return new Promise(resolve => {
+      this.getLocations(detailpo).subscribe(val => {
+        let data = val['data'];
+        for (let i = 0; i < data.length; i++) {
+          this.locations.push(data[i]);
+          this.totaldatalocation = val['count'];
+        }
+        if (detailpo.position == '' && this.status == 'INP2') {
+          this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
+          this.myFormModal.get('location').setValue((this.locations[0]).location_alocation);
+          document.getElementById("myModal").style.display = "block";
+          this.receivingno = detailpo.receiving_no;
+        }
+        else {
+          this.getUsers();
+          this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
+          this.myFormModal.get('location').setValue(detailpo.position);
+          document.getElementById("myModal").style.display = "block";
+          this.receivingno = detailpo.receiving_no;
+        }
+        resolve();
+      });
+    });
+  }
+  getLocations(detailpo) {
+    return this.api.get('table/location_master', {
+      params: {
+        filter:
+          'location_code=' + "'" + detailpo.location_code + "'" +
+          ' ' + 'AND' + ' ' +
+          'division=' + "'" + detailpo.division + "'" +
+          ' ' + 'AND' + ' ' +
+          "status='true'"
+      }
+    })
   }
   doOffToTL() {
     document.getElementById("myModal").style.display = "none";
@@ -175,7 +226,8 @@ export class DetailpoactionPage {
     this.api.put("table/receiving",
       {
         "receiving_no": this.receivingno,
-        "receiving_pic": this.myFormModal.value.pic
+        "receiving_pic": this.myFormModal.value.pic,
+        "position": this.myFormModal.value.location
       },
       { headers })
       .subscribe(
@@ -183,7 +235,34 @@ export class DetailpoactionPage {
           console.log("Update call successful value returned in body",
             val);
           document.getElementById("myModal").style.display = "none";
+          const headers = new HttpHeaders()
+            .set("Content-Type", "application/json");
+          if (this.myFormModal.value.location != '') {
+            this.api.put("table/location_master",
+              {
+                "location_alocation": this.myFormModal.value.location,
+                "batch_no": this.batch,
+                "item_no": this.item,
+                "qty": this.qty,
+                "status": 'BOOKING'
+              },
+              { headers })
+              .subscribe();
+          }
+          if (this.position != '') {
+            this.api.put("table/location_master",
+              {
+                "location_alocation": this.position,
+                "batch_no": '',
+                "item_no": '',
+                "qty": 0,
+                "status": 'TRUE'
+              },
+              { headers })
+              .subscribe();
+          }
           this.myFormModal.reset()
+          this.locations = [];
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',
@@ -199,4 +278,67 @@ export class DetailpoactionPage {
           console.log("The Update observable is now completed.");
         });
   }
+  doOpenLocation() {
+
+  }
+  doPostingRCV(detailpo) {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Posting',
+      message: 'Do you want to posting Item No ' + detailpo.item_no + ' ?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Posting',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+            this.api.put("table/purchasing_order_detail",
+              {
+                "po_detail_no": detailpo.receiving_no,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe();
+            this.api.put("table/receiving",
+              {
+                "receiving_no": detailpo.receiving_no,
+                "status": 'INPG'
+              },
+              { headers })
+              .subscribe(
+                (val) => {
+                  console.log("Posting call successful value returned in body",
+                    val);
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Posting Sukses',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
+                    this.purchasing_order_detail = val['data'];
+                    this.totaldata = val['count'];
+                    this.searchpodetail = this.purchasing_order_detail;
+                  });
+
+                },
+                response => {
+                  console.log("Posting call in error", response);
+                },
+                () => {
+                  console.log("The Posting observable is now completed.");
+                });
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
 }

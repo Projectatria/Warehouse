@@ -113,6 +113,7 @@ export class DetailpoaddPage {
       this.api.post("table/purchasing_order_detail",
         {
           "po_detail_no": this.nextno,
+          "po_id": this.poid,
           "doc_no": this.myForm.value.docno,
           "order_no": this.myForm.value.orderno,
           "batch_no": this.batchno,
@@ -123,7 +124,7 @@ export class DetailpoaddPage {
           "qty": this.myForm.value.qty,
           "unit": this.myForm.value.unit,
           "division": this.itemdiv,
-          "status": 'open',
+          "status": 'OPEN',
           "chronology_no": '',
           "uuid": this.uuid
         },
@@ -170,7 +171,7 @@ export class DetailpoaddPage {
                   "division": this.itemdiv,
                   "staging": "",
                   "position": "",
-                  "status": "open",
+                  "status": "OPEN",
                   "receiving_pic": "",
                   "chronology_no": "",
                   "uuid": this.uuid2

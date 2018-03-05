@@ -63,7 +63,7 @@ export class PurchasingorderPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: "status='open'" } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: "status='OPEN'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -165,7 +165,7 @@ export class PurchasingorderPage {
                 (val) => {
                   console.log("DELETE call successful value returned in body",
                     val);
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='open'" } }).subscribe(val => {
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
                     this.searchpo = this.purchasing_order;
@@ -184,7 +184,7 @@ export class PurchasingorderPage {
     alert.present();
   }
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='open'" } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       this.searchpo = this.purchasing_order;
@@ -228,7 +228,7 @@ export class PurchasingorderPage {
             this.api.put("table/purchasing_order",
               {
                 "po_id": po.po_id,
-                "status": 'inp1',
+                "status": 'INP1',
                 "user_id": ''
               },
               { headers })
@@ -242,7 +242,7 @@ export class PurchasingorderPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='open'" } }).subscribe(val => {
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
                     this.searchpo = this.purchasing_order;
@@ -263,7 +263,7 @@ export class PurchasingorderPage {
   }
   
   doFilter(filter) {
-    this.api.get("table/purchasing_order", { params: { filter: "status='open'", sort: filter } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'", sort: filter } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       console.log(this.purchasing_order);

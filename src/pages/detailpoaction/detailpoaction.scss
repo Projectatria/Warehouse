@@ -133,3 +133,15 @@ ion-fab-list {
     text-decoration: none;
     cursor: pointer;
 }
+.icon-search {
+    width: 30px;
+    text-align:center;
+    color:#dedede;
+}
+.icon-search:hover,
+.icon-search:focus {
+    color: #ffffff;
+    background: #dedede;
+    text-decoration: none;
+    cursor: pointer;
+}
