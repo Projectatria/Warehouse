@@ -13,6 +13,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 })
 export class DetailpoactionPage {
   myFormModal: FormGroup;
+  private purchasing_order = [];
   private purchasing_order_detail = [];
   private users = [];
   private locations = [];
@@ -30,6 +31,7 @@ export class DetailpoactionPage {
   transferdate = '';
   receivingno = '';
   status = '';
+  totalpost = '';
   batch = '';
   item = '';
   position = '';
@@ -59,8 +61,12 @@ export class DetailpoactionPage {
     this.orderno = navParams.get('orderno');
     this.batchno = navParams.get('batchno');
     this.status = navParams.get('status');
+    this.totalpost = navParams.get('totalpost')
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+  }
+  getPO() {
+
   }
   getPOD() {
     this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
@@ -282,63 +288,79 @@ export class DetailpoactionPage {
 
   }
   doPostingRCV(detailpo) {
-    let alert = this.alertCtrl.create({
-      title: 'Confirm Posting',
-      message: 'Do you want to posting Item No ' + detailpo.item_no + ' ?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Posting',
-          handler: () => {
-            const headers = new HttpHeaders()
-              .set("Content-Type", "application/json");
-            this.api.put("table/purchasing_order_detail",
-              {
-                "po_detail_no": detailpo.receiving_no,
-                "status": 'CLSD'
-              },
-              { headers })
-              .subscribe();
-            this.api.put("table/receiving",
-              {
-                "receiving_no": detailpo.receiving_no,
-                "status": 'INPG'
-              },
-              { headers })
-              .subscribe(
-                (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
-                  let alert = this.alertCtrl.create({
-                    title: 'Sukses',
-                    subTitle: 'Posting Sukses',
-                    buttons: ['OK']
-                  });
-                  alert.present();
-                  this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
-                    this.purchasing_order_detail = val['data'];
-                    this.totaldata = val['count'];
-                    this.searchpodetail = this.purchasing_order_detail;
-                  });
-
-                },
-                response => {
-                  console.log("Posting call in error", response);
-                },
-                () => {
-                  console.log("The Posting observable is now completed.");
-                });
-          }
+    return new Promise(resolve => {
+      this.api.get("table/purchasing_order", { params: { filter: 'po_id=' + "'" + this.poid + "'" } }).subscribe(val => {
+        let data = val['data'];
+        for (let i = 0; i < data.length; i++) {
+          this.purchasing_order.push(data[i]);
         }
-      ]
+        let alert = this.alertCtrl.create({
+          title: 'Confirm Posting',
+          message: 'Do you want to posting Item No ' + detailpo.item_no + ' ?',
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                console.log('Cancel clicked');
+              }
+            },
+            {
+              text: 'Posting',
+              handler: () => {
+                const headers = new HttpHeaders()
+                  .set("Content-Type", "application/json");
+                this.api.put("table/purchasing_order",
+                  {
+                    "po_id": this.poid,
+                    "total_item_post": ((this.purchasing_order[0]).total_item_post) + 1
+                  },
+                  { headers })
+                  .subscribe();
+                this.api.put("table/purchasing_order_detail",
+                  {
+                    "po_detail_no": detailpo.receiving_no,
+                    "status": 'CLSD'
+                  },
+                  { headers })
+                  .subscribe();
+                this.api.put("table/receiving",
+                  {
+                    "receiving_no": detailpo.receiving_no,
+                    "status": 'INPG'
+                  },
+                  { headers })
+                  .subscribe(
+                    (val) => {
+                      console.log("Posting call successful value returned in body",
+                        val);
+                      let alert = this.alertCtrl.create({
+                        title: 'Sukses',
+                        subTitle: 'Posting Sukses',
+                        buttons: ['OK']
+                      });
+                      alert.present();
+                      this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
+                        this.purchasing_order_detail = val['data'];
+                        this.totaldata = val['count'];
+                        this.searchpodetail = this.purchasing_order_detail;
+                      });
+
+                    },
+                    response => {
+                      console.log("Posting call in error", response);
+                    },
+                    () => {
+                      console.log("The Posting observable is now completed.");
+                    });
+              }
+            }
+          ]
+        });
+        alert.present();
+        resolve();
+      });
     });
-    alert.present();
   }
 
 }

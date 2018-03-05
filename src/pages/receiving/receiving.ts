@@ -202,7 +202,8 @@ export class ReceivingPage {
       batchno: prepare.batch_no,
       locationcode: prepare.location_code,
       transferdate: prepare.transfer_date,
-      status: prepare.status
+      status: prepare.status,
+      totalpost: prepare.total_item_post
     });
   }
   viewDetail(po) {
