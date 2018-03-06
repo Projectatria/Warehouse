@@ -15,7 +15,7 @@
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
         <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
@@ -45,7 +45,7 @@
     <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
       <ion-item class="content-data-item" *ngFor="let detailpo of purchasing_order_detail">
         <ion-avatar item-start>
-          <img src="http://101.255.60.202/webapi/img/noimage" alt="">
+          <img src="assets/imgs/noimage.jpg" alt="">
         </ion-avatar>
         <div no-padding>
           <h2>No Item : {{detailpo.item_no}}</h2>
@@ -93,7 +93,7 @@
           <ion-item *ngIf="status == 'INP2'" class="item-rc" style="border:0px;">
             <ion-label floating>LOCATION</ion-label>
             <ion-input type="text" formControlName="location"></ion-input>
-            <ion-icon class="icon-search" item-end name="md-search" (click)="doOpenLocation();"></ion-icon>
+            <button ion-button clear style="width:100px;" item-end (click)="doOpenLocation2()"><ion-icon class="icon-search" name="md-search" ></ion-icon></button>
           </ion-item>
         </ion-list>
       </form>

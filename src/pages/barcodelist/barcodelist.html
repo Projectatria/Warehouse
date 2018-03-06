@@ -19,8 +19,8 @@
     </ion-card-header>
     <ion-grid>
       <ion-row>
-        <ion-col style="border:1px solid;border-color:#dedede;" col-2 *ngFor="let i of arr">
-          <qr-code [(value)]="barcode.item_no" size="200" [level]="H"></qr-code>
+        <ion-col style="border:1px solid;border-color:#dedede;" col-xl-2 *ngFor="let i of arr">
+          <qr-code [(value)]="itemno" size="200" [level]="H"></qr-code>
         </ion-col>
       </ion-row>
     </ion-grid>

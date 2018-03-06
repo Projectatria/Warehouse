@@ -16,6 +16,7 @@ export class ReceivingdetailPage {
   private receiving = [];
   private receiving_post = [];
   private resultbarcode = [];
+  private itemdata = [];
   data = {};
   option: BarcodeScannerOptions;
   searchrcv: any;
@@ -55,7 +56,6 @@ export class ReceivingdetailPage {
     private barcodeScanner: BarcodeScanner
   ) {
     this.getRCV();
-    this.getTotalPost();
     this.toggled = false;
     this.barcode = false;
     this.detailrcv = "detailreceiving";
@@ -67,10 +67,13 @@ export class ReceivingdetailPage {
     this.transferdate = navParams.get('transferdate');
   }
   getRCV() {
-    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
-      this.receiving = val['data'];
-      this.totaldata = val['count'];
-    })
+    return new Promise(resolve => {
+      this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+        this.receiving = val['data'];
+        this.totaldata = val['count'];
+        resolve();
+      })
+    });
   }
   getRCVDetail() {
     return new Promise(resolve => {
@@ -157,7 +160,7 @@ export class ReceivingdetailPage {
             this.api.put("table/receiving",
               {
                 "receiving_no": detailrcv.receiving_no,
-                "status": '3'
+                "status": 'CLSD'
               },
               { headers })
               .subscribe(
@@ -224,12 +227,6 @@ export class ReceivingdetailPage {
     });
     alert.present();
   }
-  getTotalPost() {
-    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" && 'status=3' } }).subscribe(val => {
-      this.receiving_post = val['data'];
-      this.totaldata_post = val['count'];
-    });
-  }
   doViewRCV(detailrcv) {
     let locationModal = this.modalCtrl.create('ReceivingdetailviewPage',
       {
@@ -287,43 +284,61 @@ export class ReceivingdetailPage {
         return false;
       }
       this.data = barcodeData;
-      let alert = this.alertCtrl.create({
-        title: barcodeData.text,
-        inputs: [
-          {
-            name: 'qty',
-            placeholder: 'Qty',
-            value: '1'
+      return new Promise(resolve => {
+        this.api.get("table/receiving", {
+          params: {
+            filter:
+              'order_no=' + "'" + this.orderno + "'" +
+              " " + 'AND' + " " +
+              'item_no=' + "'" + barcodeData.text + "'"
           }
-        ],
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            handler: data => {
-              console.log('Cancel clicked');
-            }
-          },
-          {
-            text: 'OK',
-            handler: data => {
-              const headers = new HttpHeaders()
-                .set("Content-Type", "application/json");
-
-              this.api.put("table/receiving",
-                {
-                  "order_no": this.orderno,
-                  "item_no": barcodeData.text,
-                  "qty_receiving": + 1
-                },
-                { headers })
-                .subscribe();
-            }
+        }).subscribe(val => {
+          let data = val['data'];
+          for (let i = 0; i < data.length; i++) {
+            this.itemdata.push(data[i]);
           }
-        ]
+          let alert = this.alertCtrl.create({
+            title: barcodeData.text,
+            inputs: [
+              {
+                name: 'qty',
+                placeholder: 'Qty',
+                value: '1'
+              }
+            ],
+            buttons: [
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                handler: data => {
+                  console.log('Cancel clicked');
+                }
+              },
+              {
+                text: 'OK',
+                handler: data => {
+                  const headers = new HttpHeaders()
+                    .set("Content-Type", "application/json");
+                  this.api.put("table/receiving",
+                    {
+                      "receiving_no": this.itemdata[0].receiving_no,
+                      "qty_receiving": parseInt(this.itemdata[0].qty_receiving) + parseInt(data.qty)
+                    },
+                    { headers })
+                    .subscribe(val => {
+                      this.itemdata = [];
+                      this.getRCV();
+                      alert.present();
+                      this.doScanBarcode();
+                    });
+                }
+              }
+            ]
+          });
+          alert.present();
+          resolve();
+        })
       });
-      alert.present();
-
     }, (err) => {
       console.log(err);
     });

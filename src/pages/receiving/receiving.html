@@ -2,7 +2,6 @@
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
       <button ion-button clear color="light" (click)="toggleSearch()">
-        <!--<img src="http://101.255.60.202/webapi/img/searching" height="25" (click)="toggleSearch()" />-->
         <ion-icon name="md-search" style="font-size:25px;"></ion-icon>
       </button>
     </div>
@@ -16,7 +15,7 @@
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
         <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
@@ -53,7 +52,7 @@
       <div *ngIf="width < 600" class="android-content">
         <ion-item class="content-data-item" *ngFor="let info of infopo">
           <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/noimage" alt="">
+            <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailInfoPO(info)">
             <h2>No Order : {{info.order_no}}</h2>
@@ -134,7 +133,7 @@
       <div *ngIf="width < 600" class="android-content">
         <ion-item class="content-data-item" *ngFor="let prepare of preparation">
           <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/noimage" alt="">
+            <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailPrepare(prepare)">
             <h2>No Order : {{prepare.order_no}}</h2>
@@ -164,19 +163,19 @@
             <ion-col padding class="col-content" col-xl-2>Options</ion-col>
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let prepare of preparation">
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.order_no}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.doc_no}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.total_item}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.posting_date}}
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.status}}
             </ion-col>
           </ion-row>
@@ -198,22 +197,15 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
       </div>
-      <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
-        <ion-item>
-          <ion-avatar item-start>
-            <img src="http://101.255.60.202/webapi/img/noimage" alt="">
-          </ion-avatar>
-          <div no-padding (click)="viewDetail(po)">
-            <h2>No Order : {{po.order_no}}</h2>
-            <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
-          </div>
-        </ion-item>
-        <ion-item-options style="background:#ffffff;border:0px;" side="left">
-          <button item-end ion-button clear color="delima" (click)="doPostingPO(po)">
-            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
+      <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+        <ion-avatar item-start>
+          <img src="assets/imgs/noimage.jpg" alt="">
+        </ion-avatar>
+        <div no-padding (click)="viewDetail(po)">
+          <h2>No Order : {{po.order_no}}</h2>
+          <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+        </div>
+      </ion-item>
       <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content>
           loadingSpinner="bubbles" loadingText="Loading more data...">

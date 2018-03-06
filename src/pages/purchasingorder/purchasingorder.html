@@ -15,7 +15,7 @@
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
         <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
@@ -48,7 +48,7 @@
         <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
           <ion-item>
             <ion-avatar item-start>
-              <img src="http://101.255.60.202/webapi/img/noimage" alt="">
+              <img src="assets/imgs/noimage.jpg" alt="">
             </ion-avatar>
             <div no-padding (click)="viewDetail(po)">
               <h2>No Order : {{po.order_no}}</h2>

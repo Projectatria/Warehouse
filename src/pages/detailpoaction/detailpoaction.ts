@@ -183,13 +183,17 @@ export class DetailpoactionPage {
     return new Promise(resolve => {
       this.getLocations(detailpo).subscribe(val => {
         let data = val['data'];
+        console.log('data',data)
+        console.log('lokasi',detailpo.location_code)
+        console.log('division',detailpo.division)
         for (let i = 0; i < data.length; i++) {
           this.locations.push(data[i]);
           this.totaldatalocation = val['count'];
         }
-        if (detailpo.position == '' && this.status == 'INP2') {
+        console.log('Lokasi',this.locations[0].location_alocation);
+        if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
           this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
-          this.myFormModal.get('location').setValue((this.locations[0]).location_alocation);
+          this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
           document.getElementById("myModal").style.display = "block";
           this.receivingno = detailpo.receiving_no;
         }
@@ -212,7 +216,7 @@ export class DetailpoactionPage {
           ' ' + 'AND' + ' ' +
           'division=' + "'" + detailpo.division + "'" +
           ' ' + 'AND' + ' ' +
-          "status='true'"
+          "status='TRUE'"
       }
     })
   }
@@ -310,6 +314,15 @@ export class DetailpoactionPage {
               handler: () => {
                 const headers = new HttpHeaders()
                   .set("Content-Type", "application/json");
+                if ((this.purchasing_order[0].total_item - this.purchasing_order[0].total_item_post) == 1) {
+                  this.api.put("table/purchasing_order",
+                    {
+                      "po_id": this.poid,
+                      "status": 'INPG'
+                    },
+                    { headers })
+                    .subscribe();
+                }
                 this.api.put("table/purchasing_order",
                   {
                     "po_id": this.poid,
@@ -340,6 +353,7 @@ export class DetailpoactionPage {
                         buttons: ['OK']
                       });
                       alert.present();
+                      this.purchasing_order = [];
                       this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
                         this.purchasing_order_detail = val['data'];
                         this.totaldata = val['count'];

@@ -15,7 +15,7 @@
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
         <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
@@ -45,7 +45,7 @@
     <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
       <ion-item class="content-data-item" *ngFor="let detailpo of purchasing_order_detail">
         <ion-avatar item-start>
-          <img src="http://101.255.60.202/webapi/img/noimage" alt="">
+          <img src="assets/imgs/noimage.jpg" alt="">
         </ion-avatar>
         <div no-padding>
           <h2>No Item : {{detailpo.item_no}}</h2>
@@ -53,10 +53,10 @@
           <ion-note>Location : {{detailpo.position}}</ion-note><br/>
           <ion-note>Qty : {{detailpo.qty}}</ion-note><br/>
         </div>
-        <button item-end ion-button clear color="secondary" (click)="doUpdatePODetail(detailpo)">
+        <button item-end ion-button clear color="greenlake" (click)="doUpdatePODetail(detailpo)">
           <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
         </button>
-        <button item-end ion-button clear color="delima" (click)="doDeletePODetail(detailpo)">
+        <button item-end ion-button clear color="greenlake" (click)="doDeletePODetail(detailpo)">
           <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>
         </button>
       </ion-item>
