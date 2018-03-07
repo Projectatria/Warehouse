@@ -251,7 +251,7 @@ export class ReceivingPage {
     this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
-      this.searchinfopo = this.preparation;
+      this.searchpreparation = this.preparation;
       refresher.complete();
     });
   }

@@ -236,7 +236,7 @@ ion-header {
 }
 .modal {
     display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
+    position: absolute; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
@@ -253,5 +253,20 @@ ion-header {
     margin: 10% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 30%; /* Could be more or less, depending on screen size */
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+.modal-content-location {
+    background-color: #fefefe;
+    border: 1px solid #888;
+    width: 100%; /* Could be more or less, depending on screen size */
+    height: 100%;
+}
+.item-cover {
+    left: 0;
+    top: 0;
+    position: absolute;
+    width: 0%;
+    height: 0%;
+    background: transparent;
+    cursor: pointer;
 }

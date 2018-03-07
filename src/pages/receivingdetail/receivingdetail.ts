@@ -13,18 +13,24 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   templateUrl: 'receivingdetail.html',
 })
 export class ReceivingdetailPage {
+  myFormModal: FormGroup;
   private receiving = [];
   private receiving_post = [];
   private resultbarcode = [];
   private itemdata = [];
+  private receivingchecked = [];
+  private location_master = [];
+  private division = [];
   data = {};
   option: BarcodeScannerOptions;
   searchrcv: any;
+  searchloc: any;
   items = [];
   halaman = 0;
   totaldata: any;
   totaldata_post: any;
   totalresultbarcode: any;
+  totaldatachecked: any;
   public toggled: boolean = false;
   public barcode: boolean = false;
   docno = '';
@@ -34,6 +40,12 @@ export class ReceivingdetailPage {
   transferdate = '';
   poid = '';
   qty = '1';
+  checked = '';
+  divisioncode = '';
+  setdiv = '';
+  selisihqty: any;
+  divdesc = '';
+  receivingno = '';
   detailrcv: string = "detailreceiving";
   private uuid = '';
   private nextno = '';
@@ -55,6 +67,9 @@ export class ReceivingdetailPage {
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner
   ) {
+    this.myFormModal = formBuilder.group({
+      location: ['', Validators.compose([Validators.required])],
+    })
     this.getRCV();
     this.toggled = false;
     this.barcode = false;
@@ -65,10 +80,24 @@ export class ReceivingdetailPage {
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+    this.getRCVChecked();
+  }
+  getRCVChecked() {
+    return new Promise(resolve => {
+      this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'CHECKED'" } }).subscribe(val => {
+        this.receivingchecked = val['data'];
+        this.totaldatachecked = val['count'];
+        if (this.receivingchecked.length) {
+          this.checked = this.receivingchecked[0].item_no
+          this.selisihqty = this.receivingchecked[0].qty - this.receivingchecked[0].qty_receiving
+        }
+        resolve();
+      })
+    });
   }
   getRCV() {
     return new Promise(resolve => {
-      this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+      this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
         this.receiving = val['data'];
         this.totaldata = val['count'];
         resolve();
@@ -85,7 +114,7 @@ export class ReceivingdetailPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" } })
+        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -132,7 +161,7 @@ export class ReceivingdetailPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
       this.receiving = val['data'];
       this.totaldata = val['count'];
       this.searchrcv = this.receiving;
@@ -208,7 +237,7 @@ export class ReceivingdetailPage {
                       { headers })
                       .subscribe();
                   });
-                  this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+                  this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
                     this.receiving = val['data'];
                     this.totaldata = val['count'];
                     this.searchrcv = this.receiving;
@@ -265,7 +294,6 @@ export class ReceivingdetailPage {
   }
   ionViewDidLoad() {
     this.getRCVDetail();
-    console.log('Total', this.receiving_post, this.totaldata_post);
     this.loading = false;
   }
   getNextNo() {
@@ -297,50 +325,224 @@ export class ReceivingdetailPage {
           for (let i = 0; i < data.length; i++) {
             this.itemdata.push(data[i]);
           }
-          let alert = this.alertCtrl.create({
-            title: barcodeData.text,
-            inputs: [
-              {
-                name: 'qty',
-                placeholder: 'Qty',
-                value: '1'
-              }
-            ],
-            buttons: [
-              {
-                text: 'Cancel',
-                role: 'cancel',
-                handler: data => {
-                  console.log('Cancel clicked');
+          if (this.itemdata[0].qty_receiving < this.itemdata[0].qty) {
+            let alert = this.alertCtrl.create({
+              title: barcodeData.text,
+              inputs: [
+                {
+                  name: 'qty',
+                  placeholder: 'Qty',
+                  value: '1'
                 }
-              },
-              {
-                text: 'OK',
-                handler: data => {
-                  const headers = new HttpHeaders()
-                    .set("Content-Type", "application/json");
-                  this.api.put("table/receiving",
-                    {
-                      "receiving_no": this.itemdata[0].receiving_no,
-                      "qty_receiving": parseInt(this.itemdata[0].qty_receiving) + parseInt(data.qty)
-                    },
-                    { headers })
-                    .subscribe(val => {
-                      this.itemdata = [];
-                      this.getRCV();
+              ],
+              buttons: [
+                {
+                  text: 'Cancel',
+                  role: 'cancel',
+                  handler: data => {
+                    console.log('Cancel clicked');
+                  }
+                },
+                {
+                  text: 'OK',
+                  handler: data => {
+                    if ((parseInt(this.itemdata[0].qty_receiving) + parseInt(data.qty)) > this.itemdata[0].qty) {
+                      let alert = this.alertCtrl.create({
+                        title: 'Error',
+                        message: 'Total QTY Receiving greater than QTY',
+                        buttons: ['OK']
+                      });
                       alert.present();
-                      this.doScanBarcode();
-                    });
+                    }
+                    else {
+                      const headers = new HttpHeaders()
+                        .set("Content-Type", "application/json");
+                      this.api.put("table/receiving",
+                        {
+                          "receiving_no": this.itemdata[0].receiving_no,
+                          "qty_receiving": parseInt(this.itemdata[0].qty_receiving) + parseInt(data.qty)
+                        },
+                        { headers })
+                        .subscribe(val => {
+                          if ((parseInt(this.itemdata[0].qty_receiving) + parseInt(data.qty)) == this.itemdata[0].qty) {
+                            const headers = new HttpHeaders()
+                              .set("Content-Type", "application/json");
+                            this.api.put("table/receiving",
+                              {
+                                "receiving_no": this.itemdata[0].receiving_no,
+                                "status": 'CHECKED'
+                              },
+                              { headers })
+                              .subscribe(val => {
+                                this.getRCV();
+                              });
+                          }
+                          this.itemdata = [];
+                          this.getRCV();
+                          alert.present();
+                          this.doScanBarcode();
+                        });
+                    }
+                  }
                 }
-              }
-            ]
-          });
-          alert.present();
-          resolve();
+              ]
+            });
+            alert.present();
+            resolve();
+          }
+          else {
+            this.itemdata = [];
+            let alert = this.alertCtrl.create({
+              title: 'Error',
+              message: 'Data Not Found',
+              buttons: ['OK']
+            });
+            alert.present();
+          }
         })
       });
     }, (err) => {
       console.log(err);
     });
+  }
+  doOpenStaging(cek) {
+    if (cek.staging != '') {
+      this.myFormModal.get('location').setValue(cek.staging)
+      this.receivingno = cek.receiving_no
+      document.getElementById("myModal").style.display = "block";
+    }
+    else {
+      this.myFormModal.reset();
+      this.receivingno = cek.receiving_no
+      document.getElementById("myModal").style.display = "block";
+    }
+  }
+  doOffStaging() {
+    this.myFormModal.reset();
+    document.getElementById("myModal").style.display = "none";
+  }
+  doOpenLocation() {
+    this.location_master = [];
+    return new Promise(resolve => {
+      this.api.get('table/division', { params: { limit: 1000, sort: 'description ASC' } }).subscribe(val => {
+        this.division = val['data'];
+        this.divisioncode = this.division[14].description
+        return new Promise(resolve => {
+          this.api.get('table/location_master', { params: { limit: 1000, filter: 'division=' + "'" + this.division[14].code + "'" } }).subscribe(val => {
+            this.location_master = val['data'];
+            this.searchloc = this.location_master;
+            document.getElementById("myLocations").style.display = "block";
+            document.getElementById("myHeader").style.display = "none";
+            resolve();
+          })
+        });
+      });
+    });
+  }
+  doSetLoc(div) {
+    console.log('div', div.code)
+    this.setdiv = div.code;
+  }
+  doLocation() {
+    console.log(this.setdiv);
+    this.api.get('table/location_master', { params: { limit: 1000, filter: 'division=' + "'" + this.setdiv + "'" } }).subscribe(val => {
+      this.location_master = val['data'];
+      this.searchloc = this.location_master;
+    });
+  }
+  doOffLocations() {
+    document.getElementById("myLocations").style.display = "none";
+    document.getElementById("myHeader").style.display = "block";
+    this.divdesc = '';
+  }
+  doSelectLoc(locmst) {
+    this.myFormModal.get('location').setValue(locmst.location_alocation);
+    this.doOffLocations();
+  }
+  getSearchLoc(ev) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.location_master = this.searchloc.filter(detailloc => {
+        return detailloc.location_alocation.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.location_master = this.searchloc;
+    }
+  }
+  doSaveStaging() {
+    console.log(this.receivingno, this.myFormModal.value.location)
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+
+    this.api.put("table/receiving",
+      {
+        "receiving_no": this.receivingno,
+        "staging": this.myFormModal.value.location
+      },
+      { headers })
+      .subscribe(
+        (val) => {
+          console.log("Posting call successful value returned in body",
+            val);
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          this.getRCVChecked();
+          this.doOffStaging();
+        })
+  }
+  doSubmitRCV(cek) {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Posting',
+      message: 'Do you want to Submit  ' + cek.item_no + ' ?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Posting',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/receiving",
+              {
+                "receiving_no": cek.receiving_no,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe(
+                (val) => {
+                  console.log("Posting call successful value returned in body",
+                    val);
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Posting Sukses',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.getRCVChecked();
+                },
+                response => {
+                  console.log("Posting call in error", response);
+                },
+                () => {
+                  console.log("The Posting observable is now completed.");
+                });
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }

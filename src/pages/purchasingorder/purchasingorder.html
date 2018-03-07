@@ -44,31 +44,21 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
       </div>
-      <div *ngIf="width < 600" class="android-content">
-        <ion-item-sliding class="content-data-item" *ngFor="let po of purchasing_order">
-          <ion-item>
-            <ion-avatar item-start>
-              <img src="assets/imgs/noimage.jpg" alt="">
-            </ion-avatar>
-            <div no-padding (click)="viewDetail(po)">
-              <h2>No Order : {{po.order_no}}</h2>
-              <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
-            </div>
-          </ion-item>
-          <ion-item-options style="background:#dedede;" side="right">
-            <button item-end ion-button clear color="greenlake" (click)="doUpdatePO(po)">
-              <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>Update
-            </button>
-            <button item-end ion-button clear color="greenlake" (click)="doDeletePO(po)">
-              <ion-icon name="md-trash" style="font-size:30px;"></ion-icon>Delete
-            </button>
-            <button item-end ion-button clear color="greenlake" (click)="doPostingPO(po)">
-              <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>Posting
-            </button>
-          </ion-item-options>
-        </ion-item-sliding>
+      <div *ngIf="width < 900" class="android-content">
+        <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+          <ion-avatar item-start>
+            <img src="assets/imgs/noimage.jpg" alt="">
+          </ion-avatar>
+          <div no-padding (click)="viewDetail(po)">
+            <h2>No Order : {{po.order_no}}</h2>
+            <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+          </div>
+          <button item-end ion-button clear color="greenlake" (click)="doOpenOptions(po)">
+            <ion-icon name="md-more" style="font-size:30px;"></ion-icon>
+          </button>
+        </ion-item>
       </div>
-      <div *ngIf="width >= 600" class="pc-content">
+      <div *ngIf="width >= 900" class="pc-content">
         <ion-grid padding>
           <ion-item no-lines>
             <ion-label style="text-align:right;">

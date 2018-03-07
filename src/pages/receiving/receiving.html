@@ -49,25 +49,21 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldatainfopo}} entries</ion-item>
       </div>
-      <div *ngIf="width < 600" class="android-content">
+      <div *ngIf="width < 900" class="android-content">
         <ion-item class="content-data-item" *ngFor="let info of infopo">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailInfoPO(info)">
             <h2>No Order : {{info.order_no}}</h2>
-            <br/>
             <ion-note>{{info.posting_date}} | Items : {{info.total_item}}</ion-note>
           </div>
-          <button item-end ion-button clear color="greenlake" (click)="doListBarcode(info)">
-            <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
-          </button>
-          <button item-end ion-button clear color="delima" (click)="doPostingInfoPO(info)">
+          <button item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
             <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
           </button>
         </ion-item>
       </div>
-      <div *ngIf="width >= 600" class="pc-content">
+      <div *ngIf="width >= 900" class="pc-content">
         <ion-grid padding>
           <ion-item no-lines>
             <ion-label style="text-align:right;">
@@ -122,7 +118,7 @@
     </ion-list>
 
     <ion-list class="content-list-menu" *ngSwitchCase="'preparation'">
-      <ion-refresher (ionRefresh)="doRefreshInfoPO($event)">
+      <ion-refresher (ionRefresh)="doRefreshPrepare($event)">
         <ion-refresher-content>
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
@@ -130,19 +126,18 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldatapreparation}} entries</ion-item>
       </div>
-      <div *ngIf="width < 600" class="android-content">
+      <div *ngIf="width < 900" class="android-content">
         <ion-item class="content-data-item" *ngFor="let prepare of preparation">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailPrepare(prepare)">
             <h2>No Order : {{prepare.order_no}}</h2>
-            <br/>
             <ion-note>{{prepare.posting_date}} | Items : {{prepare.total_item}}</ion-note>
           </div>
         </ion-item>
       </div>
-      <div *ngIf="width >= 600" class="pc-content">
+      <div *ngIf="width >= 900" class="pc-content">
         <ion-grid padding>
           <ion-item no-lines>
             <ion-label style="text-align:right;">

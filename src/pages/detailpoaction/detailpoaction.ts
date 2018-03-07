@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -17,7 +17,10 @@ export class DetailpoactionPage {
   private purchasing_order_detail = [];
   private users = [];
   private locations = [];
+  private location_master = [];
+  private division = [];
   searchpodetail: any;
+  searchloc: any;
   poid = '';
   items = [];
   halaman = 0;
@@ -36,8 +39,13 @@ export class DetailpoactionPage {
   item = '';
   position = '';
   qty = '';
+  divisioncode = '';
+  setdiv = '';
+  divdesc = '';
   detailpo: string = "detailpoitem";
   barcode: {};
+  private width: number;
+  private height: number;
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -47,11 +55,17 @@ export class DetailpoactionPage {
     public navParams: NavParams,
     public menu: MenuController,
     public modalCtrl: ModalController,
-    private barcodeScanner: BarcodeScanner
+    private barcodeScanner: BarcodeScanner,
+    private platform: Platform,
+    public actionSheetCtrl: ActionSheetController
   ) {
+    platform.ready().then(() => {
+      this.width = platform.width();
+      this.height = platform.height();
+    });
     this.myFormModal = formBuilder.group({
-      pic: [''],
-      location: [''],
+      pic: ['', Validators.compose([Validators.required])],
+      location: ['', Validators.compose([Validators.required])],
     })
     this.getPOD();
     this.toggled = false;
@@ -183,14 +197,14 @@ export class DetailpoactionPage {
     return new Promise(resolve => {
       this.getLocations(detailpo).subscribe(val => {
         let data = val['data'];
-        console.log('data',data)
-        console.log('lokasi',detailpo.location_code)
-        console.log('division',detailpo.division)
+        console.log('data', data)
+        console.log('lokasi', detailpo.location_code)
+        console.log('division', detailpo.division)
         for (let i = 0; i < data.length; i++) {
           this.locations.push(data[i]);
           this.totaldatalocation = val['count'];
         }
-        console.log('Lokasi',this.locations[0].location_alocation);
+        console.log('Lokasi', this.locations[0].location_alocation);
         if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
           this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
           this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
@@ -289,7 +303,56 @@ export class DetailpoactionPage {
         });
   }
   doOpenLocation() {
+    this.location_master = [];
+    return new Promise(resolve => {
+      this.api.get('table/division', { params: { limit: 1000, sort: 'description ASC' } }).subscribe(val => {
+        this.division = val['data'];
+        this.divisioncode = this.division[0].description
+        return new Promise(resolve => {
+          this.api.get('table/location_master', { params: { limit: 1000, filter: 'division=' + "'" + this.division[0].code + "'" } }).subscribe(val => {
+            this.location_master = val['data'];
+            this.searchloc = this.location_master
+            document.getElementById("myLocations").style.display = "block";
+            document.getElementById("myHeader").style.display = "none";
+            resolve();
+          })
+        });
+      });
+    });
+  }
+  doSetLoc(div) {
+    console.log('div', div.code)
+    this.setdiv = div.code;
+  }
+  doLocation() {
+    console.log(this.setdiv);
+    this.api.get('table/location_master', { params: { limit: 1000, filter: 'division=' + "'" + this.setdiv + "'" } }).subscribe(val => {
+      this.location_master = val['data'];
+      this.searchloc = this.location_master
+    });
+  }
+  doOffLocations() {
+    document.getElementById("myLocations").style.display = "none";
+    document.getElementById("myHeader").style.display = "block";
+    this.divdesc = '';
+  }
+  doSelectLoc(locmst) {
+    this.myFormModal.get('location').setValue(locmst.location_alocation);
+    this.doOffLocations();
+  }
+  getSearchLoc(ev) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
 
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.location_master = this.searchloc.filter(detailloc => {
+        return detailloc.location_alocation.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.location_master = this.searchloc;
+    }
   }
   doPostingRCV(detailpo) {
     return new Promise(resolve => {
@@ -375,6 +438,164 @@ export class DetailpoactionPage {
         resolve();
       });
     });
+  }
+
+  doOpenOptions(detailpo) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Options',
+      buttons: [
+        {
+          icon: 'md-checkmark-circle-outline',
+          text: 'Posting',
+          handler: () => {
+            return new Promise(resolve => {
+              this.api.get("table/purchasing_order", { params: { filter: 'po_id=' + "'" + this.poid + "'" } }).subscribe(val => {
+                let data = val['data'];
+                for (let i = 0; i < data.length; i++) {
+                  this.purchasing_order.push(data[i]);
+                }
+                let alert = this.alertCtrl.create({
+                  title: 'Confirm Posting',
+                  message: 'Do you want to posting Item No ' + detailpo.item_no + ' ?',
+                  buttons: [
+                    {
+                      text: 'Cancel',
+                      role: 'cancel',
+                      handler: () => {
+                        console.log('Cancel clicked');
+                      }
+                    },
+                    {
+                      text: 'Posting',
+                      handler: () => {
+                        const headers = new HttpHeaders()
+                          .set("Content-Type", "application/json");
+                        if ((this.purchasing_order[0].total_item - this.purchasing_order[0].total_item_post) == 1) {
+                          this.api.put("table/purchasing_order",
+                            {
+                              "po_id": this.poid,
+                              "status": 'INPG'
+                            },
+                            { headers })
+                            .subscribe();
+                        }
+                        this.api.put("table/purchasing_order",
+                          {
+                            "po_id": this.poid,
+                            "total_item_post": ((this.purchasing_order[0]).total_item_post) + 1
+                          },
+                          { headers })
+                          .subscribe();
+                        this.api.put("table/purchasing_order_detail",
+                          {
+                            "po_detail_no": detailpo.receiving_no,
+                            "status": 'CLSD'
+                          },
+                          { headers })
+                          .subscribe();
+                        this.api.put("table/receiving",
+                          {
+                            "receiving_no": detailpo.receiving_no,
+                            "status": 'INPG'
+                          },
+                          { headers })
+                          .subscribe(
+                            (val) => {
+                              console.log("Posting call successful value returned in body",
+                                val);
+                              let alert = this.alertCtrl.create({
+                                title: 'Sukses',
+                                subTitle: 'Posting Sukses',
+                                buttons: ['OK']
+                              });
+                              alert.present();
+                              this.purchasing_order = [];
+                              this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
+                                this.purchasing_order_detail = val['data'];
+                                this.totaldata = val['count'];
+                                this.searchpodetail = this.purchasing_order_detail;
+                              });
+
+                            },
+                            response => {
+                              console.log("Posting call in error", response);
+                            },
+                            () => {
+                              console.log("The Posting observable is now completed.");
+                            });
+                      }
+                    }
+                  ]
+                });
+                alert.present();
+                resolve();
+              });
+            });
+          }
+        },
+        {
+          icon: 'md-open',
+          text: 'Update',
+          handler: () => {
+            this.batch = detailpo.batch_no;
+            this.item = detailpo.item_no;
+            this.position = detailpo.position;
+            this.qty = detailpo.qty;
+            return new Promise(resolve => {
+              this.getLocations(detailpo).subscribe(val => {
+                let data = val['data'];
+                console.log('data', data)
+                console.log('lokasi', detailpo.location_code)
+                console.log('division', detailpo.division)
+                for (let i = 0; i < data.length; i++) {
+                  this.locations.push(data[i]);
+                  this.totaldatalocation = val['count'];
+                }
+                console.log('Lokasi', this.locations[0].location_alocation);
+                if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
+                  this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
+                  this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
+                  document.getElementById("myModal").style.display = "block";
+                  this.receivingno = detailpo.receiving_no;
+                }
+                else {
+                  this.getUsers();
+                  this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
+                  this.myFormModal.get('location').setValue(detailpo.position);
+                  document.getElementById("myModal").style.display = "block";
+                  this.receivingno = detailpo.receiving_no;
+                }
+                resolve();
+              });
+            });
+          }
+        },
+        {
+          icon: 'md-barcode',
+          text: 'Barcode',
+          handler: () => {
+            let locationModal = this.modalCtrl.create('BarcodelistPage', {
+              batchno: detailpo.batch_no,
+              orderno: detailpo.order_no,
+              itemno: detailpo.item_no,
+              qty: detailpo.qty
+            },
+              { cssClass: "modal-fullscreen" });
+            locationModal.present();
+          }
+        },
+        {
+          icon: 'md-close',
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
   }
 
 }

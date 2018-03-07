@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
@@ -39,7 +39,8 @@ export class PurchasingorderPage {
     public fileChooser: FileChooser,
     public fileOpener: FileOpener,
     public filePath: FilePath,
-    private platform: Platform
+    private platform: Platform,
+    public actionSheetCtrl: ActionSheetController
   ) {
     this.getPO();
     this.toggled = false;
@@ -80,7 +81,7 @@ export class PurchasingorderPage {
     })
 
   }
-  
+
   getSearchPO(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
@@ -95,7 +96,7 @@ export class PurchasingorderPage {
       this.purchasing_order = this.searchpo;
     }
   }
- 
+
   menuShow() {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
@@ -111,7 +112,7 @@ export class PurchasingorderPage {
       poid: po.po_id
     });
   }
-  
+
   doAddPO() {
     let locationModal = this.modalCtrl.create('PurchasingorderaddPage', this.modalCtrl, { cssClass: "modal-fullscreen" });
     locationModal.present();
@@ -123,7 +124,7 @@ export class PurchasingorderPage {
 
     })
   }
-  
+
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
@@ -192,7 +193,7 @@ export class PurchasingorderPage {
     });
   }
 
-  
+
   chooseFile() {
     this.fileChooser.open().then(file => {
       this.filePath.resolveNativePath(file).then(resolvedFilePath => {
@@ -210,7 +211,7 @@ export class PurchasingorderPage {
   doPostingPO(po) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Posting',
-      message: 'Are you sure you want to posting  ' + po.order_no + ' ?',
+      message: 'Do you want to posting  ' + po.order_no + ' ?',
       buttons: [
         {
           text: 'Cancel',
@@ -261,7 +262,7 @@ export class PurchasingorderPage {
     });
     alert.present();
   }
-  
+
   doFilter(filter) {
     this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'", sort: filter } }).subscribe(val => {
       this.purchasing_order = val['data'];
@@ -269,6 +270,144 @@ export class PurchasingorderPage {
       console.log(this.purchasing_order);
       console.log(this.totaldata);
     });
+  }
+  doOpenOptions(po) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Options',
+      buttons: [
+        {
+          icon: 'md-checkmark-circle-outline',
+          text: 'Posting',
+          handler: () => {
+            let alert = this.alertCtrl.create({
+              title: 'Confirm Posting',
+              message: 'Do you want to posting  ' + po.order_no + ' ?',
+              buttons: [
+                {
+                  text: 'Cancel',
+                  role: 'cancel',
+                  handler: () => {
+                    console.log('Cancel clicked');
+                  }
+                },
+                {
+                  text: 'Posting',
+                  handler: () => {
+                    const headers = new HttpHeaders()
+                      .set("Content-Type", "application/json");
+
+                    this.api.put("table/purchasing_order",
+                      {
+                        "po_id": po.po_id,
+                        "status": 'INP1',
+                        "user_id": ''
+                      },
+                      { headers })
+                      .subscribe(
+                        (val) => {
+                          console.log("Posting call successful value returned in body",
+                            val);
+                          let alert = this.alertCtrl.create({
+                            title: 'Sukses',
+                            subTitle: 'Posting Sukses',
+                            buttons: ['OK']
+                          });
+                          alert.present();
+                          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
+                            this.purchasing_order = val['data'];
+                            this.totaldata = val['count'];
+                            this.searchpo = this.purchasing_order;
+                          });
+
+                        },
+                        response => {
+                          console.log("Posting call in error", response);
+                        },
+                        () => {
+                          console.log("The Posting observable is now completed.");
+                        });
+                  }
+                }
+              ]
+            });
+            alert.present();
+          }
+        },
+        {
+          icon: 'md-open',
+          text: 'Update',
+          handler: () => {
+            let locationModal = this.modalCtrl.create('PurchasingorderupdatePage',
+              {
+                poid: po.po_id,
+                docno: po.doc_no,
+                orderno: po.order_no,
+                vendorno: po.vendor_no,
+                transferdate: po.transfer_date,
+                locationcode: po.location_code,
+                description: po.posting_desc
+              },
+              { cssClass: "modal-fullscreen" });
+            locationModal.present();
+          }
+        },
+        {
+          icon: 'md-trash',
+          text: 'Delete',
+          handler: () => {
+            let alert = this.alertCtrl.create({
+              title: 'Confirm Delete',
+              message: 'Are you sure you want to delete  ' + po.order_no + ' ?',
+              buttons: [
+                {
+                  text: 'Cancel',
+                  role: 'cancel',
+                  handler: () => {
+                    console.log('Cancel clicked');
+                  }
+                },
+                {
+                  text: 'Delete',
+                  handler: () => {
+                    const headers = new HttpHeaders()
+                      .set("Content-Type", "application/json");
+        
+                    this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
+                      .subscribe(
+                        (val) => {
+                          console.log("DELETE call successful value returned in body",
+                            val);
+                          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
+                            this.purchasing_order = val['data'];
+                            this.totaldata = val['count'];
+                            this.searchpo = this.purchasing_order;
+                          });
+                        },
+                        response => {
+                          console.log("DELETE call in error", response);
+                        },
+                        () => {
+                          console.log("The DELETE observable is now completed.");
+                        });
+                  }
+                }
+              ]
+            });
+            alert.present();
+          }
+        },
+        {
+          icon: 'md-close',
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
   }
 
 }
