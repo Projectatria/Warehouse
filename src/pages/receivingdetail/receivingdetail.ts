@@ -49,6 +49,7 @@ export class ReceivingdetailPage {
   detailrcv: string = "detailreceiving";
   private uuid = '';
   private nextno = '';
+  private nextnoqc = '';
   public scannedText: string;
   public buttonText: string;
   public loading: boolean;
@@ -539,10 +540,52 @@ export class ReceivingdetailPage {
                 () => {
                   console.log("The Posting observable is now completed.");
                 });
+            console.log(this.totaldatachecked);
+            this.getNextNoQC().subscribe(val => {
+              this.nextnoqc = val['nextno'];
+            this.api.post("table/qc_in",
+              {
+                "qc_no": this.nextnoqc,
+                "receiving_no": cek.receiving_no,
+                "doc_no": cek.doc_no,
+                "order_no": cek.order_no,
+                "batch_no": cek.batch_no,
+                "item_no": cek.item_no,
+                "date_start": '',
+                "date_finish": '',
+                "time-start": '',
+                "time-finish": '',
+                "pic": '',
+                "qty": cek.qty,
+                "unit": cek.unit,
+                "qc_status": 'Waiting Checking',
+                "qc_description": '',
+                "status": '',
+                "chronology_no": '',
+                "uuid": UUID.UUID()
+              },
+              { headers })
+              .subscribe();
+            });
+            if (this.totaldatachecked == 1) {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+
+              this.api.put("table/purchasing_order",
+                {
+                  "po_id": this.poid,
+                  "status": 'CLS1'
+                },
+                { headers })
+                .subscribe();
+            }
           }
         }
       ]
     });
     alert.present();
+  }
+  getNextNoQC() {
+    return this.api.get('nextno/qc_in/qc_in')
   }
 }

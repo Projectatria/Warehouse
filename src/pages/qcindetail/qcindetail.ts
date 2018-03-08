@@ -7,16 +7,17 @@ import { HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-qcin',
-  templateUrl: 'qcin.html',
+  selector: 'page-qcindetail',
+  templateUrl: 'qcindetail.html',
 })
-export class QcinPage {
+export class QcindetailPage {
   private quality_control = [];
   searchqc: any;
   halaman = 0;
   totaldata: any;
   public toggled: boolean = false;
   qc: string = "qcin";
+  orderno = '';
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -30,6 +31,7 @@ export class QcinPage {
     this.getQC();
     this.toggled = false;
     this.qc = "qcin"
+    this.orderno = navParams.get('orderno')
   }
   getQC() {
     return new Promise(resolve => {
@@ -41,7 +43,7 @@ export class QcinPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetinfopo, filter: "status='CLS1'" } })
+        this.api.get('table/qc_in', { params: { limit: 30, offset: offsetinfopo, filter: 'order_no=' + "'" + this.orderno + "'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -66,7 +68,7 @@ export class QcinPage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.quality_control = this.searchqc.filter(qc => {
-        return qc.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+        return qc.item_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
       })
     } else {
       this.quality_control = this.searchqc;
@@ -88,7 +90,7 @@ export class QcinPage {
   }
 
   doRefresh(refresher) {
-    this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='CLS1'" } })
+    this.api.get('table/qc_in', { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
         this.totaldata = val['count'];
@@ -97,17 +99,6 @@ export class QcinPage {
       });
   }
   ionViewDidLoad() {
-
-  }
-  viewDetail(qc) {
-    this.navCtrl.push('QcindetailPage', {
-      orderno: qc.order_no,
-      docno: qc.doc_no,
-      batchno: qc.batch_no,
-      locationcode: qc.location_code,
-      transferdate:qc.transfer_date,
-      totalitem: qc.total_item,
-      poid: qc.po_id
-    });
+    console.log(this.orderno)
   }
 }

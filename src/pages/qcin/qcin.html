@@ -18,17 +18,12 @@
         <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
-        <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
+        <ion-searchbar (ionInput)="getSearchQCDetail($event)" placeholder="Search"></ion-searchbar>
       </div>
     </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>
-      pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
-    </ion-refresher-content>
-  </ion-refresher>
   <ion-segment [(ngModel)]="qc">
     <ion-segment-button value="qcin">
       Quality Control
@@ -39,28 +34,40 @@
   </ion-segment>
 
   <div [ngSwitch]="qc">
-    <div>
-      <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
-    </div>
     <ion-list class="content-list-menu" *ngSwitchCase="'qcin'">
-      <ion-item class="content-data-item" *ngFor="let qc of quality_control">
-        <!--<ion-avatar item-start>
-          <img src="http://101.255.60.202/webapi/img/" alt="">
-        </ion-avatar>-->
-        <div no-padding>
-          <h2>Receiving No : {{qc.receiving_no}}</h2>
-          <br/>
-          <h3>Order No : {{qc.order_no}}</h3>
-          <h3>Item No : {{qc.item_no}}</h3>
-          <ion-note>{{qc.batch_no}} | Qty : {{qc.qty}}</ion-note>
+      <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <ion-card *ngFor="let qc of quality_control">
+        <ion-item-sliding #item>
+          <ion-item (click)="viewDetail(qc)">
+            <h3 style="font-weight:bold;padding-bottom:5px;">ORDER NO - {{qc.order_no}}</h3>
+            <p>Vendor No: {{qc.vendor_no}}</p>
+            <p>Vendor Status: {{qc.vendor_status}}</p>
+            <p>Description: {{qc.posting_desc}}</p>
+            <ion-note item-end>{{qc.posting_date}}</ion-note>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button color="danger" (click)="doPosting(qc)" style="font-weight:bold;"><ion-icon name="md-checkmark-circle-outline" style="font-weight:bold;font-size:30px"></ion-icon>POSTING</button>
+          </ion-item-options>
+        </ion-item-sliding>
+        <ion-row class="cardfooter">
+          <ion-col style="border-top:1px solid;border-color:#dedede;background:#ffffff">
+            <p style="padding-left:10px;color:blue;font-weight:bold;">{{qc.qc_status}}</p>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+      <!-- <ion-item class="content-data-item" *ngFor="let qc of quality_control">
+        <ion-avatar item-start>
+          <img src="assets/imgs/noimage.jpg" alt="">
+        </ion-avatar>
+        <div no-padding (click)="viewDetail(qc)">
+          <h2>No Order : {{qc.order_no}}</h2>
+          <ion-note>{{qc.posting_date}} | Items : {{qc.total_item}}</ion-note>
         </div>
-        <button item-end ion-button clear color="secondary" (click)="doCek(qc)">
-          <ion-icon name="md-pricetag" style="font-size:30px;"></ion-icon>
-        </button>
-        <button item-end ion-button clear color="delima" (click)="doPosting(qc)">
-          <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
-        </button>
-      </ion-item>
+      </ion-item> -->
     </ion-list>
     <ion-list *ngSwitchCase="'history'">
       <ion-item>
@@ -74,4 +81,3 @@
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>
-</div>
