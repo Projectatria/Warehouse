@@ -560,8 +560,7 @@ export class ReceivingdetailPage {
                   "qty_checked": 0,
                   "unit": cek.unit,
                   "qc_status": 'Waiting Checking',
-                  "qc_description": '',
-                  "status": '',
+                  "status": 'OPEN',
                   "chronology_no": '',
                   "uuid": UUID.UUID()
                 },

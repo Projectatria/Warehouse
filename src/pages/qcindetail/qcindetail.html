@@ -41,21 +41,13 @@
         </ion-refresher-content>
       </ion-refresher>
       <ion-card *ngFor="let qc of quality_control">
-        <ion-item-sliding #item>
-          <ion-item (click)="doDetailQC(qc)">
-            <h3 style="font-weight:bold;padding-bottom:5px;">ITEM NO - {{qc.item_no}}</h3>
-            <p>Order No: {{qc.order_no}}</p>
-            <p>Receiving No: {{qc.receiving_no}}</p>
-            <p>Qty: {{qc.qty}} | Qty Checked: {{qc.qty_checked}}</p>
-            <ion-note item-end>{{qc.batch_no}}</ion-note>
-          </ion-item>
-          <ion-item-options side="right">
-            <button ion-button color="greenlake" (click)="doPassed(qc)" style="font-weight:bold;">
-              <ion-icon name="md-checkmark-circle-outline" style="font-weight:bold;font-size:30px"></ion-icon>PASSED</button>
-            <button ion-button color="danger" (click)="doReject(qc)" style="font-weight:bold;">
-              <ion-icon name="md-close" style="font-weight:bold;font-size:30px"></ion-icon>REJECT</button>
-          </ion-item-options>
-        </ion-item-sliding>
+        <ion-item (click)="doDetailQC(qc)">
+          <h3 style="font-weight:bold;padding-bottom:5px;">ITEM NO - {{qc.item_no}}</h3>
+          <p>Order No: {{qc.order_no}}</p>
+          <p>Receiving No: {{qc.receiving_no}}</p>
+          <p>Qty: {{qc.qty}} | Qty Checked: {{qc.qty_checked}}</p>
+          <ion-note item-end>{{qc.batch_no}}</ion-note>
+        </ion-item>
         <div *ngIf="detailqc && qc.item_no == qclist" style="border-top:1px solid;border-color:#dedede;background:#ffffff;">
           <div padding style="font-weight:bold;">
             Inspection Result
@@ -63,34 +55,20 @@
           <ion-grid>
             <ion-row>
               <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
+                <ion-row>
+                  <ion-col>Date Inspection</ion-col>
+                  <ion-col>Time Inspection</ion-col>
+                  <ion-col>PIC Inspection</ion-col>
+                  <ion-col>Status</ion-col>
+                </ion-row>
               </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
-              </ion-col>
-              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
-                1
+              <ion-col *ngFor="let result of qcresult" col-12 style="border-top:1px solid;border-color:#dedede;">
+                <ion-row (click)="doDetail();">
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_finish}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_finish}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.qc_pic}}</ion-col>
+                  <ion-col style="color:green">{{result.qc_status}}</ion-col>
+                </ion-row>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -131,8 +109,102 @@
         </ion-title>
       </ion-navbar>
     </ion-header>
-    <ion-content class="content-checking">
-
+    <ion-content class="content-checking">  
+      <ion-list radio-group [(ngModel)]="functionality">
+        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="dofunctionality();">
+          Appearance / Functionality
+        </ion-item>
+        <div *ngIf="functionality" style="margin-left:10px;">
+          <ion-item>
+            <ion-label>Conform</ion-label>
+            <ion-radio value="conform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Not Conform</ion-label>
+            <ion-radio value="notconform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Pending</ion-label>
+            <ion-radio value="pending"></ion-radio>
+          </ion-item>
+        </div>
+      </ion-list>
+      <ion-list radio-group [(ngModel)]="productstyle" >
+        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="doproductstyle();">
+          Product Style and Color
+        </ion-item>
+        <div *ngIf="productstyle" style="margin-left:10px;">
+          <ion-item>
+            <ion-label>Conform</ion-label>
+            <ion-radio value="conform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Not Conform</ion-label>
+            <ion-radio value="notconform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Pending</ion-label>
+            <ion-radio value="pending"></ion-radio>
+          </ion-item>
+        </div>
+      </ion-list>
+      <ion-list radio-group [(ngModel)]="datameasurement">
+        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="dodatameasurement();">
+          Data Measurement
+        </ion-item>
+        <div *ngIf="datameasurement" style="margin-left:10px;">
+          <ion-item>
+            <ion-label>Conform</ion-label>
+            <ion-radio value="conform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Not Conform</ion-label>
+            <ion-radio value="notconform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Pending</ion-label>
+            <ion-radio value="pending"></ion-radio>
+          </ion-item>
+        </div>
+      </ion-list>
+      <ion-list radio-group [(ngModel)]="packaging">
+        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="dopackaging();">
+          Packaging
+        </ion-item>
+        <div *ngIf="packaging" style="margin-left:10px;">
+          <ion-item>
+            <ion-label>Conform</ion-label>
+            <ion-radio value="conform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Not Conform</ion-label>
+            <ion-radio value="notconform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Pending</ion-label>
+            <ion-radio value="pending"></ion-radio>
+          </ion-item>
+        </div>
+      </ion-list>
+      <ion-list radio-group [(ngModel)]="shippingmark">
+        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="doshippingmark();">
+          Shipping mark
+        </ion-item>
+        <div *ngIf="shippingmark" style="margin-left:10px;">
+          <ion-item>
+            <ion-label>Conform</ion-label>
+            <ion-radio value="conform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Not Conform</ion-label>
+            <ion-radio value="notconform"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Pending</ion-label>
+            <ion-radio value="pending"></ion-radio>
+          </ion-item>
+        </div>
+      </ion-list>
     </ion-content>
   </div>
 </div>

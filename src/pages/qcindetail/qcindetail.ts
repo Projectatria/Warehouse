@@ -16,9 +16,11 @@ import { UUID } from 'angular2-uuid';
 })
 export class QcindetailPage {
   private quality_control = [];
+  private qcresult = [];
   searchqc: any;
   halaman = 0;
   totaldata: any;
+  totaldataqcresult: any;
   public toggled: boolean = false;
   qc: string = "qcin";
   button: string = "qcin";
@@ -35,6 +37,11 @@ export class QcindetailPage {
   imageFileName: string = '';
   public detailqc: boolean = false;
   private qclist = '';
+  public functionality: boolean = false;
+  public productstyle: boolean = false;
+  public datameasurement: boolean = false;
+  public packaging: boolean = false;
+  public shippingmark: boolean = false;
 
   constructor(
     public navCtrl: NavController,
@@ -54,15 +61,18 @@ export class QcindetailPage {
     this.getQC();
     this.toggled = false;
     this.detailqc = false;
+    this.functionality = false;
+    this.productstyle = false;
+    this.datameasurement = false;
+    this.packaging = false;
+    this.shippingmark = false;
     this.qc = "qcin"
     this.button = "qcin"
   }
   getQC() {
     return new Promise(resolve => {
       let offsetinfopo = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -159,6 +169,7 @@ export class QcindetailPage {
   doDetailQC(qc) {
     this.qclist = qc.item_no;
     this.detailqc = this.detailqc ? false : true;
+    this.getQCResult(qc);
   }
   doCamera() {
     let options: CameraOptions = {
@@ -242,5 +253,29 @@ export class QcindetailPage {
     });
 
     toast.present();
+  }
+  getQCResult(qc) {
+    return new Promise(resolve => {
+      this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + qc.qc_no + "'" } }).subscribe(val => {
+        this.qcresult = val['data'];
+        this.totaldataqcresult = val['count'];
+        resolve();
+      })
+    });
+  }
+  dofunctionality() {
+    this.functionality = this.functionality ? false : true;
+  }
+  doproductstyle() {
+    this.productstyle = this.productstyle ? false : true;
+  }
+  dodatameasurement() {
+    this.datameasurement = this.datameasurement ? false : true;
+  }
+  dopackaging() {
+    this.packaging = this.packaging ? false : true;
+  }
+  doshippingmark() {
+    this.shippingmark = this.shippingmark ? false : true;
   }
 }
