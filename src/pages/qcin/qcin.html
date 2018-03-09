@@ -15,7 +15,7 @@
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
         <ion-searchbar (ionInput)="getSearchQCDetail($event)" placeholder="Search"></ion-searchbar>
@@ -50,7 +50,7 @@
             <ion-note item-end>{{qc.posting_date}}</ion-note>
           </ion-item>
           <ion-item-options side="right">
-            <button ion-button color="danger" (click)="doPosting(qc)" style="font-weight:bold;"><ion-icon name="md-checkmark-circle-outline" style="font-weight:bold;font-size:30px"></ion-icon>POSTING</button>
+            <button ion-button color="greenlake" (click)="doPosting(qc)" style="font-weight:bold;"><ion-icon name="md-checkmark-circle-outline" style="font-weight:bold;font-size:30px"></ion-icon>POSTING</button>
           </ion-item-options>
         </ion-item-sliding>
         <ion-row class="cardfooter">

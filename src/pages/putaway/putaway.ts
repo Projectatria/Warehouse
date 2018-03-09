@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
+import { VideoPlayer } from '@ionic-native/video-player';
 
 @IonicPage()
 @Component({
@@ -10,8 +11,8 @@ import { ApiProvider } from '../../providers/api/api';
 export class PutawayPage {
   private location = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider) {
-  
+  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, private videoPlayer: VideoPlayer) {
+
     this.getLocation();
   }
 
@@ -20,13 +21,19 @@ export class PutawayPage {
   }
 
   getLocation() {
-    this.api.get('table/location',{params:{limit:100}}).subscribe(val => {
+    this.api.get('table/location', { params: { limit: 100 } }).subscribe(val => {
       this.location = val['data'];
     });
   }
-  doLocation(location_name) { 
+  doLocation(location_name) {
     console.log(location_name);
     this.navCtrl.push('LocationPage');
   }
-
+  playvideo() {
+    this.videoPlayer.play('file:///android_asset/www/movie.mp4').then(() => {
+      console.log('video completed');
+    }).catch(err => {
+      console.log(err);
+    });
+  }
 }

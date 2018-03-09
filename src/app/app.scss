@@ -261,6 +261,12 @@ ion-header {
     width: 100%; /* Could be more or less, depending on screen size */
     height: 100%;
 }
+.modal-content-checking {
+    background-color: #fefefe;
+    border: 1px solid #888;
+    width: 100%; /* Could be more or less, depending on screen size */
+    height: 100%;
+}
 .item-cover {
     left: 0;
     top: 0;
@@ -270,6 +276,6 @@ ion-header {
     background: transparent;
     cursor: pointer;
 }
-* {
-    font-family: "Roboto", "Helvetica Neue", sans-serif;
-}
+ * {
+     font-family: "Roboto", "Helvetica Neue", sans-serif;
+    }

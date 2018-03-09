@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
-import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { ModalController, MenuController, IonicPage, LoadingController, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
 import { HttpHeaders } from "@angular/common/http";
+import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
+import { Camera, CameraOptions } from '@ionic-native/camera';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { UUID } from 'angular2-uuid';
 
 @IonicPage()
 @Component({
@@ -17,7 +21,21 @@ export class QcindetailPage {
   totaldata: any;
   public toggled: boolean = false;
   qc: string = "qcin";
+  button: string = "qcin";
   orderno = '';
+  data = {};
+  option: BarcodeScannerOptions;
+  public buttonText: string;
+  private uuid = '';
+  private uuidrcv = '';
+  public loading: boolean;
+  private photos = [];
+  private totalphoto: any;
+  imageURI: string = '';
+  imageFileName: string = '';
+  public detailqc: boolean = false;
+  private qclist = '';
+
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -26,12 +44,18 @@ export class QcindetailPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    private barcodeScanner: BarcodeScanner,
+    private transfer: FileTransfer,
+    private camera: Camera,
+    public loadingCtrl: LoadingController,
   ) {
+    this.orderno = navParams.get('orderno')
     this.getQC();
     this.toggled = false;
+    this.detailqc = false;
     this.qc = "qcin"
-    this.orderno = navParams.get('orderno')
+    this.button = "qcin"
   }
   getQC() {
     return new Promise(resolve => {
@@ -100,5 +124,123 @@ export class QcindetailPage {
   }
   ionViewDidLoad() {
     console.log(this.orderno)
+  }
+  doPassed() {
+    console.log('Passed')
+  }
+  doReject() {
+    console.log('Reject')
+  }
+  // doChecked() {
+  //   this.buttonText = "Loading..";
+  //   this.loading = true;
+  //   this.option = {
+  //     prompt: "Please scan your code"
+  //   }
+  //   this.barcodeScanner.scan().then((barcodeData) => {
+  //     if (barcodeData.cancelled) {
+  //       console.log("User cancelled the action!");
+  //       this.loading = false;
+  //       return false;
+  //     }
+  //     this.data = barcodeData;
+  //   });
+  // }
+  doChecked() {
+    document.getElementById("myQCChecking").style.display = "block";
+    document.getElementById("myHeader").style.display = "none";
+    this.button = "qccheck"
+  }
+  doOffChecking() {
+    document.getElementById("myQCChecking").style.display = "none";
+    document.getElementById("myHeader").style.display = "block";
+    this.button = "qcin"
+  }
+  doDetailQC(qc) {
+    this.qclist = qc.item_no;
+    this.detailqc = this.detailqc ? false : true;
+  }
+  doCamera() {
+    let options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.FILE_URI
+    }
+    options.sourceType = this.camera.PictureSourceType.CAMERA
+
+    this.camera.getPicture(options).then((imageData) => {
+      this.imageURI = imageData;
+      this.imageFileName = this.imageURI;
+      if (this.imageURI == '') return;
+      let loader = this.loadingCtrl.create({
+        content: "Uploading..."
+      });
+      loader.present();
+      const fileTransfer: FileTransferObject = this.transfer.create();
+
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let options: FileUploadOptions = {
+        fileKey: 'fileToUpload',
+        //fileName: this.imageURI.substr(this.imageURI.lastIndexOf('/') + 1),
+        fileName: uuid + '.jpeg',
+        chunkedMode: true,
+        mimeType: "image/jpeg",
+        headers: {}
+      }
+
+      let url = "http://10.10.10.7/webapi5/api/Upload";
+      fileTransfer.upload(this.imageURI, url, options)
+        .then((data) => {
+          loader.dismiss();
+          const headers = new HttpHeaders()
+            .set("Content-Type", "application/json");
+
+          this.api.post("table/link_image",
+            {
+              "no": this.uuid,
+              "parent": this.uuidrcv,
+              "table_name": "Receiving",
+              "img_src": 'http://101.255.60.202/webapi/img/' + this.uuid,
+              "file_name": this.uuid,
+              "description": "",
+              "latitude": "",
+              "longitude": "",
+              "location_code": '',
+              "upload_date": "",
+              "upload_by": ""
+            },
+            { headers })
+            .subscribe(
+              (val) => {
+                this.presentToast("Image uploaded successfully");
+                this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidrcv + "'" } }).subscribe(val => {
+                  this.photos = val['data'];
+                  this.totalphoto = val['count'];
+                });
+              });
+          this.imageURI = '';
+          this.imageFileName = '';
+        }, (err) => {
+          console.log(err);
+          loader.dismiss();
+          this.presentToast(err);
+        });
+    }, (err) => {
+      console.log(err);
+      this.presentToast(err);
+    });
+  }
+  presentToast(msg) {
+    let toast = this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'bottom'
+    });
+
+    toast.onDidDismiss(() => {
+      console.log('Dismissed toast');
+    });
+
+    toast.present();
   }
 }

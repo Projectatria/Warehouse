@@ -20,6 +20,7 @@ import { QRCodeModule } from 'angular2-qrcode';
 import { NgxBarcodeModule } from 'ngx-barcode';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 import { IonicStorageModule } from '@ionic/storage';
+import { VideoPlayer } from '@ionic-native/video-player';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { IonicStorageModule } from '@ionic/storage';
     FileOpener,
     FilePath,
     Camera,
-    FileTransfer
+    FileTransfer,
+    VideoPlayer
   ]
 })
 export class AppModule {
