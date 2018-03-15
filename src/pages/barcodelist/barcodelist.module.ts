@@ -12,6 +12,7 @@ import { NgxBarcodeModule } from 'ngx-barcode';
     IonicPageModule.forChild(BarcodelistPage),
     QRCodeModule,
     NgxBarcodeModule
+
   ],
 })
 export class BarcodelistPageModule {}

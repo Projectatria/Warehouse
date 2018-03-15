@@ -15,7 +15,7 @@
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
-        <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
         <ion-searchbar (ionInput)="getSearchQCDetail($event)" placeholder="Search"></ion-searchbar>
@@ -53,7 +53,7 @@
             Inspection Result
           </div>
           <ion-grid>
-            <ion-row>
+            <ion-row *ngIf="detailqc && qc.item_no == qclist">
               <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
                 <ion-row>
                   <ion-col>Date Inspection</ion-col>
@@ -63,7 +63,7 @@
                 </ion-row>
               </ion-col>
               <ion-col *ngFor="let result of qcresult" col-12 style="border-top:1px solid;border-color:#dedede;">
-                <ion-row (click)="doDetail();">
+                <ion-row (click)="doUpdateChecked(result);" *ngIf="detailqc && result.item_no == qclist">
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_finish}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_finish}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.qc_pic}}</ion-col>
@@ -75,7 +75,7 @@
         </div>
         <ion-row class="cardfooter">
           <ion-col style="border-top:1px solid;border-color:#dedede;background:#ffffff">
-            <p style="padding-left:10px;color:blue;font-weight:bold;">{{qc.qc_status}}</p>
+            <p style="padding-left:10px;color:rgb(0, 0, 0);font-weight:bold;">{{qc.qc_status}}</p>
           </ion-col>
         </ion-row>
       </ion-card>
@@ -109,103 +109,46 @@
         </ion-title>
       </ion-navbar>
     </ion-header>
-    <ion-content class="content-checking">  
-      <ion-list radio-group [(ngModel)]="functionality">
-        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="dofunctionality();">
-          Appearance / Functionality
-        </ion-item>
-        <div *ngIf="functionality" style="margin-left:10px;">
-          <ion-item>
-            <ion-label>Conform</ion-label>
-            <ion-radio value="conform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Not Conform</ion-label>
-            <ion-radio value="notconform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Pending</ion-label>
-            <ion-radio value="pending"></ion-radio>
-          </ion-item>
-        </div>
-      </ion-list>
-      <ion-list radio-group [(ngModel)]="productstyle" >
-        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="doproductstyle();">
-          Product Style and Color
-        </ion-item>
-        <div *ngIf="productstyle" style="margin-left:10px;">
-          <ion-item>
-            <ion-label>Conform</ion-label>
-            <ion-radio value="conform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Not Conform</ion-label>
-            <ion-radio value="notconform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Pending</ion-label>
-            <ion-radio value="pending"></ion-radio>
-          </ion-item>
-        </div>
-      </ion-list>
-      <ion-list radio-group [(ngModel)]="datameasurement">
-        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="dodatameasurement();">
-          Data Measurement
-        </ion-item>
-        <div *ngIf="datameasurement" style="margin-left:10px;">
-          <ion-item>
-            <ion-label>Conform</ion-label>
-            <ion-radio value="conform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Not Conform</ion-label>
-            <ion-radio value="notconform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Pending</ion-label>
-            <ion-radio value="pending"></ion-radio>
-          </ion-item>
-        </div>
-      </ion-list>
-      <ion-list radio-group [(ngModel)]="packaging">
-        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="dopackaging();">
-          Packaging
-        </ion-item>
-        <div *ngIf="packaging" style="margin-left:10px;">
-          <ion-item>
-            <ion-label>Conform</ion-label>
-            <ion-radio value="conform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Not Conform</ion-label>
-            <ion-radio value="notconform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Pending</ion-label>
-            <ion-radio value="pending"></ion-radio>
-          </ion-item>
-        </div>
-      </ion-list>
-      <ion-list radio-group [(ngModel)]="shippingmark">
-        <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="doshippingmark();">
-          Shipping mark
-        </ion-item>
-        <div *ngIf="shippingmark" style="margin-left:10px;">
-          <ion-item>
-            <ion-label>Conform</ion-label>
-            <ion-radio value="conform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Not Conform</ion-label>
-            <ion-radio value="notconform"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Pending</ion-label>
-            <ion-radio value="pending"></ion-radio>
-          </ion-item>
-        </div>
+    <ion-content class="content-checking">
+      <ion-list *ngFor="let qcparam of qcparameter" radio-group [(ngModel)]="detailcheckingqc">
+        <ion-card style="background:#ffffff;">
+          <ion-card-header style="color:#000000;text-align:left;" (click)="doOpenContent(qcparam,noqcresult,uuidresult)">
+            <ion-item style="height:0px;">
+              <ion-icon item-start name="{{qcparam.icon}}" style="font-size:50px;color:#217481;"></ion-icon>
+              {{qcparam.qc_param_desc}}
+              <ion-icon item-end name="md-checkmark" style="font-size:25px;color:#2fc900;"></ion-icon>
+            </ion-item>
+          </ion-card-header>
+          <ion-card-content *ngIf="functionality && qcparam.qc_param_desc == param" style="border-top:1px solid;border-color:#dedede;padding-top:10px;">
+            <ion-slides pager="true">
+              <ion-slide style="text-align:center;">
+                <img src="http://101.255.60.202/webapi/img/{{qcparam.uuid}}}" style="width:100%;" />
+              </ion-slide>
+            </ion-slides>
+            <ion-list style="padding-top:10px;">
+              <ion-item style="border-top:1px solid;border-color:#dedede;text-align:center;">
+                <button ion-button clear (click)="doCamera(qcparam)">
+                  <ion-icon name="md-camera" style="color:#217481;font-size:30px;"></ion-icon>
+                </button>
+              </ion-item>
+              <ion-item style="border-top:1px solid;border-color:#dedede;">
+                <ion-label floating>Detail Inspection</ion-label>
+                <ion-textarea [(ngModel)]="detailinspection"></ion-textarea>
+              </ion-item>
+              <ion-buttons style="text-align:center;">
+                <button ion-button color="greenlake">SAVE</button>
+              </ion-buttons>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </ion-list>
     </ion-content>
+    <ion-footer>
+      <ion-buttons>
+        <button ion-button color="greenlake" style="width:48%;">PASSED</button>
+        <button ion-button color="danger" style="width:48%;">REJECT</button>
+      </ion-buttons>
+    </ion-footer>
   </div>
 </div>
 
@@ -213,11 +156,6 @@
   <ion-fab *ngSwitchCase="'qcin'" class="fixed-div" bottom right>
     <button ion-fab color="greenlake" (click)="doChecked()">
       <ion-icon name="md-barcode"></ion-icon>
-    </button>
-  </ion-fab>
-  <ion-fab *ngSwitchCase="'qccheck'" class="fixed-div" bottom right>
-    <button ion-fab color="greenlake" (click)="doCamera()">
-      <ion-icon name="md-camera"></ion-icon>
     </button>
   </ion-fab>
 </div>

@@ -319,7 +319,7 @@ export class ReceivingdetailPage {
             filter:
               'order_no=' + "'" + this.orderno + "'" +
               " " + 'AND' + " " +
-              'item_no=' + "'" + barcodeData.text + "'"
+              'item_no=RIGHT(' + "'" + barcodeData.text + "',6)"
           }
         }).subscribe(val => {
           let data = val['data'];
@@ -405,6 +405,69 @@ export class ReceivingdetailPage {
     }, (err) => {
       console.log(err);
     });
+  }
+  doReceiving(detailrcv) {
+    let alert = this.alertCtrl.create({
+      title: detailrcv.item_no,
+      inputs: [
+        {
+          name: 'qty',
+          placeholder: 'Qty',
+          value: '1'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: data => {
+            if ((parseInt(detailrcv.qty_receiving) + parseInt(data.qty)) > detailrcv.qty) {
+              let alert = this.alertCtrl.create({
+                title: 'Error',
+                message: 'Total QTY Receiving greater than QTY',
+                buttons: ['OK']
+              });
+              alert.present();
+            }
+            else {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.put("table/receiving",
+                {
+                  "receiving_no": detailrcv.receiving_no,
+                  "qty_receiving": parseInt(detailrcv.qty_receiving) + parseInt(data.qty)
+                },
+                { headers })
+                .subscribe(val => {
+                  if ((parseInt(detailrcv.qty_receiving) + parseInt(data.qty)) == detailrcv.qty) {
+                    const headers = new HttpHeaders()
+                      .set("Content-Type", "application/json");
+                    this.api.put("table/receiving",
+                      {
+                        "receiving_no": detailrcv.receiving_no,
+                        "status": 'CHECKED'
+                      },
+                      { headers })
+                      .subscribe(val => {
+                        this.getRCV();
+                      });
+                  }
+                  this.itemdata = [];
+                  this.getRCV();
+                });
+              alert.present();
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
   }
   doOpenStaging(cek) {
     if (cek.staging != '') {
@@ -541,32 +604,32 @@ export class ReceivingdetailPage {
                   console.log("The Posting observable is now completed.");
                 });
             console.log(this.totaldatachecked);
-            this.getNextNoQC().subscribe(val => {
-              this.nextnoqc = val['nextno'];
-              console.log(this.nextnoqc, cek.receiving_no, UUID.UUID());
-              const headers = new HttpHeaders()
-                .set("Content-Type", "application/json");
+            // this.getNextNoQC().subscribe(val => {
+            //   this.nextnoqc = val['nextno'];
+            //   console.log(this.nextnoqc, cek.receiving_no, UUID.UUID());
+            //   const headers = new HttpHeaders()
+            //     .set("Content-Type", "application/json");
 
-              this.api.post("table/qc_in",
-                {
-                  "qc_no": this.nextnoqc,
-                  "receiving_no": cek.receiving_no,
-                  "doc_no": cek.doc_no,
-                  "order_no": cek.order_no,
-                  "batch_no": cek.batch_no,
-                  "item_no": cek.item_no,
-                  "pic": '',
-                  "qty": cek.qty,
-                  "qty_checked": 0,
-                  "unit": cek.unit,
-                  "qc_status": 'Waiting Checking',
-                  "status": 'OPEN',
-                  "chronology_no": '',
-                  "uuid": UUID.UUID()
-                },
-                { headers })
-                .subscribe();
-            });
+            //   this.api.post("table/qc_in",
+            //     {
+            //       "qc_no": this.nextnoqc,
+            //       "receiving_no": cek.receiving_no,
+            //       "doc_no": cek.doc_no,
+            //       "order_no": cek.order_no,
+            //       "batch_no": cek.batch_no,
+            //       "item_no": cek.item_no,
+            //       "pic": '',
+            //       "qty": cek.qty,
+            //       "qty_checked": 0,
+            //       "unit": cek.unit,
+            //       "qc_status": 'Waiting Checking',
+            //       "status": 'OPEN',
+            //       "chronology_no": '',
+            //       "uuid": UUID.UUID()
+            //     },
+            //     { headers })
+            //     .subscribe();
+            // });
             if (this.totaldatachecked == 1) {
               const headers = new HttpHeaders()
                 .set("Content-Type", "application/json");

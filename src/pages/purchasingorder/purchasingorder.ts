@@ -7,6 +7,7 @@ import { HttpHeaders } from "@angular/common/http";
 import { FileChooser } from "@ionic-native/file-chooser";
 import { FileOpener } from "@ionic-native/file-opener";
 import { FilePath } from "@ionic-native/file-path";
+import moment from 'moment';
 
 @IonicPage()
 @Component({
@@ -226,9 +227,11 @@ export class PurchasingorderPage {
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
 
+            let date = moment().format('YYYY-MM-DD');
             this.api.put("table/purchasing_order",
               {
                 "po_id": po.po_id,
+                "posting_date": date,
                 "status": 'INP1',
                 "user_id": ''
               },
@@ -371,7 +374,7 @@ export class PurchasingorderPage {
                   handler: () => {
                     const headers = new HttpHeaders()
                       .set("Content-Type", "application/json");
-        
+
                     this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
                       .subscribe(
                         (val) => {

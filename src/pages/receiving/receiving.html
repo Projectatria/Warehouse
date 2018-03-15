@@ -56,7 +56,7 @@
           </ion-avatar>
           <div no-padding (click)="viewDetailInfoPO(info)">
             <h2>No Order : {{info.order_no}}</h2>
-            <ion-note>{{info.posting_date}} | Items : {{info.total_item}}</ion-note>
+            <ion-note>{{info.transfer_date}} | Items : {{info.total_item}}</ion-note>
           </div>
           <button item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
             <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
@@ -94,7 +94,7 @@
               {{info.total_item}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
-              {{info.posting_date}}
+              {{info.transfer_date}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
               {{info.status}}
@@ -133,7 +133,7 @@
           </ion-avatar>
           <div no-padding (click)="viewDetailPrepare(prepare)">
             <h2>No Order : {{prepare.order_no}}</h2>
-            <ion-note>{{prepare.posting_date}} | Items : {{prepare.total_item}}</ion-note>
+            <ion-note>{{prepare.transfer_date}} | Items : {{prepare.total_item}}</ion-note>
           </div>
         </ion-item>
       </div>
@@ -168,7 +168,7 @@
               {{prepare.total_item}}
             </ion-col>
             <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
-              {{prepare.posting_date}}
+              {{prepare.transfer_date}}
             </ion-col>
             <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.status}}
@@ -198,7 +198,7 @@
         </ion-avatar>
         <div no-padding (click)="viewDetail(po)">
           <h2>No Order : {{po.order_no}}</h2>
-          <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+          <ion-note>{{po.transfer_date}} | items : {{po.total_item}}</ion-note>
         </div>
       </ion-item>
       <ion-infinite-scroll (ionInfinite)="doInfinite($event)">

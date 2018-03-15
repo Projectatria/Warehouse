@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ApiProvider } from '../../providers/api/api';
 
+
 @IonicPage()
 @Component({
   selector: 'page-barcodelist',

@@ -87,7 +87,7 @@
       <span class="closeModal" (click)="doOffToTL()">&times;</span>
       <form [formGroup]="myFormModal">
         <ion-list no-lines>
-          <ion-item *ngIf="status == 'INP1'" class="item-rcv" style="border:0px;">
+          <ion-item *ngIf="status == 'INP1'" class="item-rcv" style="border-bottom:1px solid;border-color:#dedede;">
             <ion-label floating>PIC</ion-label>
             <ion-select formControlName="pic">
               <ion-option *ngFor="let user of users" value="{{user.id_user}}">{{user.id_user}} {{user.nama}} {{user.id_role}}</ion-option>

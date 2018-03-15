@@ -8,6 +8,7 @@ import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-sca
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { UUID } from 'angular2-uuid';
+import moment from 'moment';
 
 @IonicPage()
 @Component({
@@ -17,6 +18,11 @@ import { UUID } from 'angular2-uuid';
 export class QcindetailPage {
   private quality_control = [];
   private qcresult = [];
+  private qcparameter = [];
+  private nextnoqcresult = [];
+  private nextnoqcresultparam = [];
+  private qcresultparameter = [];
+  private qcin = [];
   searchqc: any;
   halaman = 0;
   totaldata: any;
@@ -25,11 +31,12 @@ export class QcindetailPage {
   qc: string = "qcin";
   button: string = "qcin";
   orderno = '';
+  docno = '';
+  batchno = '';
   data = {};
   option: BarcodeScannerOptions;
   public buttonText: string;
   private uuid = '';
-  private uuidrcv = '';
   public loading: boolean;
   private photos = [];
   private totalphoto: any;
@@ -42,6 +49,12 @@ export class QcindetailPage {
   public datameasurement: boolean = false;
   public packaging: boolean = false;
   public shippingmark: boolean = false;
+  public param = '';
+  public noqcresult: any;
+  public uuidresult: any;
+  public noqcresultparam: any;
+  public detailinspection = '';
+  private nextnoqc = '';
 
   constructor(
     public navCtrl: NavController,
@@ -58,6 +71,8 @@ export class QcindetailPage {
     public loadingCtrl: LoadingController,
   ) {
     this.orderno = navParams.get('orderno')
+    this.docno = navParams.get('docno')
+    this.batchno = navParams.get('batchno')
     this.getQC();
     this.toggled = false;
     this.detailqc = false;
@@ -156,22 +171,239 @@ export class QcindetailPage {
   //     this.data = barcodeData;
   //   });
   // }
+  doUpdateChecked(result) {
+    this.api.get("table/qc_in_result_parameter", { params: { filter: "qc_result_no=" + "'" + result.qc_result_no + "'" } }).subscribe(val => {
+      this.qcparameter = val['data'];
+      this.api.get("table/qc_in_result", { params: { filter: "qc_result_no=" + "'" + result.qc_result_no + "'" } }).subscribe(val => {
+        this.qcresultparameter = val['data'];
+        this.noqcresultparam = result.qc_result_param_no
+        this.noqcresult = result.qc_result_no
+        this.uuidresult = result.uuid
+        console.log(this.noqcresult)
+        console.log(this.uuidresult)
+        document.getElementById("myQCChecking").style.display = "block";
+        document.getElementById("myHeader").style.display = "none";
+        this.button = "qccheck"
+      });
+    })
+  }
   doChecked() {
-    document.getElementById("myQCChecking").style.display = "block";
-    document.getElementById("myHeader").style.display = "none";
-    this.button = "qccheck"
+    let alert = this.alertCtrl.create({
+      title: 'Please Input Barcode Number',
+      inputs: [
+        {
+          name: 'item',
+          placeholder: 'Barcode',
+          value: ''
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: data => {
+            this.api.get("table/qc_in", {
+              params: {
+                filter:
+                  'doc_no=' + "'" + this.docno + "'" + " AND " +
+                  'order_no=' + "'" + this.orderno + "'" + " AND " +
+                  'batch_no=' + "'" + this.batchno + "'" + " AND " +
+                  'item_no=' + "'" + data.item + "'"
+              }
+            }).subscribe(val => {
+              this.qcin = val['data'];
+              if (this.qcin.length == 0) {
+
+                this.getNextNoQC().subscribe(val => {
+                  this.nextnoqc = val['nextno'];
+                  const headers = new HttpHeaders()
+                    .set("Content-Type", "application/json");
+
+                  this.api.post("table/qc_in",
+                    {
+                      "qc_no": this.nextnoqc,
+                      "doc_no": this.docno,
+                      "order_no": this.orderno,
+                      "batch_no": this.batchno,
+                      "item_no": data.item,
+                      "pic": '',
+                      "qty": 20,
+                      "qty_checked": 0,
+                      "unit": '',
+                      "qc_status": 'Waiting Checking',
+                      "status": 'OPEN',
+                      "chronology_no": '',
+                      "uuid": UUID.UUID()
+                    },
+                    { headers })
+                    .subscribe();
+                });
+              }
+              this.getNextNoQCResult().subscribe(val => {
+                let time = moment().format('HH:mm:ss');
+                let date = moment().format('YYYY-MM-DD');
+                let uuid = UUID.UUID();
+                this.nextnoqcresult = val['nextno'];
+                const headers = new HttpHeaders()
+                  .set("Content-Type", "application/json");
+                this.api.post("table/qc_in_result",
+                  {
+                    "qc_result_no": this.nextnoqcresult,
+                    "qc_no": this.nextnoqc,
+                    "batch_no": this.batchno,
+                    "item_no": data.item,
+                    "date_start": date,
+                    "date_finish": date,
+                    "time_start": time,
+                    "time_finish": time,
+                    "qc_pic": 'AJI',
+                    "qty_receiving": 25,
+                    "unit": null,
+                    "qc_status": "OPEN",
+                    "qc_description": "",
+                    "uuid": uuid
+                  },
+                  { headers })
+                  .subscribe(val => {
+                    this.getNextNoQCResultParam().subscribe(val => {
+                      this.nextnoqcresultparam = val['nextno'];
+                      console.log(this.nextnoqcresultparam, this.nextnoqcresult);
+                      const headers = new HttpHeaders()
+                        .set("Content-Type", "application/json");
+                      this.api.post("table/qc_in_result_parameter",
+                        {
+                          "qc_result_param_no": this.nextnoqcresultparam,
+                          "qc_result_no": this.nextnoqcresult,
+                          "qc_param_id": '01',
+                          "qc_param_desc": 'Appearance / Functionality',
+                          "icon": 'md-construct',
+                          "uuid": UUID.UUID()
+                        },
+                        { headers })
+                        .subscribe(val => {
+                          this.getNextNoQCResultParam().subscribe(val => {
+                            this.nextnoqcresultparam = val['nextno'];
+                            console.log(this.nextnoqcresultparam, this.nextnoqcresult);
+                            const headers = new HttpHeaders()
+                              .set("Content-Type", "application/json");
+                            this.api.post("table/qc_in_result_parameter",
+                              {
+                                "qc_result_param_no": this.nextnoqcresultparam,
+                                "qc_result_no": this.nextnoqcresult,
+                                "qc_param_id": '02',
+                                "qc_param_desc": 'Product Style and Color',
+                                "icon": 'md-color-fill',
+                                "uuid": UUID.UUID()
+                              },
+                              { headers })
+                              .subscribe(val => {
+                                this.getNextNoQCResultParam().subscribe(val => {
+                                  this.nextnoqcresultparam = val['nextno'];
+                                  console.log(this.nextnoqcresultparam, this.nextnoqcresult);
+                                  const headers = new HttpHeaders()
+                                    .set("Content-Type", "application/json");
+                                  this.api.post("table/qc_in_result_parameter",
+                                    {
+                                      "qc_result_param_no": this.nextnoqcresultparam,
+                                      "qc_result_no": this.nextnoqcresult,
+                                      "qc_param_id": '03',
+                                      "qc_param_desc": 'Data Measurement',
+                                      "icon": 'md-contract',
+                                      "uuid": UUID.UUID()
+                                    },
+                                    { headers })
+                                    .subscribe(val => {
+                                      this.getNextNoQCResultParam().subscribe(val => {
+                                        this.nextnoqcresultparam = val['nextno'];
+                                        console.log(this.nextnoqcresultparam, this.nextnoqcresult);
+                                        const headers = new HttpHeaders()
+                                          .set("Content-Type", "application/json");
+                                        this.api.post("table/qc_in_result_parameter",
+                                          {
+                                            "qc_result_param_no": this.nextnoqcresultparam,
+                                            "qc_result_no": this.nextnoqcresult,
+                                            "qc_param_id": '04',
+                                            "qc_param_desc": 'Packaging',
+                                            "icon": 'md-cube',
+                                            "uuid": UUID.UUID()
+                                          },
+                                          { headers })
+                                          .subscribe(val => {
+                                            this.getNextNoQCResultParam().subscribe(val => {
+                                              this.nextnoqcresultparam = val['nextno'];
+                                              console.log(this.nextnoqcresultparam, this.nextnoqcresult);
+                                              const headers = new HttpHeaders()
+                                                .set("Content-Type", "application/json");
+                                              this.api.post("table/qc_in_result_parameter",
+                                                {
+                                                  "qc_result_param_no": this.nextnoqcresultparam,
+                                                  "qc_result_no": this.nextnoqcresult,
+                                                  "qc_param_id": '05',
+                                                  "qc_param_desc": 'Shipping mark',
+                                                  "icon": 'md-boat',
+                                                  "uuid": UUID.UUID()
+                                                },
+                                                { headers })
+                                                .subscribe(val => {
+                                                  this.api.get("table/qc_in_result_parameter", { params: { filter: "qc_result_no=" + "'" + this.nextnoqcresult + "'" } }).subscribe(val => {
+                                                    this.qcparameter = val['data'];
+                                                    this.noqcresult = this.nextnoqcresult;
+                                                    this.uuidresult = uuid
+                                                    document.getElementById("myQCChecking").style.display = "block";
+                                                    document.getElementById("myHeader").style.display = "none";
+                                                    this.button = "qccheck"
+                                                  })
+                                                });
+                                            });
+                                          });
+                                      });
+                                    });
+                                });
+                              });
+                          });
+                        });
+
+                    });
+                  });
+              });
+
+            });
+
+          }
+        }
+      ]
+    });
+    alert.present();
   }
   doOffChecking() {
-    document.getElementById("myQCChecking").style.display = "none";
-    document.getElementById("myHeader").style.display = "block";
-    this.button = "qcin"
+    this.functionality = false;
+    this.api.get("table/qc_in_result"/*, { params: { filter: 'qc_no=' + "'" + this.quality_control[0].qc_no + "'" } }*/).subscribe(val => {
+      this.qcresult = val['data'];
+      this.totaldataqcresult = val['count'];
+      document.getElementById("myQCChecking").style.display = "none";
+      document.getElementById("myHeader").style.display = "block";
+      this.button = "qcin"
+    });
   }
   doDetailQC(qc) {
+    this.qcresult = [];
     this.qclist = qc.item_no;
     this.detailqc = this.detailqc ? false : true;
     this.getQCResult(qc);
   }
-  doCamera() {
+  getfoto() {
+    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidresult + "'" } }).subscribe(val => {
+      this.photos = val['data'];
+      this.totalphoto = val['count'];
+    });
+  }
+  doCamera(qcparam) {
     let options: CameraOptions = {
       quality: 100,
       destinationType: this.camera.DestinationType.FILE_URI
@@ -209,8 +441,8 @@ export class QcindetailPage {
           this.api.post("table/link_image",
             {
               "no": this.uuid,
-              "parent": this.uuidrcv,
-              "table_name": "Receiving",
+              "parent": qcparam.uuid,
+              "table_name": "Qc_in_result",
               "img_src": 'http://101.255.60.202/webapi/img/' + this.uuid,
               "file_name": this.uuid,
               "description": "",
@@ -224,7 +456,7 @@ export class QcindetailPage {
             .subscribe(
               (val) => {
                 this.presentToast("Image uploaded successfully");
-                this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidrcv + "'" } }).subscribe(val => {
+                this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + qcparam.uuid + "'" } }).subscribe(val => {
                   this.photos = val['data'];
                   this.totalphoto = val['count'];
                 });
@@ -263,19 +495,24 @@ export class QcindetailPage {
       })
     });
   }
-  dofunctionality() {
-    this.functionality = this.functionality ? false : true;
+  doOpenContent(qcparam, noqcresult, uuidresult) {
+    this.api.get("table/qc_in_result", { params: { filter: 'qc_result_no=' + "'" + noqcresult + "'" } }).subscribe(val => {
+      this.qcresult = val['data'];
+      this.totaldataqcresult = val['count'];
+      console.log(qcparam.qc_result_param_no);
+      console.log(this.noqcresult);
+      console.log(this.uuidresult)
+      this.param = qcparam.qc_param_desc
+      this.functionality = this.functionality ? false : true;
+    });
   }
-  doproductstyle() {
-    this.productstyle = this.productstyle ? false : true;
+  getNextNoQC() {
+    return this.api.get('nextno/qc_in/qc_no')
   }
-  dodatameasurement() {
-    this.datameasurement = this.datameasurement ? false : true;
+  getNextNoQCResult() {
+    return this.api.get('nextno/qc_in_result/qc_result_no')
   }
-  dopackaging() {
-    this.packaging = this.packaging ? false : true;
-  }
-  doshippingmark() {
-    this.shippingmark = this.shippingmark ? false : true;
+  getNextNoQCResultParam() {
+    return this.api.get('nextno/qc_in_result_parameter/qc_result_param_no')
   }
 }

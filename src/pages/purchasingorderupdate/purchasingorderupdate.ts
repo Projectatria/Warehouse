@@ -4,7 +4,6 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 
-
 @IonicPage()
 @Component({
   selector: 'page-purchasingorderupdate',
@@ -41,7 +40,7 @@ export class PurchasingorderupdatePage {
       { type: 'required', message: 'Location Code Must Be Fill' }
     ]
   }
-  ven:any = {};
+  ven: any = {};
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -49,7 +48,7 @@ export class PurchasingorderupdatePage {
     public fb: FormBuilder,
     public api: ApiProvider,
     public alertCtrl: AlertController
-  ) { 
+  ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
       orderno: ['', Validators.compose([Validators.required])],
@@ -81,33 +80,32 @@ export class PurchasingorderupdatePage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad PurchasingorderupdatePage');
     console.log(this.poid);
-    
+
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   onChange(ven) {
-    console.log('Testing',ven);
+    console.log('Testing', ven);
     this.ven = ven;
   }
   updatePO() {
-      const headers = new HttpHeaders()
-        .set("Content-Type", "application/json");
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
 
-      this.api.put("table/purchasing_order",
-        {
-          "po_id": this.poid,
-          "doc_no": this.myForm.value.docno,
-          "order_no": this.myForm.value.orderno,
-          "vendor_no": this.myForm.value.vendorno,
-          "vendor_status": this.ven.gen_bus_posting_group,
-          "transfer_date": this.myForm.value.transferdate,
-          "posting_date": this.myForm.value.transferdate,
-          "posting_desc": this.myForm.value.description,
-          "location_code": this.myForm.value.locationcode
-        },
-        { headers })
-        .subscribe(
+    this.api.put("table/purchasing_order",
+      {
+        "po_id": this.poid,
+        "doc_no": this.myForm.value.docno,
+        "order_no": this.myForm.value.orderno,
+        "vendor_no": this.myForm.value.vendorno,
+        "vendor_status": this.ven.gen_bus_posting_group,
+        "transfer_date": this.myForm.value.transferdate,
+        "posting_desc": this.myForm.value.description,
+        "location_code": this.myForm.value.locationcode
+      },
+      { headers })
+      .subscribe(
         (val) => {
           console.log("Update call successful value returned in body",
             val);

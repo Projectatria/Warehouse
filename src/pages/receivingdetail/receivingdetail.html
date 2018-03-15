@@ -56,6 +56,9 @@
           <ion-note>Qty : {{detailrcv.qty}} | Qty Receiving: {{detailrcv.qty_receiving}}</ion-note>
           <br/>
         </div>
+        <button item-end ion-button clear color="greenlake" (click)="doReceiving(detailrcv)">
+          <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
+        </button>
       </ion-item>
     </ion-list>
 

@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
+import moment from 'moment';
 
 /**
  * Generated class for the PurchasingorderaddPage page.
@@ -91,6 +92,8 @@ export class PurchasingorderaddPage {
       this.nextno = val['nextno'];
       let uuid = UUID.UUID();
       this.uuid = uuid;
+      let batch = moment(this.myForm.value.transferdate).format('YYMMDD');
+      console.log(batch)
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -99,11 +102,10 @@ export class PurchasingorderaddPage {
           "po_id": this.nextno,
           "doc_no": this.myForm.value.docno,
           "order_no": this.myForm.value.orderno,
-          "batch_no": this.myForm.value.transferdate,
+          "batch_no": batch,
           "vendor_no": this.myForm.value.vendorno,
           "vendor_status": this.ven.gen_bus_posting_group,
           "transfer_date": this.myForm.value.transferdate,
-          "posting_date": this.myForm.value.transferdate,
           "posting_desc": this.myForm.value.description,
           "location_code": this.myForm.value.locationcode,
           "status": 'OPEN',

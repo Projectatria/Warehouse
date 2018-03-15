@@ -51,7 +51,7 @@
           </ion-avatar>
           <div no-padding (click)="viewDetail(po)">
             <h2>No Order : {{po.order_no}}</h2>
-            <ion-note>{{po.posting_date}} | items : {{po.total_item}}</ion-note>
+            <ion-note>{{po.transfer_date}} | items : {{po.total_item}}</ion-note>
           </div>
           <button item-end ion-button clear color="greenlake" (click)="doOpenOptions(po)">
             <ion-icon name="md-more" style="font-size:30px;"></ion-icon>
@@ -66,7 +66,7 @@
             <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter,asc)">
               <ion-option value="order_no">Order No</ion-option>
               <ion-option value="doc_no">Document No</ion-option>
-              <ion-option value="posting_date">Posting Date</ion-option>
+              <ion-option value="posting_date">Transfer Date</ion-option>
               <ion-option value="total_item">Jumlah Item</ion-option>
             </ion-select>
           </ion-item>
@@ -75,7 +75,7 @@
             <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
             <ion-col padding class="col-content" col-xl-2>Description</ion-col>
             <ion-col padding class="col-content" col-xl-2>Items</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Posting Date</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Transfer Date</ion-col>
             <ion-col padding class="col-content" col-xl-2>Options</ion-col>
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let po of purchasing_order">
@@ -92,7 +92,7 @@
               {{po.total_item}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
-              {{po.posting_date}}
+              {{po.transfer_date}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2>
               <button ion-button clear color="greenlake" (click)="doUpdatePO(po)">
