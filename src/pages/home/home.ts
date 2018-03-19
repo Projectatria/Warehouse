@@ -40,4 +40,7 @@ export class HomePage {
   doQcIn() {
     this.navCtrl.push('QcinPage');
   }
+  doPutaway() {
+    this.navCtrl.push('PutawayPage');
+  }
 }

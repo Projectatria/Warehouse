@@ -645,8 +645,7 @@ export class ReceivingdetailPage {
               this.api.put("table/purchasing_order",
                 {
                   "po_id": this.poid,
-                  "status": 'CLS1',
-                  "qc_status": 'Waiting for decision'
+                  "status": 'CLSD'
                 },
                 { headers })
                 .subscribe();

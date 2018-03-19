@@ -1,36 +1,166 @@
-<ion-header class="header-menu">
-  <ion-navbar class="header-navbar">
+<ion-header id="myHeader" class="header-menu">
+  <ion-navbar class="header-navbar" style="width:100%;">
+    <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
+      <button ion-button clear color="light" (click)="toggleSearch()">
+        <ion-icon name="md-search" style="font-size:35px;"></ion-icon>
+      </button>
+    </div>
+    <div *ngIf="toggled" style="text-align:right;height:0px;">
+      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="toggleSearch()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
+    </div>
+    <button *ngIf="!toggled" ion-button menuToggle color="light">
+      <ion-icon name="menu" style="font-size:30px;"></ion-icon>
+    </button>
     <ion-title class="side-title">
-      <img src="http://101.255.60.202/webapi/img/logoatriawhite" height="45" />
+      <div *ngIf="!toggled" class="logo-atria">
+        <img src="assets/imgs/logoatriawhite.png" height="45" />
+      </div>
+      <div *ngIf="toggled" class="content-search" style="width:100%;">
+        <ion-searchbar (ionInput)="getSearchQCDetail($event)" placeholder="Search"></ion-searchbar>
+      </div>
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content>
-  <div class="content-header-images">
-    <img class="content-images" src="http://101.255.60.202/webapi/img/furniture">
-  </div>
-  <div class="content-title">
-    Warehouse Location
-  </div>
-  <div class="content-item">
-    <ion-list padding>
-      <ion-item class="content-item-select">
-        <ion-icon name="ios-pin-outline" item-start></ion-icon>
-        <ion-label stacked>Location</ion-label>
-        <ion-select placeholder="Select Location" [(ngModel)]="location_name">
-          <ion-option *ngFor="let loc of location" value="{{loc.location_code}}">{{loc.location_name}}</ion-option>
-        </ion-select>
-      </ion-item>
+<ion-content class="content-menu" no-padding>
+  <ion-segment [(ngModel)]="put">
+    <ion-segment-button value="putaway">
+      Putaway
+    </ion-segment-button>
+    <ion-segment-button value="history">
+      History
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="put">
+    <ion-list class="content-list-menu" *ngSwitchCase="'putaway'">
+      <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <ion-card *ngFor="let rcv of receiving">
+        <ion-item-sliding #item>
+          <ion-item (click)="viewDetail(rcv)">
+            <h3 style="font-weight:bold;padding-bottom:5px;text-align:center;">ITEM NO - {{rcv.item_no}}</h3>
+            <p>Qty : {{rcv.qty}}</p>
+            <p>Unit : {{rcv.unit}}</p>
+            <p>Division : {{rcv.division}}</p>
+            <p style="float:left;">Location Code : {{rcv.location_code}}</p>
+            <p style="float:right;">Batch No : {{rcv.batch_no}}</p>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button color="greenlake" (click)="doPosting(rcv)" style="font-weight:bold;">
+              <ion-icon name="md-checkmark-circle-outline" style="font-weight:bold;font-size:30px"></ion-icon>POSTING</button>
+          </ion-item-options>
+        </ion-item-sliding>
+        <div *ngIf="detailput && rcv.receiving_no == rcvlist" style="border-top:1px solid;border-color:#dedede;background:#ffffff;">
+          <div padding style="font-weight:bold;">
+            Detail Putaway
+          </div>
+          <ion-grid>
+            <ion-row>
+              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
+                <ion-row>
+                  <ion-col>Item No</ion-col>
+                  <ion-col>Qty</ion-col>
+                  <ion-col>Location</ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col *ngFor="let put of putaway" col-12 style="border-top:1px solid;border-color:#dedede;">
+                <ion-row (click)="doUpdatePutaway();">
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{put.item_no}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{put.qty}}</ion-col>
+                  <ion-col style="color:green">{{put.location_position}}</ion-col>
+                </ion-row>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+        <ion-row class="cardfooter">
+          <ion-col style="border-top:1px solid;border-color:#dedede;background:#ffffff">
+            <button ion-button full button clear color="greenlake" (click)="doPutaway(rcv)">
+              <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </ion-list>
+    <ion-list *ngSwitchCase="'history'">
       <ion-item>
-        <ion-label stacked style="text-align:center;">Location No.</ion-label>
-        <ion-input disabled="true" type="text"></ion-input>
+
       </ion-item>
-      <button item-end class="btn-go-location" ion-button color="primary" round (click)="playvideo()">GO Location</button>
     </ion-list>
   </div>
-  <ion-fab class="fixed-div" right bottom>
-    <button ion-fab color="light">
-      <ion-icon name="ios-home" (click)="doHome()"></ion-icon>
-    </button>
-  </ion-fab>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content>
+      loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="closeModal" (click)="doOffPutaway()">&times;</span>
+      <form [formGroup]="myFormModal">
+        <ion-list no-lines>
+          <ion-item class="item-rc" style="border:0px;">
+            <ion-label floating>Location</ion-label>
+            <ion-input type="text" formControlName="location"></ion-input>
+          </ion-item>
+          <ion-item class="item-rc" style="border:0px;">
+            <ion-label floating>Qty</ion-label>
+            <ion-input type="text" formControlName="qty"></ion-input>
+          </ion-item>
+        </ion-list>
+      </form>
+      <ion-buttons end>
+        <button ion-button color="greenlake" style="margin-top:20px;" (click)="doOpenLocation()">Location</button>
+        <button ion-button color="greenlake" style="margin-top:20px;" [disabled]="!myFormModal.valid" (click)="doSavePutaway(rcv)">Save</button>
+      </ion-buttons>
+    </div>
+  </div>
+
 </ion-content>
+
+<div id="myLocations" class="modal-location">
+    <div class="modal-content-location">
+      <ion-header class="header-menu">
+        <ion-navbar class="header-navbar" style="width:100%;">
+          <div style="text-align:right;height:0px;">
+            <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="doOffLocations()">
+              <ion-icon name="md-close"></ion-icon>
+            </button>
+          </div>
+          <ion-title class="side-title">
+            <div class="content-search" style="width:100%;">
+              <ion-searchbar (ionInput)="getSearchLoc($event)" placeholder="Search"></ion-searchbar>
+            </div>
+          </ion-title>
+        </ion-navbar>
+      </ion-header>
+      <ion-content class="content-location">
+        <ion-card>
+          <ion-card-header class="title-header-location">
+            <div class="fc-center">
+              <ion-select placeholder="{{divisioncode}}" [(ngModel)]="divdesc" (ionChange)="doLocation()">
+                <ion-option *ngFor="let div of division" value="{{div.code}}" (ionSelect)="doSetLoc(div)">{{div.description}}</ion-option>
+              </ion-select>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="grid-location">
+              <ion-grid>
+                <ion-row>
+                  <ion-col [ngClass]="{'col-disabled': (locmst.status != 'TRUE')}" padding *ngFor="let locmst of location_master" class="col-location"
+                    col-4 col-xl-2 (click)="doSelectLoc(locmst)">
+                    {{locmst.location_alocation}}
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-content>
+    </div>
+  </div>

@@ -41,7 +41,7 @@ export class QcinPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetinfopo, filter: "status='CLS1'" } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetinfopo, filter: "status='CLSD'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -88,7 +88,7 @@ export class QcinPage {
   }
 
   doRefresh(refresher) {
-    this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='CLS1'" } })
+    this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='CLSD'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
         this.totaldata = val['count'];
