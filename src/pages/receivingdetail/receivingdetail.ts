@@ -306,7 +306,7 @@ export class ReceivingdetailPage {
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan().then((barcodeData) => {
+    this.barcodeScanner.scan({"orientation" : 'landscape'}).then((barcodeData) => {
       if (barcodeData.cancelled) {
         console.log("User cancelled the action!");
         this.loading = false;
@@ -319,16 +319,16 @@ export class ReceivingdetailPage {
             filter:
               'order_no=' + "'" + this.orderno + "'" +
               " " + 'AND' + " " +
-              'item_no=RIGHT(' + "'" + barcodeData.text + "',6)"
+              'item_no=RIGHT(' + "'" + barcodeData.text + "',8)"
           }
-        }).subscribe(val => {
+        }).subscribe((val) => {
           let data = val['data'];
           for (let i = 0; i < data.length; i++) {
             this.itemdata.push(data[i]);
           }
           if (this.itemdata[0].qty_receiving < this.itemdata[0].qty) {
             let alert = this.alertCtrl.create({
-              title: barcodeData.text,
+              subTitle: barcodeData.text,
               inputs: [
                 {
                   name: 'qty',
@@ -400,6 +400,14 @@ export class ReceivingdetailPage {
             });
             alert.present();
           }
+        },
+        response => {
+          let alert = this.alertCtrl.create({
+            title: 'Error',
+            message: 'Data Not Found' + response,
+            buttons: ['OK']
+          });
+          alert.present();
         })
       });
     }, (err) => {

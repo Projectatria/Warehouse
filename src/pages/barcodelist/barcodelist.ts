@@ -49,6 +49,28 @@ export class BarcodelistPage {
     this.viewCtrl.dismiss();
   }
   doPrint() {
-    window.print();
+    var divHeaders = document.getElementById("printareaheader").innerHTML;
+    var divContents = document.getElementById("printarea").innerHTML;
+    var printWindow = window.open();
+    printWindow.document.write('<html><head><title>Barcode Print</title>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<div style="padding-top:10px;padding-bottom:10px;text-align:center;border:1px solid;border-color:#dedede">');
+    printWindow.document.write(divHeaders);
+    printWindow.document.write('</div>');
+    printWindow.document.write('<div style="margin-top:10px;text-align:center;border:1px solid;border-color:transparent">');
+    for (let i = 0; i < this.qty; i++) {
+      printWindow.document.write('<div style="text-align:center;float:left;padding-top:10px;width:24%;margin-bottom:5px;margin-right:5px;border:1px solid;border-color:#dedede"">');
+      printWindow.document.write(divContents);
+      printWindow.document.write('</div>');
+    }
+    printWindow.document.write('</div>');
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+    //window.print();
+  }
+  openfolder() {
+    var thePath = 'C:\\Windows';
+		window.open('file://' + thePath, 'explorer');
   }
 }
