@@ -72,7 +72,7 @@ export class DetailpoaddPage {
     })
     this.getItems();
     this.orderno = navParams.get('orderno');
-    this.docno = navParams.get('orderno');
+    this.docno = navParams.get('docno');
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');

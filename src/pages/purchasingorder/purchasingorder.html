@@ -28,6 +28,12 @@
     <ion-segment-button value="purchasingorder">
       Purchasing Order
     </ion-segment-button>
+    <ion-segment-button value="infopo">
+      Info PO
+    </ion-segment-button>
+    <ion-segment-button value="preparation">
+      Preparation
+    </ion-segment-button>
     <ion-segment-button value="history">
       History
     </ion-segment-button>
@@ -109,6 +115,149 @@
         </ion-grid>
       </div>
       <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content>
+          loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-list>
+
+    <ion-list class="content-list-menu" *ngSwitchCase="'infopo'">
+      <ion-refresher (ionRefresh)="doRefreshInfoPO($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <div>
+        <ion-item no-lines class="toolbar-scroll">Showing {{totaldatainfopo}} entries</ion-item>
+      </div>
+      <div *ngIf="width < 900" class="android-content">
+        <ion-item class="content-data-item" *ngFor="let info of infopo">
+          <ion-avatar item-start>
+            <img src="assets/imgs/noimage.jpg" alt="">
+          </ion-avatar>
+          <div no-padding (click)="viewDetailInfoPO(info)">
+            <h2>No Order : {{info.order_no}}</h2>
+            <ion-note>{{info.transfer_date}} | Items : {{info.total_item}}</ion-note>
+          </div>
+          <button item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
+            <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+          </button>
+        </ion-item>
+      </div>
+      <div *ngIf="width >= 900" class="pc-content">
+        <ion-grid padding>
+          <ion-item no-lines>
+            <ion-label style="text-align:right;">
+              <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
+            <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter)">
+              <ion-option value="order_no">Order No</ion-option>
+              <ion-option value="doc_no">Document No</ion-option>
+              <ion-option value="posting_date">Posting Date</ion-option>
+              <ion-option value="total_item">Jumlah Item</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-row class="row-content">
+            <ion-col padding class="col-content" col-xl-2>No Order</ion-col>
+            <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Items</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Posting Date</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Status</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Options</ion-col>
+          </ion-row>
+          <ion-row class="row-content-list" *ngFor="let info of infopo">
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
+              {{info.order_no}}
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
+              {{info.doc_no}}
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
+              {{info.total_item}}
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
+              {{info.transfer_date}}
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
+              {{info.status}}
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2>
+              <button *ngIf="info.status == 'INPG'" item-end ion-button clear color="greenlake" (click)="doListBarcode(info)">
+                <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
+              </button>
+              <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
+                <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <ion-infinite-scroll (ionInfinite)="doInfiniteInfoPO($event)">
+        <ion-infinite-scroll-content>
+          loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-list>
+
+    <ion-list class="content-list-menu" *ngSwitchCase="'preparation'">
+      <ion-refresher (ionRefresh)="doRefreshPrepare($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <div>
+        <ion-item no-lines class="toolbar-scroll">Showing {{totaldatapreparation}} entries</ion-item>
+      </div>
+      <div *ngIf="width < 900" class="android-content">
+        <ion-item class="content-data-item" *ngFor="let prepare of preparation">
+          <ion-avatar item-start>
+            <img src="assets/imgs/noimage.jpg" alt="">
+          </ion-avatar>
+          <div no-padding (click)="viewDetailPrepare(prepare)">
+            <h2>No Order : {{prepare.order_no}}</h2>
+            <ion-note>{{prepare.transfer_date}} | Items : {{prepare.total_item}}</ion-note>
+          </div>
+        </ion-item>
+      </div>
+      <div *ngIf="width >= 900" class="pc-content">
+        <ion-grid padding>
+          <ion-item no-lines>
+            <ion-label style="text-align:right;">
+              <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
+            <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter)">
+              <ion-option value="order_no">Order No</ion-option>
+              <ion-option value="doc_no">Document No</ion-option>
+              <ion-option value="posting_date">Posting Date</ion-option>
+              <ion-option value="total_item">Jumlah Item</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-row class="row-content">
+            <ion-col padding class="col-content" col-xl-2>No Order</ion-col>
+            <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Items</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Posting Date</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Status</ion-col>
+            <ion-col padding class="col-content" col-xl-2>Options</ion-col>
+          </ion-row>
+          <ion-row class="row-content-list" *ngFor="let prepare of preparation">
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+              {{prepare.order_no}}
+            </ion-col>
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+              {{prepare.doc_no}}
+            </ion-col>
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+              {{prepare.total_item}}
+            </ion-col>
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+              {{prepare.transfer_date}}
+            </ion-col>
+            <ion-col *ngIf="prepare.total_item_post < prepare.total_item" padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
+              {{prepare.status}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <ion-infinite-scroll (ionInfinite)="doInfiniteAction($event)">
         <ion-infinite-scroll-content>
           loadingSpinner="bubbles" loadingText="Loading more data...">
         </ion-infinite-scroll-content>

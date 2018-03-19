@@ -65,6 +65,7 @@ export class PurchasingorderaddPage {
     })
     this.getVendor();
     this.getLocation();
+    this.myForm.get('locationcode').setValue('81003')
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {

@@ -116,13 +116,19 @@
             <ion-item style="height:0px;">
               <ion-icon item-start name="{{qcparam.icon}}" style="font-size:50px;color:#217481;"></ion-icon>
               {{qcparam.qc_param_desc}}
-              <ion-icon item-end name="md-checkmark" style="font-size:25px;color:#2fc900;"></ion-icon>
+              <ion-icon *ngIf="qcparam.qc_result_desc == ''" item-end name="md-close-circle" style="font-size:25px;color:#ca021d;"></ion-icon>
+              <ion-icon *ngIf="qcparam.qc_result_desc != ''" item-end name="md-checkmark" style="font-size:25px;color:#2fc900;"></ion-icon>
             </ion-item>
           </ion-card-header>
           <ion-card-content *ngIf="functionality && qcparam.qc_param_desc == param" style="border-top:1px solid;border-color:#dedede;padding-top:10px;">
-            <ion-slides pager="true">
+            <ion-slides *ngIf="photos.length" pager="true">
+              <ion-slide *ngFor="let foto of photos" style="text-align:center;">
+                <img src="{{foto.img_src}}" style="width:100%;" />
+              </ion-slide>
+            </ion-slides>
+            <ion-slides *ngIf="photos.length == 0" pager="true">
               <ion-slide style="text-align:center;">
-                <img src="http://101.255.60.202/webapi/img/{{qcparam.uuid}}}" style="width:100%;" />
+                <img src="http://101.255.60.202/webapi/img/noimage" style="width:100%;" />
               </ion-slide>
             </ion-slides>
             <ion-list style="padding-top:10px;">
@@ -136,19 +142,19 @@
                 <ion-textarea [(ngModel)]="detailinspection"></ion-textarea>
               </ion-item>
               <ion-buttons style="text-align:center;">
-                <button ion-button color="greenlake">SAVE</button>
+                <button ion-button color="greenlake" (click)="doSaveQCDesc(qcparam)">SAVE</button>
               </ion-buttons>
             </ion-list>
           </ion-card-content>
         </ion-card>
+        <ion-footer style="position:fixed;">
+          <ion-buttons>
+            <button ion-button color="greenlake" style="width:48%;" (click)="doPassed(qcparam)">PASSED</button>
+            <button ion-button color="danger" style="width:48%;" (click)="doReject(qcparam)">REJECT</button>
+          </ion-buttons>
+        </ion-footer>
       </ion-list>
     </ion-content>
-    <ion-footer>
-      <ion-buttons>
-        <button ion-button color="greenlake" style="width:48%;">PASSED</button>
-        <button ion-button color="danger" style="width:48%;">REJECT</button>
-      </ion-buttons>
-    </ion-footer>
   </div>
 </div>
 
