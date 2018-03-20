@@ -33,8 +33,11 @@ export class PutawayPage {
   batchno = '';
   itemno = '';
   locationcode = '';
+  position = '';
   divisionno = '';
   qty = '';
+  qtyprevious = '';
+  putawayno = '';
   unit = '';
   rcvlist = '';
   public totalqty: any;
@@ -153,12 +156,22 @@ export class PutawayPage {
           this.batchno = rcv.batch_no;
           this.itemno = rcv.item_no;
           this.locationcode = rcv.location_code;
+          this.position = rcv.position;
           this.divisionno = rcv.division;
           this.qty = rcv.qty;
           this.unit = rcv.unit;
         }
       });
 
+  }
+  doUpdatePutaway(put) {
+    this.myFormModal.reset();
+    document.getElementById("myModal").style.display = "block";
+    this.myFormModal.get('location').setValue(put.location_position)
+    this.myFormModal.get('qty').setValue(put.qty)
+    this.receivingno = put.receiving_no
+    this.qtyprevious = put.qty
+    this.putawayno = put.putaway_no
   }
   doOffPutaway() {
     this.myFormModal.reset();
@@ -210,8 +223,12 @@ export class PutawayPage {
         this.totalqty = this.putaway.reduce(function (prev, cur) {
           return prev + cur.qty;
         }, 0);
-        console.log('Total Qty:', this.totalqty);
-        if ((this.totalqty + this.myFormModal.value.qty) >= this.qty) {
+        console.log('Total Qty Putaway:', this.totalqty);
+        console.log('Qty Form:', this.myFormModal.value.qty);
+        console.log('Qty Receiving:', this.qty);
+        console.log('Qty Previous', this.qtyprevious);
+        console.log('Putaway No', this.qtyprevious);
+        if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) > parseInt(this.qty)) {
           console.log('lewat')
           let alert = this.alertCtrl.create({
             title: 'Error ',
@@ -219,44 +236,121 @@ export class PutawayPage {
             buttons: ['OK']
           });
           alert.present();
+          this.receivingno = '';
+          this.qtyprevious = '';
+          this.putawayno = '';
         }
         else {
-          const headers = new HttpHeaders()
-            .set("Content-Type", "application/json");
-          this.getNextNo().subscribe(val => {
-            this.nextno = val['nextno'];
-            let date = moment().format('YYYY-MM-DD');
-            this.api.post("table/putaway",
-              {
-                "putaway_no": this.nextno,
-                "receiving_no": this.receivingno,
-                "doc_no": this.docno,
-                "order_no": this.orderno,
-                "batch_no": this.batchno,
-                "item_no": this.itemno,
-                "posting_date": date,
-                "location_code": this.locationcode,
-                "location_position": this.myFormModal.value.location,
-                "division": this.divisionno,
-                "qty": this.myFormModal.value.qty,
-                "unit": this.unit,
-                "flag": '',
-                "pic": '',
-                "status": 'OPEN',
-                "chronology_no": '',
-                "uuid": UUID.UUID()
-              },
-              { headers })
-              .subscribe(val => {
-                let alert = this.alertCtrl.create({
-                  title: 'Sukses',
-                  subTitle: 'Save Sukses',
-                  buttons: ['OK']
+          if (this.qtyprevious == '') {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+            this.getNextNo().subscribe(val => {
+              this.nextno = val['nextno'];
+              let date = moment().format('YYYY-MM-DD');
+              this.api.post("table/putaway",
+                {
+                  "putaway_no": this.nextno,
+                  "receiving_no": this.receivingno,
+                  "doc_no": this.docno,
+                  "order_no": this.orderno,
+                  "batch_no": this.batchno,
+                  "item_no": this.itemno,
+                  "posting_date": date,
+                  "location_code": this.locationcode,
+                  "location_position": this.myFormModal.value.location,
+                  "division": this.divisionno,
+                  "qty": this.myFormModal.value.qty,
+                  "unit": this.unit,
+                  "flag": '',
+                  "pic": '',
+                  "status": 'OPEN',
+                  "chronology_no": '',
+                  "uuid": UUID.UUID()
+                },
+                { headers })
+                .subscribe(val => {
+                  if (this.position == this.myFormModal.value.location) {
+
+                    this.api.put("table/location_master",
+                      {
+                        "location_alocation": this.myFormModal.value.location,
+                        "batch_no": this.batchno,
+                        "item_no": this.itemno,
+                        "qty": this.myFormModal.value.qty,
+                        "status": 'FALSE'
+                      },
+                      { headers })
+                      .subscribe(val => {
+                        let alert = this.alertCtrl.create({
+                          title: 'Sukses',
+                          subTitle: 'Save Sukses',
+                          buttons: ['OK']
+                        });
+                        alert.present();
+                        this.doOffPutaway();
+                        this.receivingno = '';
+                        this.qtyprevious = '';
+
+                      });
+                  }
+                  else {
+                    this.api.put("table/location_master",
+                      {
+                        "location_alocation": this.position,
+                        "batch_no": '',
+                        "item_no": '',
+                        "qty": '',
+                        "status": 'TRUE'
+                      },
+                      { headers })
+                      .subscribe(val => {
+                        this.api.put("table/location_master",
+                          {
+                            "location_alocation": this.myFormModal.value.location,
+                            "batch_no": this.batchno,
+                            "item_no": this.itemno,
+                            "qty": this.myFormModal.value.qty,
+                            "status": 'FALSE'
+                          },
+                          { headers })
+                          .subscribe(val => {
+                            this.api.put("table/receiving",
+                              {
+                                "receiving_no": this.receivingno,
+                                "staging": 'RACK',
+                                "position": this.myFormModal.value.location
+                              },
+                              { headers })
+                              .subscribe(val => {
+                                let alert = this.alertCtrl.create({
+                                  title: 'Sukses',
+                                  subTitle: 'Save Sukses',
+                                  buttons: ['OK']
+                                });
+                                alert.present();
+                                this.doOffPutaway();
+                                this.receivingno = '';
+                                this.qtyprevious = '';
+                              });
+                          });
+                      });
+                  }
                 });
-                alert.present();
-                this.doOffPutaway();
-              });
-          });
+            });
+          }
+          else {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+              this.api.put("table/putaway",
+                {
+                  "putaway_no": this.putawayno,
+                  "location_position": this.myFormModal.value.location,
+                  "qty": this.myFormModal.value.qty
+                },
+                { headers })
+                .subscribe();
+          }
+
         }
       });
   }
