@@ -124,43 +124,112 @@
 </ion-content>
 
 <div id="myLocations" class="modal-location">
-    <div class="modal-content-location">
-      <ion-header class="header-menu">
-        <ion-navbar class="header-navbar" style="width:100%;">
-          <div style="text-align:right;height:0px;">
-            <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="doOffLocations()">
-              <ion-icon name="md-close"></ion-icon>
-            </button>
+  <div class="modal-content-location">
+    <ion-header class="header-menu">
+      <ion-navbar class="header-navbar" style="width:100%;">
+        <div style="text-align:right;height:0px;">
+          <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="doOffLocations()">
+            <ion-icon name="md-close"></ion-icon>
+          </button>
+        </div>
+        <ion-title class="side-title">
+          <div class="content-search" style="width:100%;">
+            <ion-searchbar (ionInput)="getSearchLoc($event)" placeholder="Search"></ion-searchbar>
           </div>
-          <ion-title class="side-title">
-            <div class="content-search" style="width:100%;">
-              <ion-searchbar (ionInput)="getSearchLoc($event)" placeholder="Search"></ion-searchbar>
-            </div>
-          </ion-title>
-        </ion-navbar>
-      </ion-header>
-      <ion-content class="content-location">
-        <ion-card>
-          <ion-card-header class="title-header-location">
-            <div class="fc-center">
-              <ion-select placeholder="{{divisioncode}}" [(ngModel)]="divdesc" (ionChange)="doLocation()">
-                <ion-option *ngFor="let div of division" value="{{div.code}}" (ionSelect)="doSetLoc(div)">{{div.description}}</ion-option>
-              </ion-select>
-            </div>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="grid-location">
-              <ion-grid>
-                <ion-row>
-                  <ion-col [ngClass]="{'col-disabled': (locmst.status != 'TRUE')}" padding *ngFor="let locmst of location_master" class="col-location"
-                    col-4 col-xl-2 (click)="doSelectLoc(locmst)">
-                    {{locmst.location_alocation}}
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-content>
-    </div>
+        </ion-title>
+      </ion-navbar>
+    </ion-header>
+    <ion-content class="content-location">
+      <ion-card>
+        <ion-card-header class="title-header-location">
+          <div class="fc-center">
+            <ion-select placeholder="{{divisioncode}}" [(ngModel)]="divdesc" (ionChange)="doLocation()">
+              <ion-option *ngFor="let div of division" value="{{div.code}}" (ionSelect)="doSetLoc(div)">{{div.description}}</ion-option>
+            </ion-select>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="grid-location">
+            <ion-grid>
+              <ion-row>
+                <ion-col [ngClass]="{'col-disabled': (locmst.status != 'TRUE')}" padding *ngFor="let locmst of location_master" class="col-location"
+                  col-4 col-xl-2 (click)="doSelectLoc(locmst)">
+                  {{locmst.location_alocation}}
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
   </div>
+</div>
+<div id="myListPutaway" class="modal-location">
+  <div class="modal-content-location">
+    <ion-header id="myHeader" class="header-menu">
+      <ion-navbar class="header-navbar" style="width:100%;">
+        <div style="text-align:right;height:0px;">
+          <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;">
+            <ion-icon name="md-checkbox-outline"></ion-icon>
+          </button>
+        </div>
+        <button ion-button menuToggle color="light">
+          <ion-icon name="menu" style="font-size:30px;"></ion-icon>
+        </button>
+        <ion-title class="side-title">
+          <div class="logo-atria">
+            <img src="assets/imgs/logoatriawhite.png" height="45" />
+          </div>
+        </ion-title>
+      </ion-navbar>
+    </ion-header>
+    <ion-content class="content-location">
+      <ion-card>
+        <ion-item>
+          <!-- <p style="font-weight:bold;">Rack Destination : </p> -->
+          <ion-label color="primary" stacked>Rack Destination</ion-label>
+          <ion-input type="text" placeholder="Input Rack Number"></ion-input>
+          <button item-end ion-button clear color="greenlake">
+            <ion-icon name="md-barcode" style="font-size:20px;"></ion-icon>
+          </button>
+          <button *ngIf="" item-end ion-button clear color="greenlake">
+            <ion-icon name="md-sync" style="font-size:20px;"></ion-icon>
+          </button>
+        </ion-item>
+      </ion-card>
+      <ion-card>
+        <ion-item>
+          <h3 style="font-weight:bold;padding-bottom:5px;text-align:center;">BATCH NO : 180315 ITEM NO - 12000739</h3>
+          <p style="text-align:center;">QTY : 200</p>
+          <button item-end ion-button clear color="danger">
+            <ion-icon name="md-close" style="font-size:30px;"></ion-icon>
+          </button>
+        </ion-item>
+      </ion-card>
+      <ion-card>
+        <ion-item>
+          <ion-label color="primary" stacked>Barcode Number</ion-label>
+          <ion-input type="text" placeholder="Input Barcode Number"></ion-input>
+          <button item-end ion-button clear color="greenlake">
+            <ion-icon name="md-add" style="font-size:20px;"></ion-icon>
+          </button>
+          <button *ngIf="" item-end ion-button clear color="greenlake">
+            <ion-icon name="md-sync" style="font-size:20px;"></ion-icon>
+          </button>
+        </ion-item>
+      </ion-card>
+    </ion-content>
+  </div>
+</div>
+<div [ngSwitch]="put">
+  <ion-fab *ngSwitchCase="'putaway'" class="fixed-div" bottom right>
+    <button ion-fab color="greenlake" (click)="doOpenListPutaway()">
+      <ion-icon name="md-apps"></ion-icon>
+    </button>
+    <ion-fab-list side="top">
+      <button ion-fab class="fab-list" color="greenlake">
+        <ion-icon name="md-barcode"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
+</div>
