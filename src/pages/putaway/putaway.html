@@ -177,7 +177,7 @@
           <ion-icon name="menu" style="font-size:30px;"></ion-icon>
         </button>
         <ion-title class="side-title">
-          <div class="logo-atria">
+          <div style="text-align:left;">
             <img src="assets/imgs/logoatriawhite.png" height="45" />
           </div>
         </ion-title>
@@ -189,11 +189,8 @@
           <!-- <p style="font-weight:bold;">Rack Destination : </p> -->
           <ion-label color="primary" stacked>Rack Destination</ion-label>
           <ion-input type="text" placeholder="Input Rack Number" [(ngModel)]="rackno"></ion-input>
-          <button item-end ion-button clear color="greenlake">
+          <button item-end ion-button clear color="greenlake" (click)="doScanBarcodeRack()">
             <ion-icon name="md-barcode" style="font-size:20px;"></ion-icon>
-          </button>
-          <button *ngIf="" item-end ion-button clear color="greenlake">
-            <ion-icon name="md-sync" style="font-size:20px;"></ion-icon>
           </button>
         </ion-item>
       </ion-card>
@@ -247,7 +244,7 @@
       <ion-icon name="md-apps"></ion-icon>
     </button>
     <ion-fab-list side="top">
-      <button ion-fab class="fab-list" color="greenlake">
+      <button ion-fab class="fab-list" color="greenlake" (click)="doScanBarcodeItem()">
         <ion-icon name="md-barcode"></ion-icon>
       </button>
     </ion-fab-list>

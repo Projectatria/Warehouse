@@ -14,9 +14,12 @@ import moment from 'moment';
 })
 export class QcinPage {
   private staging_in = [];
+  private quality_control = [];
+  searchstaging: any;
   searchqc: any;
   halaman = 0;
   totaldata: any;
+  totaldataqc: any;
   public toggled: boolean = false;
   qc: string = "qcin";
   private nextnoqc = '';
@@ -34,6 +37,12 @@ export class QcinPage {
     this.getStagingin();
     this.toggled = false;
     this.qc = "qcin"
+    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+      .subscribe(val => {
+        this.quality_control = val['data'];
+        this.totaldataqc = val['count'];
+        this.searchqc = this.quality_control;
+      });
   }
   getStagingin() {
     return new Promise(resolve => {
@@ -51,7 +60,7 @@ export class QcinPage {
             for (let i = 0; i < data.length; i++) {
               this.staging_in.push(data[i]);
               this.totaldata = val['count'];
-              this.searchqc = this.staging_in;
+              this.searchstaging = this.staging_in;
             }
             if (data.length == 0) {
               this.halaman = -1
@@ -62,18 +71,45 @@ export class QcinPage {
     })
 
   }
-  getSearchQCDetail(ev: any) {
+  getStagingqc() {
+    return new Promise(resolve => {
+      let offsetqc = 30 * this.halaman
+      console.log('offset', this.halaman);
+      if (this.halaman == -1) {
+        console.log('Data Tidak Ada')
+        resolve();
+      }
+      else {
+        this.halaman++;
+        this.api.get('table/qc_in', { params: { limit: 30, offset: offsetqc, filter: "pic='12345'" } })
+          .subscribe(val => {
+            let data = val['data'];
+            for (let i = 0; i < data.length; i++) {
+              this.quality_control.push(data[i]);
+              this.totaldataqc = val['count'];
+              this.searchqc = this.quality_control;
+            }
+            if (data.length == 0) {
+              this.halaman = -1
+            }
+            resolve();
+          });
+      }
+    })
+
+  }
+  getSearchStagingDetail(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
-      this.staging_in = this.searchqc.filter(qc => {
+      this.staging_in = this.searchstaging.filter(qc => {
         return qc.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
       })
     } else {
-      this.staging_in = this.searchqc;
+      this.staging_in = this.searchstaging;
     }
   }
   menuShow() {
@@ -81,8 +117,14 @@ export class QcinPage {
     this.menu.swipeEnable(true);
   };
 
-  doInfinite(infiniteScroll) {
+  doInfiniteStaging(infiniteScroll) {
     this.getStagingin().then(response => {
+      infiniteScroll.complete();
+
+    })
+  }
+  doInfiniteQC(infiniteScroll) {
+    this.getStagingqc().then(response => {
       infiniteScroll.complete();
 
     })
@@ -90,18 +132,25 @@ export class QcinPage {
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
-
-  doRefresh(refresher) {
+  doRefreshStaging(refresher) {
     this.api.get('table/staging_in', { params: { limit: 30 } })
       .subscribe(val => {
         this.staging_in = val['data'];
         this.totaldata = val['count'];
-        this.searchqc = this.staging_in;
+        this.searchstaging = this.staging_in;
+        refresher.complete();
+      });
+  }
+  doRefreshmyqc(refresher) {
+    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+      .subscribe(val => {
+        this.quality_control = val['data'];
+        this.totaldataqc = val['count'];
+        this.searchqc = this.quality_control;
         refresher.complete();
       });
   }
   ionViewDidLoad() {
-
   }
   viewDetail(qc) {
     this.navCtrl.push('QcindetailPage', {
@@ -170,6 +219,13 @@ export class QcinPage {
                       { headers })
                       .subscribe(val => {
                         console.log('Sukses 2')
+                        this.getStagingin();
+                        this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+                        .subscribe(val => {
+                          this.quality_control = val['data'];
+                          this.totaldataqc = val['count'];
+                          this.searchqc = this.quality_control;
+                        });
                       });
                   });
               });

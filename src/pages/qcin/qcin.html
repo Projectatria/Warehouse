@@ -18,7 +18,7 @@
         <img src="assets/imgs/logoatriawhite.png" height="45" />
       </div>
       <div *ngIf="toggled" class="content-search" style="width:100%;">
-        <ion-searchbar (ionInput)="getSearchQCDetail($event)" placeholder="Search"></ion-searchbar>
+        <ion-searchbar (ionInput)="getSearchStagingDetail($event)" placeholder="Search"></ion-searchbar>
       </div>
     </ion-title>
   </ion-navbar>
@@ -38,7 +38,7 @@
 
   <div [ngSwitch]="qc">
     <ion-list class="content-list-menu" *ngSwitchCase="'qcin'">
-      <ion-refresher (ionRefresh)="doRefresh($event)">
+      <ion-refresher (ionRefresh)="doRefreshStaging($event)">
         <ion-refresher-content>
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
@@ -66,13 +66,28 @@
         </div>
       </ion-item> -->
     </ion-list>
+    <ion-list class="content-list-menu" *ngSwitchCase="'myqc'">
+      <ion-refresher (ionRefresh)="doRefreshmyqc($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <ion-card *ngFor="let myqc of quality_control">
+        <ion-item (click)="doOpenQty(staging)">
+          <h3 style="font-weight:bold;padding-bottom:5px;">ITEM NO - {{myqc.item_no}}</h3>
+          <p>Batch No : {{myqc.batch_no}}</p>
+          <p>Qty : {{myqc.qty}}</p>
+          <ion-note item-end>Staging : {{myqc.staging}}</ion-note>
+        </ion-item>
+      </ion-card>
+    </ion-list>
     <ion-list *ngSwitchCase="'history'">
       <ion-item>
 
       </ion-item>
     </ion-list>
   </div>
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+  <ion-infinite-scroll (ionInfinite)="doInfiniteStaging($event)">
     <ion-infinite-scroll-content>
       loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
