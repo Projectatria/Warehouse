@@ -169,7 +169,7 @@
     <ion-header id="myHeader" class="header-menu">
       <ion-navbar class="header-navbar" style="width:100%;">
         <div style="text-align:right;height:0px;">
-          <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;">
+          <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="doSaveToPutaway()">
             <ion-icon name="md-checkbox-outline"></ion-icon>
           </button>
         </div>
@@ -188,7 +188,7 @@
         <ion-item>
           <!-- <p style="font-weight:bold;">Rack Destination : </p> -->
           <ion-label color="primary" stacked>Rack Destination</ion-label>
-          <ion-input type="text" placeholder="Input Rack Number"></ion-input>
+          <ion-input type="text" placeholder="Input Rack Number" [(ngModel)]="rackno"></ion-input>
           <button item-end ion-button clear color="greenlake">
             <ion-icon name="md-barcode" style="font-size:20px;"></ion-icon>
           </button>
@@ -199,24 +199,44 @@
       </ion-card>
       <ion-card>
         <ion-item>
-          <h3 style="font-weight:bold;padding-bottom:5px;text-align:center;">BATCH NO : 180315 ITEM NO - 12000739</h3>
-          <p style="text-align:center;">QTY : 200</p>
-          <button item-end ion-button clear color="danger">
-            <ion-icon name="md-close" style="font-size:30px;"></ion-icon>
-          </button>
-        </ion-item>
-      </ion-card>
-      <ion-card>
-        <ion-item>
           <ion-label color="primary" stacked>Barcode Number</ion-label>
-          <ion-input type="text" placeholder="Input Barcode Number"></ion-input>
-          <button item-end ion-button clear color="greenlake">
+          <ion-input type="text" placeholder="Input Barcode Number" [(ngModel)]="barcodeno"></ion-input>
+          <button item-end ion-button clear color="greenlake" (click)="doOpenQty(barcodeno)">
             <ion-icon name="md-add" style="font-size:20px;"></ion-icon>
           </button>
           <button *ngIf="" item-end ion-button clear color="greenlake">
             <ion-icon name="md-sync" style="font-size:20px;"></ion-icon>
           </button>
         </ion-item>
+      </ion-card>
+      <ion-card>
+        <div style="border-top:1px solid;border-color:#dedede;background:#ffffff;">
+          <div padding style="font-weight:bold;">
+            Detail Item
+          </div>
+          <ion-grid>
+            <ion-row>
+              <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
+                <ion-row>
+                  <ion-col>Batch No</ion-col>
+                  <ion-col>Item No</ion-col>
+                  <ion-col>Variant</ion-col>
+                  <ion-col>Qty</ion-col>
+                  <ion-col>Tools</ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col *ngFor="let putemp of putawaytemp" col-12 style="border-top:1px solid;border-color:#dedede;">
+                <ion-row>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.batch_no}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.item_no}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.variant_no}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.qty}}</ion-col>
+                  <ion-col style="color:white;background:#ac0000;text-align:center;" (click)="doDeletePutawayList(putemp)"><ion-icon name="md-close"></ion-icon></ion-col>
+                </ion-row>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
       </ion-card>
     </ion-content>
   </div>
