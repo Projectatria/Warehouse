@@ -136,7 +136,9 @@
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailInfoPO(info)">
-            <h2>No Order : {{info.order_no}}</h2>
+            <h2>PO No : {{info.order_no}}</h2>
+            <ion-note>PIC : {{info.pic}}</ion-note>
+            <br>
             <ion-note>{{info.transfer_date}} | Items : {{info.total_item}}</ion-note>
           </div>
           <button item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
@@ -150,14 +152,14 @@
             <ion-label style="text-align:right;">
               <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
             <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter)">
-              <ion-option value="order_no">Order No</ion-option>
+              <ion-option value="order_no">PO No</ion-option>
               <ion-option value="doc_no">Document No</ion-option>
               <ion-option value="posting_date">Posting Date</ion-option>
               <ion-option value="total_item">Jumlah Item</ion-option>
             </ion-select>
           </ion-item>
           <ion-row class="row-content">
-            <ion-col padding class="col-content" col-xl-2>No Order</ion-col>
+            <ion-col padding class="col-content" col-xl-2>PO No</ion-col>
             <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
             <ion-col padding class="col-content" col-xl-2>Items</ion-col>
             <ion-col padding class="col-content" col-xl-2>Posting Date</ion-col>

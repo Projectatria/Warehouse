@@ -49,8 +49,9 @@
           <img src="assets/imgs/noimage.jpg" alt="">
         </ion-avatar>
         <div no-padding (click)="viewDetail(po)">
-          <h2>No Order : {{po.order_no}}</h2>
-          <ion-note>{{po.transfer_date}} | items : {{po.total_item}}</ion-note>
+          <h2>PO No : {{po.order_no}}</h2>
+          <ion-note style="float:left;">items : {{po.total_item}}</ion-note>
+          <ion-note style="float:right;">Receiving Date : {{po.transfer_date}}</ion-note>
         </div>
       </ion-item>
       <ion-infinite-scroll (ionInfinite)="doInfinite($event)">

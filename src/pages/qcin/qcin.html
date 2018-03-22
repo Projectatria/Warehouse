@@ -26,7 +26,10 @@
 <ion-content class="content-menu" no-padding>
   <ion-segment [(ngModel)]="qc">
     <ion-segment-button value="qcin">
-      Quality Control
+      List Staging In
+    </ion-segment-button>
+    <ion-segment-button value="myqc">
+      My QC
     </ion-segment-button>
     <ion-segment-button value="history">
       History
@@ -40,19 +43,13 @@
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
       </ion-refresher>
-      <ion-card *ngFor="let qc of quality_control">
-        <ion-item-sliding #item>
-          <ion-item (click)="viewDetail(qc)">
-            <h3 style="font-weight:bold;padding-bottom:5px;">ORDER NO - {{qc.order_no}}</h3>
-            <p>Vendor No: {{qc.vendor_no}}</p>
-            <p>Vendor Status: {{qc.vendor_status}}</p>
-            <p>Description: {{qc.posting_desc}}</p>
-            <ion-note item-end>{{qc.transfer_date}}</ion-note>
-          </ion-item>
-          <ion-item-options side="right">
-            <button ion-button color="greenlake" (click)="doPosting(qc)" style="font-weight:bold;"><ion-icon name="md-checkmark-circle-outline" style="font-weight:bold;font-size:30px"></ion-icon>POSTING</button>
-          </ion-item-options>
-        </ion-item-sliding>
+      <ion-card *ngFor="let staging of staging_in">
+        <ion-item (click)="doOpenQty(staging)">
+          <h3 style="font-weight:bold;padding-bottom:5px;">ITEM NO - {{staging.item_no}}</h3>
+          <p>Batch No : {{staging.batch_no}}</p>
+          <p>Qty : {{staging.qty}}</p>
+          <ion-note item-end>Staging : {{staging.staging}}</ion-note>
+        </ion-item>
         <!-- <ion-row class="cardfooter">
           <ion-col style="border-top:1px solid;border-color:#dedede;background:#ffffff">
             <p style="padding-left:10px;color:rgb(0, 0, 0);font-weight:bold;text-align:center;">{{qc.transfer_date}}</p>

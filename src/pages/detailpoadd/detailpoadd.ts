@@ -165,7 +165,6 @@ export class DetailpoaddPage {
                   "item_no": this.myForm.value.itemno,
                   "location_code": this.locationcode,
                   "transfer_date": this.transferdate,
-                  "receiving_date": this.transferdate,
                   "qty": this.myForm.value.qty,
                   "unit": this.myForm.value.unit,
                   "division": this.itemdiv,

@@ -6,6 +6,7 @@ import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
 import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import moment from 'moment';
 
 @IonicPage()
 @Component({
@@ -21,6 +22,7 @@ export class ReceivingdetailPage {
   private receivingchecked = [];
   private location_master = [];
   private division = [];
+  private purchasingorder = [];
   data = {};
   option: BarcodeScannerOptions;
   searchrcv: any;
@@ -49,7 +51,7 @@ export class ReceivingdetailPage {
   detailrcv: string = "detailreceiving";
   private uuid = '';
   private nextno = '';
-  private nextnoqc = '';
+  private nextnostaging = '';
   public scannedText: string;
   public buttonText: string;
   public loading: boolean;
@@ -212,32 +214,6 @@ export class ReceivingdetailPage {
                   alert.present();
                   let uuid = UUID.UUID();
                   this.uuid = uuid;
-                  this.getNextNo().subscribe(val => {
-                    this.nextno = val['nextno'];
-                    this.api.post("table/qc_in",
-                      {
-                        "qc_no": this.nextno,
-                        "receiving_no": detailrcv.receiving_no,
-                        "doc_no": detailrcv.doc_no,
-                        "order_no": detailrcv.order_no,
-                        "batch_no": detailrcv.batch_no,
-                        "item_no": detailrcv.item_no,
-                        "date_start": '',
-                        "date_finish": '',
-                        "time_start": '',
-                        "time_finish": '',
-                        "pic": '',
-                        "qty": detailrcv.qty,
-                        "unit": detailrcv.unit,
-                        "qc_status": '',
-                        "qc_description": '',
-                        "status": '',
-                        "chronology_no": '',
-                        "uuid": this.uuid
-                      },
-                      { headers })
-                      .subscribe();
-                  });
                   this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
                     this.receiving = val['data'];
                     this.totaldata = val['count'];
@@ -306,7 +282,7 @@ export class ReceivingdetailPage {
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan({"orientation" : 'landscape'}).then((barcodeData) => {
+    this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
       if (barcodeData.cancelled) {
         console.log("User cancelled the action!");
         this.loading = false;
@@ -376,6 +352,7 @@ export class ReceivingdetailPage {
                               { headers })
                               .subscribe(val => {
                                 this.getRCV();
+                                this.getRCVChecked();
                               });
                           }
                           this.itemdata = [];
@@ -401,14 +378,14 @@ export class ReceivingdetailPage {
             alert.present();
           }
         },
-        response => {
-          let alert = this.alertCtrl.create({
-            title: 'Error',
-            message: 'Data Not Found' + response,
-            buttons: ['OK']
-          });
-          alert.present();
-        })
+          response => {
+            let alert = this.alertCtrl.create({
+              title: 'Error',
+              message: 'Data Not Found' + response,
+              buttons: ['OK']
+            });
+            alert.present();
+          })
       });
     }, (err) => {
       console.log(err);
@@ -464,6 +441,7 @@ export class ReceivingdetailPage {
                       { headers })
                       .subscribe(val => {
                         this.getRCV();
+                        this.getRCVChecked();
                       });
                   }
                   this.itemdata = [];
@@ -612,32 +590,62 @@ export class ReceivingdetailPage {
                   console.log("The Posting observable is now completed.");
                 });
             console.log(this.totaldatachecked);
-            // this.getNextNoQC().subscribe(val => {
-            //   this.nextnoqc = val['nextno'];
-            //   console.log(this.nextnoqc, cek.receiving_no, UUID.UUID());
-            //   const headers = new HttpHeaders()
-            //     .set("Content-Type", "application/json");
+            console.log('order no',cek.order_no)
+            this.api.get('table/purchasing_order', { params: { limit: 30, filter: "order_no=" + "'" + cek.order_no + "'" } })
+              .subscribe(val => {
+                this.purchasingorder = val['data'];
+                console.log('vendor',this.purchasingorder[0].vendor_status)
+                if (this.purchasingorder[0].vendor_status == 'FOREIGN') {
+                  this.getNextNoStaging().subscribe(val => {
+                    this.nextnostaging = val['nextno'];
+                    const headers = new HttpHeaders()
+                      .set("Content-Type", "application/json");
+                    let date = moment().format('YYYY-MM-DD');
+                    this.api.post("table/staging_in",
+                      {
+                        "staging_no": this.nextnostaging,
+                        "receiving_no": cek.receiving_no,
+                        "doc_no": cek.doc_no,
+                        "order_no": cek.order_no,
+                        "batch_no": cek.batch_no,
+                        "item_no": cek.item_no,
+                        "data_entry": date,
+                        "qty": parseInt(cek.qty) / 10,
+                        "unit": cek.unit,
+                        "staging": cek.staging,
+                        "uuid": UUID.UUID()
+                      },
+                      { headers })
+                      .subscribe();
+                  });
+                }
+                else {
+                  this.getNextNoStaging().subscribe(val => {
+                    this.nextnostaging = val['nextno'];
+                    const headers = new HttpHeaders()
+                      .set("Content-Type", "application/json");
+                    let date = moment().format('YYYY-MM-DD');
+                    this.api.post("table/staging_in",
+                      {
+                        "staging_no": this.nextnostaging,
+                        "receiving_no": cek.receiving_no,
+                        "doc_no": cek.doc_no,
+                        "order_no": cek.order_no,
+                        "batch_no": cek.batch_no,
+                        "item_no": cek.item_no,
+                        "data_entry": date,
+                        "qty": cek.qty,
+                        "unit": cek.unit,
+                        "staging": cek.staging,
+                        "uuid": UUID.UUID()
+                      },
+                      { headers })
+                      .subscribe();
+                  });
+                }
 
-            //   this.api.post("table/qc_in",
-            //     {
-            //       "qc_no": this.nextnoqc,
-            //       "receiving_no": cek.receiving_no,
-            //       "doc_no": cek.doc_no,
-            //       "order_no": cek.order_no,
-            //       "batch_no": cek.batch_no,
-            //       "item_no": cek.item_no,
-            //       "pic": '',
-            //       "qty": cek.qty,
-            //       "qty_checked": 0,
-            //       "unit": cek.unit,
-            //       "qc_status": 'Waiting Checking',
-            //       "status": 'OPEN',
-            //       "chronology_no": '',
-            //       "uuid": UUID.UUID()
-            //     },
-            //     { headers })
-            //     .subscribe();
-            // });
+              });
+
             if (this.totaldatachecked == 1) {
               const headers = new HttpHeaders()
                 .set("Content-Type", "application/json");
@@ -656,7 +664,7 @@ export class ReceivingdetailPage {
     });
     alert.present();
   }
-  getNextNoQC() {
-    return this.api.get('nextno/qc_in/qc_no')
+  getNextNoStaging() {
+    return this.api.get('nextno/staging_in/staging_no')
   }
 }

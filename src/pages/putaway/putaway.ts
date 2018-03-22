@@ -321,6 +321,7 @@ export class PutawayPage {
                 });
             });
           }
+          this.rackno = '';
         });
     }
   }
