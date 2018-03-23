@@ -45,9 +45,8 @@
           <ion-item (click)="viewDetail(rcv)">
             <h3 style="font-weight:bold;padding-bottom:5px;text-align:center;">ITEM NO - {{rcv.item_no}}</h3>
             <p>Qty : {{rcv.qty}}</p>
-            <p>Unit : {{rcv.unit}}</p>
             <p>Division : {{rcv.division}}</p>
-            <p style="float:left;">Location Code : {{rcv.location_code}}</p>
+            <p style="float:left;">Staging : {{rcv.staging}}</p>
             <p style="float:right;">Batch No : {{rcv.batch_no}}</p>
           </ion-item>
           <ion-item-options side="right">
@@ -173,9 +172,9 @@
             <ion-icon name="md-checkbox-outline"></ion-icon>
           </button>
         </div>
-        <button ion-button menuToggle color="light">
+        <!-- <button ion-button menuToggle color="light">
           <ion-icon name="menu" style="font-size:30px;"></ion-icon>
-        </button>
+        </button> -->
         <ion-title class="side-title">
           <div style="text-align:left;">
             <img src="assets/imgs/logoatriawhite.png" height="45" />

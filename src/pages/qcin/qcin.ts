@@ -15,14 +15,19 @@ import moment from 'moment';
 export class QcinPage {
   private staging_in = [];
   private quality_control = [];
+  private qcresult = [];
   searchstaging: any;
   searchqc: any;
   halaman = 0;
   totaldata: any;
   totaldataqc: any;
+  totaldataqcresult: any;
   public toggled: boolean = false;
   qc: string = "qcin";
   private nextnoqc = '';
+  public detailqc: boolean = false;
+  private qclist = '';
+  private batchnolist = '';
 
   constructor(
     public navCtrl: NavController,
@@ -37,6 +42,7 @@ export class QcinPage {
     this.getStagingin();
     this.toggled = false;
     this.qc = "qcin"
+    this.detailqc = false;
     this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
@@ -152,15 +158,16 @@ export class QcinPage {
   }
   ionViewDidLoad() {
   }
-  viewDetail(qc) {
+  viewDetail(myqc) {
     this.navCtrl.push('QcindetailPage', {
-      orderno: qc.order_no,
-      docno: qc.doc_no,
-      batchno: qc.batch_no,
-      locationcode: qc.location_code,
-      transferdate: qc.transfer_date,
-      totalitem: qc.total_item,
-      poid: qc.po_id
+      qcno: myqc.qc_no,
+      receivingno: myqc.receiving_no,
+      orderno: myqc.order_no,
+      batchno: myqc.batch_no,
+      itemno: myqc.item_no,
+      pic: myqc.pic,
+      qty: myqc.qty,
+      staging: myqc.staging
     });
   }
   doOpenQty(staging) {
@@ -219,16 +226,66 @@ export class QcinPage {
                       { headers })
                       .subscribe(val => {
                         console.log('Sukses 2')
-                        this.getStagingin();
-                        this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
-                        .subscribe(val => {
-                          this.quality_control = val['data'];
-                          this.totaldataqc = val['count'];
-                          this.searchqc = this.quality_control;
-                        });
+                        this.api.get('table/staging_in')
+                          .subscribe(val => {
+                            this.staging_in = val['data'];
+                            this.totaldata = val['count'];
+                            this.searchstaging = this.staging_in;
+                            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+                              .subscribe(val => {
+                                this.quality_control = val['data'];
+                                this.totaldataqc = val['count'];
+                                this.searchqc = this.quality_control;
+                              });
+                          });
+
                       });
                   });
               });
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+  doDetailQC(myqc) {
+    this.qcresult = [];
+    this.qclist = myqc.item_no;
+    this.batchnolist = myqc.batch_no;
+    this.detailqc = this.detailqc ? false : true;
+    this.getQCResult(myqc);
+  }
+  getQCResult(myqc) {
+    return new Promise(resolve => {
+      this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + myqc.qc_no + "'" } }).subscribe(val => {
+        this.qcresult = val['data'];
+        this.totaldataqcresult = val['count'];
+        resolve();
+      })
+    });
+  }
+  doChecked() {
+    let alert = this.alertCtrl.create({
+      title: 'Please Input Barcode Number',
+      inputs: [
+        {
+          name: 'item',
+          placeholder: 'Barcode',
+          value: ''
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: data => {
+
           }
         }
       ]

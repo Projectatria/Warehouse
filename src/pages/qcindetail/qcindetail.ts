@@ -33,7 +33,7 @@ export class QcindetailPage {
   qc: string = "qcin";
   button: string = "qcin";
   orderno = '';
-  docno = '';
+  itemno = '';
   batchno = '';
   data = {};
   option: BarcodeScannerOptions;
@@ -73,8 +73,8 @@ export class QcindetailPage {
     public loadingCtrl: LoadingController,
   ) {
     this.orderno = navParams.get('orderno')
-    this.docno = navParams.get('docno')
     this.batchno = navParams.get('batchno')
+    this.itemno = navParams.get('itemno')
     this.getQC();
     this.toggled = false;
     this.detailqc = false;
@@ -289,7 +289,6 @@ export class QcindetailPage {
             this.api.get("table/receiving", {
               params: {
                 filter:
-                  'doc_no=' + "'" + this.docno + "'" + " AND " +
                   'order_no=' + "'" + this.orderno + "'" + " AND " +
                   'batch_no=' + "'" + this.batchno + "'" + " AND " +
                   'item_no=' + "RIGHT('" + data.item + "',8)"
@@ -301,7 +300,6 @@ export class QcindetailPage {
                 this.api.get("table/qc_in", {
                   params: {
                     filter:
-                      'doc_no=' + "'" + this.docno + "'" + " AND " +
                       'order_no=' + "'" + this.orderno + "'" + " AND " +
                       'batch_no=' + "'" + this.batchno + "'" + " AND " +
                       'item_no=' + "RIGHT('" + data.item + "',8)"
@@ -318,7 +316,6 @@ export class QcindetailPage {
                       this.api.post("table/qc_in",
                         {
                           "qc_no": this.nextnoqc,
-                          "doc_no": this.docno,
                           "order_no": this.orderno,
                           "batch_no": this.batchno,
                           "item_no": this.receiving[0].item_no,
