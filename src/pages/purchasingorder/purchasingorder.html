@@ -127,9 +127,6 @@
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
       </ion-refresher>
-      <div>
-        <ion-item no-lines class="toolbar-scroll">Showing {{totaldatainfopo}} entries</ion-item>
-      </div>
       <div *ngIf="width < 900" class="android-content">
         <ion-item class="content-data-item" *ngFor="let info of infopo">
           <ion-avatar item-start>
@@ -147,21 +144,14 @@
         </ion-item>
       </div>
       <div *ngIf="width >= 900" class="pc-content">
-        <ion-grid padding>
-          <!-- <ion-item no-lines>
-            <ion-label style="text-align:right;">
-              <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
-            <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter)">
-              <ion-option value="order_no">PO No</ion-option>
-              <ion-option value="doc_no">Document No</ion-option>
-              <ion-option value="posting_date">Posting Date</ion-option>
-              <ion-option value="total_item">Jumlah Item</ion-option>
-            </ion-select>
-          </ion-item> -->
-          <ion-item no-lines style="border:0px;margin-left:-16px;width:101%;">
-            <ion-label>DATE :</ion-label>
+        <ion-grid>
+          <ion-item no-lines style="margin-left:-1%;width:101%;border-bottom:1px solid;border-color:#dedede;">
+            <ion-label style="margin-left:1%;">DATE :</ion-label>
             <ion-input style="border:0px;" type="date" [(ngModel)]="datearrival" (ionChange)="selectdate(datearrival)"></ion-input>
           </ion-item>
+          <div class="content-search" style="width:100%;">
+            <ion-searchbar (ionInput)="getSearchInfoPO($event)" placeholder="Search PO Number"></ion-searchbar>
+          </div>
           <ion-row class="row-content">
             <ion-col padding class="col-content" col-xl-2 (click)="doSort('order_no')">PO No
               <ion-icon *ngIf="filter == 'order_no' && sort == 'ASC'" name="md-arrow-dropdown"></ion-icon>
