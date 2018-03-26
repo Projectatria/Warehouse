@@ -112,11 +112,18 @@ ion-fab-list {
 .row-content-list:hover {
     background: #b7c400;
     color: #000000;
+    cursor: pointer;
 }
 .col-content {
     background:transparent;
     color:#000000;
     border:0px;
     text-align:left;
+}
+.filter:hover {
+    cursor: pointer;
+}
+.col-content {
+    cursor: pointer;
 }
 

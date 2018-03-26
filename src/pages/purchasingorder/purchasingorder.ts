@@ -35,6 +35,9 @@ export class PurchasingorderPage {
   po: string = "purchasingorder";
   private width: number;
   private height: number;
+  private datearrival = '';
+  filter = '';
+  sort = '';
 
   constructor(
     public navCtrl: NavController,
@@ -60,6 +63,7 @@ export class PurchasingorderPage {
       this.width = platform.width();
       this.height = platform.height();
     });
+    this.sort = ''
   }
   ionViewDidLoad() {
     console.log(this.width);
@@ -510,14 +514,6 @@ export class PurchasingorderPage {
     });
     alert.present();
   }
-  doFilter(filter) {
-    this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'", sort: filter } }).subscribe(val => {
-      this.purchasing_order = val['data'];
-      this.totaldata = val['count'];
-      console.log(this.purchasing_order);
-      console.log(this.totaldata);
-    });
-  }
   doOpenOptions(po) {
     let actionSheet = this.actionSheetCtrl.create({
       title: 'Options',
@@ -664,4 +660,41 @@ export class PurchasingorderPage {
       { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
+  doSort(filter) {
+    console.log(filter)
+    if (this.sort == 'ASC') {
+      this.sort = 'DESC'
+    }
+    else {
+      this.sort = 'ASC'
+    }
+    console.log(this.sort)
+    this.api.get("table/purchasing_order", { params: { filter: "status='INP1'", sort: filter + " " + this.sort + " " } }).subscribe(val => {
+      this.infopo = val['data'];
+      this.totaldatainfopo = val['count'];
+      console.log(this.infopo);
+      console.log(this.totaldatainfopo);
+      this.filter = filter
+    });
+  }
+  selectdate(datearrival) {
+    console.log('date', datearrival)
+    if (datearrival == '') {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'"} }).subscribe(val => {
+        this.infopo = val['data'];
+        this.totaldatainfopo = val['count'];
+        console.log(this.infopo);
+        console.log(this.totaldatainfopo);
+      });
+    }
+    else {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" + " AND " + "transfer_date=" + "'" + datearrival + "'" } }).subscribe(val => {
+        this.infopo = val['data'];
+        this.totaldatainfopo = val['count'];
+        console.log(this.infopo);
+        console.log(this.totaldatainfopo);
+      });
+    }
+  }
+
 }
