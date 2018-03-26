@@ -12,6 +12,19 @@ page-qcin {
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     }
+    .modal-foto {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 0px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
     /* Modal Content */
     .modal-content {
         background-color: #fefefe;
@@ -27,5 +40,42 @@ page-qcin {
         border: 0px solid;
         width: 80%;
         text-align: left;
+    }
+    .container {
+        position: relative;
+        text-align: center;
+        color: white;
+        top:25%;
+    }
+    
+    .bottom-left {
+        position: absolute;
+        bottom: 8px;
+        left: 16px;
+    }
+    
+    .top-left {
+        position: absolute;
+        top: 8px;
+        left: 16px;
+    }
+    
+    .top-right {
+        position: absolute;
+        top: 8px;
+        right: 16px;
+    }
+    
+    .bottom-right {
+        position: absolute;
+        bottom: 8px;
+        right: 16px;
+    }
+    
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }

@@ -1,4 +1,4 @@
-<ion-header class="header-menu">
+<ion-header id="myHeader" class="header-menu">
   <ion-navbar class="header-navbar" style="width:100%;">
     <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
       <button ion-button clear color="light" (click)="toggleSearch()">
@@ -94,7 +94,7 @@
                 </ion-row>
               </ion-col>
               <ion-col *ngFor="let result of qcresult" col-12 style="border-top:1px solid;border-color:#dedede;">
-                <ion-row (click)="doUpdateChecked(result);" *ngIf="detailqc && result.item_no == qclist">
+                <ion-row (click)="getfoto(result);" *ngIf="detailqc && result.item_no == qclist">
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_finish}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_finish}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.qc_pic}}</ion-col>
@@ -136,58 +136,40 @@
       </ion-navbar>
     </ion-header>
     <ion-content class="content-checking">
-      <ion-list *ngFor="let qcparam of qcparameter" radio-group [(ngModel)]="detailcheckingqc">
-        <ion-card style="background:#ffffff;">
-          <ion-card-header style="color:#000000;text-align:left;" (click)="doOpenContent(qcparam,noqcresult,uuidresult)">
-            <ion-item style="height:0px;">
-              <ion-icon item-start name="{{qcparam.icon}}" style="font-size:50px;color:#217481;"></ion-icon>
-              {{qcparam.qc_param_desc}}
-              <ion-icon *ngIf="qcparam.qc_result_desc == ''" item-end name="md-close-circle" style="font-size:25px;color:#ca021d;"></ion-icon>
-              <ion-icon *ngIf="qcparam.qc_result_desc != ''" item-end name="md-checkmark" style="font-size:25px;color:#2fc900;"></ion-icon>
-            </ion-item>
-          </ion-card-header>
-          <ion-card-content *ngIf="functionality && qcparam.qc_param_desc == param" style="border-top:1px solid;border-color:#dedede;padding-top:10px;">
-            <ion-slides *ngIf="photos.length" pager="true">
-              <ion-slide *ngFor="let foto of photos" style="text-align:center;">
-                <img src="{{foto.img_src}}" style="width:100%;" />
-              </ion-slide>
-            </ion-slides>
-            <ion-slides *ngIf="photos.length == 0" pager="true">
-              <ion-slide style="text-align:center;">
-                <img src="http://101.255.60.202/webapi/img/noimage" style="width:100%;" />
-              </ion-slide>
-            </ion-slides>
-            <ion-list style="padding-top:10px;">
-              <ion-item style="border-top:1px solid;border-color:#dedede;text-align:center;">
-                <button ion-button clear (click)="doCamera(qcparam)">
-                  <ion-icon name="md-camera" style="color:#217481;font-size:30px;"></ion-icon>
-                </button>
-              </ion-item>
-              <ion-item style="border-top:1px solid;border-color:#dedede;">
-                <ion-label floating>Detail Inspection</ion-label>
-                <ion-textarea [(ngModel)]="detailinspection"></ion-textarea>
-              </ion-item>
-              <ion-buttons style="text-align:center;">
-                <button ion-button color="greenlake" (click)="doSaveQCDesc(qcparam)">SAVE</button>
-              </ion-buttons>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
-        <ion-footer style="position:fixed;">
-          <ion-buttons>
-            <button ion-button color="greenlake" style="width:48%;" (click)="doPassed(qcparam)">PASSED</button>
-            <button ion-button color="danger" style="width:48%;" (click)="doReject(qcparam)">REJECT</button>
-          </ion-buttons>
-        </ion-footer>
-      </ion-list>
+      <ion-grid *ngIf="photos.length">
+        <ion-row>
+          <ion-col col-4 style="padding:0px;margin-bottom:-4px;" *ngFor="let foto of photos" (click)="doViewPhoto(foto)">
+            <img src="{{foto.img_src}}" style="width:100%;" />
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <img *ngIf="photos.length == 0" src="http://101.255.60.202/webapi/img/noimage" style="width:100%;" />
     </ion-content>
   </div>
+  <ion-footer>
+    <button ion-button full color="greenlake"><ion-icon name="md-checkbox-outline" style="font-size:35px;"></ion-icon></button>
+  </ion-footer>
 </div>
 
-<div [ngSwitch]="qc">
+<div id="button" [ngSwitch]="qc" *ngIf="!button">
   <ion-fab *ngSwitchCase="'myqc'" class="fixed-div" bottom right>
     <button ion-fab color="greenlake" (click)="doChecked()">
       <ion-icon name="md-barcode"></ion-icon>
     </button>
   </ion-fab>
+</div>
+<div id="button" [ngSwitch]="qc" *ngIf="button">
+  <ion-fab *ngSwitchCase="'myqc'" class="fixed-div" bottom right>
+    <button ion-fab color="greenlake" (click)="doCamera()">
+      <ion-icon name="md-camera"></ion-icon>
+    </button>
+  </ion-fab>
+</div>
+<div id="foto" class="modal-foto">
+  <div class="container">
+    <img src="{{viewfoto}}"/>
+    <div class="top-right">
+      <ion-icon name="md-close" style="font-size:25px;" (click)="doCloseViewPhoto()"></ion-icon>
+    </div>
+  </div>
 </div>

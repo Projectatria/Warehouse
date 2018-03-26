@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
-import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { ModalController, MenuController, IonicPage, LoadingController, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
 import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
 import moment from 'moment';
+import { Camera, CameraOptions } from '@ionic-native/camera';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 
 @IonicPage()
 @Component({
@@ -17,18 +20,29 @@ export class QcinPage {
   private quality_control = [];
   private qcresult = [];
   private qcinpic = [];
+  private qcinbarcode = [];
+  private photos = [];
   searchstaging: any;
   searchqc: any;
   halaman = 0;
   totaldata: any;
   totaldataqc: any;
   totaldataqcresult: any;
+  totalphoto: any;
   public toggled: boolean = false;
   qc: string = "qcin";
   private nextnoqc = '';
+  private nextnoqcresult = '';
   public detailqc: boolean = false;
+  public button: boolean = false;
   private qclist = '';
   private batchnolist = '';
+  option: BarcodeScannerOptions;
+  imageURI: string = '';
+  imageFileName: string = '';
+  private uuid = '';
+  private uuidqcresult = '';
+  private viewfoto = '';
 
   constructor(
     public navCtrl: NavController,
@@ -38,12 +52,16 @@ export class QcinPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    private transfer: FileTransfer,
+    private camera: Camera,
+    public loadingCtrl: LoadingController,
   ) {
     this.getStagingin();
     this.toggled = false;
     this.qc = "qcin"
     this.detailqc = false;
+    this.button = false;
     this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
@@ -314,7 +332,7 @@ export class QcinPage {
       title: 'Please Input Barcode Number',
       inputs: [
         {
-          name: 'item',
+          name: 'barcode',
           placeholder: 'Barcode',
           value: ''
         }
@@ -331,10 +349,191 @@ export class QcinPage {
           text: 'OK',
           handler: data => {
 
+            console.log(data.barcode)
+            var barcodeno = data.barcode;
+            var batchno = barcodeno.substring(0, 6);
+            var itemno = barcodeno.substring(6, 14);
+            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "batch_no=" + "'" + batchno + "'" + " AND " + "item_no=" + "'" + itemno + "'" } })
+              .subscribe(val => {
+                this.qcinbarcode = val['data'];
+                if (this.qcinbarcode.length == 0) {
+                  let alert = this.alertCtrl.create({
+                    title: 'Error',
+                    subTitle: 'Data Not Found In My QC',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                }
+                else {
+                  let alert = this.alertCtrl.create({
+                    title: 'Confirm Start',
+                    message: 'Do you want to QC Now?',
+                    buttons: [
+                      {
+                        text: 'Cancel',
+                        role: 'cancel',
+                        handler: () => {
+                          console.log('Cancel clicked');
+                        }
+                      },
+                      {
+                        text: 'Start',
+                        handler: () => {
+                          this.getNextNoQCResult().subscribe(val => {
+                            let time = moment().format('HH:mm:ss');
+                            let date = moment().format('YYYY-MM-DD');
+                            let uuid = UUID.UUID();
+                            this.nextnoqcresult = val['nextno'];
+                            const headers = new HttpHeaders()
+                              .set("Content-Type", "application/json");
+                            this.api.post("table/qc_in_result",
+                              {
+                                "qc_result_no": this.nextnoqcresult,
+                                "qc_no": this.qcinbarcode[0].qc_no,
+                                "batch_no": this.qcinbarcode[0].batch_no,
+                                "item_no": this.qcinbarcode[0].item_no,
+                                "date_start": date,
+                                "date_finish": date,
+                                "time_start": time,
+                                "time_finish": time,
+                                "qc_pic": 'AJI',
+                                "qty_receiving": 25,
+                                "unit": this.qcinbarcode[0].unit,
+                                "qc_status": "OPEN",
+                                "qc_description": "",
+                                "uuid": uuid
+                              },
+                              { headers })
+                              .subscribe(val => {
+                                document.getElementById("myQCChecking").style.display = "block";
+                                document.getElementById("myHeader").style.display = "none";
+                                this.button = true;
+                                this.uuidqcresult = uuid;
+                              })
+                          });
+                        }
+                      }
+                    ]
+                  });
+                  alert.present();
+                }
+              });
+
           }
         }
       ]
     });
     alert.present();
+  }
+  doOffChecking() {
+    document.getElementById("myQCChecking").style.display = "none";
+    document.getElementById("myHeader").style.display = "block";
+    this.button = false;
+  }
+  getfoto(result) {
+    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + result.uuid + "'" } }).subscribe(val => {
+      this.photos = val['data'];
+      this.totalphoto = val['count'];
+      this.uuidqcresult = result.uuid;
+      document.getElementById("myQCChecking").style.display = "block";
+      document.getElementById("myHeader").style.display = "none";
+      this.button = true;
+    });
+  }
+  doViewPhoto(foto) {
+    console.log(foto.img_src)
+    this.viewfoto = foto.img_src
+    document.getElementById("foto").style.display = "block";
+    document.getElementById("button").style.display = "none";
+  }
+  doCloseViewPhoto() {
+    document.getElementById("foto").style.display = "none";
+    document.getElementById("button").style.display = "block";
+  }
+  doCamera() {
+    let options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.FILE_URI
+    }
+    options.sourceType = this.camera.PictureSourceType.CAMERA
+
+    this.camera.getPicture(options).then((imageData) => {
+      this.imageURI = imageData;
+      this.imageFileName = this.imageURI;
+      if (this.imageURI == '') return;
+      let loader = this.loadingCtrl.create({
+        content: "Uploading..."
+      });
+      loader.present();
+      const fileTransfer: FileTransferObject = this.transfer.create();
+
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let options: FileUploadOptions = {
+        fileKey: 'fileToUpload',
+        //fileName: this.imageURI.substr(this.imageURI.lastIndexOf('/') + 1),
+        fileName: uuid + '.jpeg',
+        chunkedMode: true,
+        mimeType: "image/jpeg",
+        headers: {}
+      }
+
+      let url = "http://10.10.10.7/webapi5/api/Upload";
+      fileTransfer.upload(this.imageURI, url, options)
+        .then((data) => {
+          loader.dismiss();
+          const headers = new HttpHeaders()
+            .set("Content-Type", "application/json");
+
+          this.api.post("table/link_image",
+            {
+              "no": this.uuid,
+              "parent": this.uuidqcresult,
+              "table_name": "Qc_in_result",
+              "img_src": 'http://101.255.60.202/webapi/img/' + this.uuid,
+              "file_name": this.uuid,
+              "description": "",
+              "latitude": "",
+              "longitude": "",
+              "location_code": '',
+              "upload_date": "",
+              "upload_by": ""
+            },
+            { headers })
+            .subscribe(
+              (val) => {
+                this.presentToast("Image uploaded successfully");
+                this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidqcresult + "'" } }).subscribe(val => {
+                  this.photos = val['data'];
+                  this.totalphoto = val['count'];
+                });
+              });
+          this.imageURI = '';
+          this.imageFileName = '';
+        }, (err) => {
+          console.log(err);
+          loader.dismiss();
+          this.presentToast(err);
+        });
+    }, (err) => {
+      console.log(err);
+      this.presentToast(err);
+    });
+  }
+  presentToast(msg) {
+    let toast = this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'bottom'
+    });
+
+    toast.onDidDismiss(() => {
+      console.log('Dismissed toast');
+    });
+
+    toast.present();
+  }
+  getNextNoQCResult() {
+    return this.api.get('nextno/qc_in_result/qc_result_no')
   }
 }
