@@ -1,24 +1,11 @@
 <ion-header class="header-menu">
   <ion-navbar class="header-navbar" style="width:100%;">
-    <div *ngIf="!toggled" class="logo-search" style="text-align:right;height:0px;">
-      <button ion-button clear color="light" (click)="toggleSearch()">
-        <ion-icon name="md-search" style="font-size:25px;"></ion-icon>
-      </button>
-    </div>
-    <div *ngIf="toggled" style="text-align:right;height:0px;">
-      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="toggleSearch()">
-        <ion-icon name="md-close"></ion-icon>
-      </button>
-    </div>
     <button *ngIf="!toggled" ion-button menuToggle color="light">
       <ion-icon name="menu" style="font-size:30px;"></ion-icon>
     </button>
     <ion-title class="side-title">
       <div *ngIf="!toggled" class="logo-atria">
         <img src="assets/imgs/logoatriawhite.png" height="45" />
-      </div>
-      <div *ngIf="toggled" class="content-search" style="width:100%;">
-        <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search"></ion-searchbar>
       </div>
     </ion-title>
   </ion-navbar>
@@ -47,10 +34,10 @@
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
       </ion-refresher>
-      <div>
-        <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
-      </div>
       <div *ngIf="width < 900" class="android-content">
+        <div>
+          <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
+        </div>
         <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
@@ -65,23 +52,33 @@
         </ion-item>
       </div>
       <div *ngIf="width >= 900" class="pc-content">
-        <ion-grid padding>
-          <ion-item no-lines>
-            <ion-label style="text-align:right;">
-              <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
-            <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter,asc)">
-              <ion-option value="order_no">Order No</ion-option>
-              <ion-option value="doc_no">Document No</ion-option>
-              <ion-option value="posting_date">Transfer Date</ion-option>
-              <ion-option value="total_item">Jumlah Item</ion-option>
-            </ion-select>
+        <ion-grid>
+          <ion-item no-lines style="margin-left:-1%;width:101%;border-bottom:1px solid;border-color:#dedede;">
+            <ion-label style="margin-left:1%;">DATE :</ion-label>
+            <ion-input style="border:0px;" type="date" [(ngModel)]="datearrivalPO" (ionChange)="selectdatePO(datearrivalPO)"></ion-input>
           </ion-item>
+          <div class="content-search" style="width:100%;">
+            <ion-searchbar (ionInput)="getSearchPO($event)" placeholder="Search PO Number"></ion-searchbar>
+          </div>
           <ion-row class="row-content">
-            <ion-col padding class="col-content" col-xl-2>No Order</ion-col>
-            <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Description</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Items</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Transfer Date</ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPO('order_no')">No Order
+              <ion-icon *ngIf="filter == 'order_no' && sortPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'order_no' && sortPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPO('doc_no')">No Document
+              <ion-icon *ngIf="filter == 'doc_no' && sortPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'doc_no' && sortPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2>Description
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPO('total_item')">Items
+              <ion-icon *ngIf="filter == 'total_item' && sortPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'total_item' && sortPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPO('transfer_date')">Estimated Time Of Arrival
+              <ion-icon *ngIf="filter == 'transfer_date' && sortPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'transfer_date' && sortPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
             <ion-col padding class="col-content" col-xl-2>Options</ion-col>
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let po of purchasing_order">
@@ -128,6 +125,9 @@
         </ion-refresher-content>
       </ion-refresher>
       <div *ngIf="width < 900" class="android-content">
+        <div>
+          <ion-item no-lines class="toolbar-scroll">Showing {{totaldatainfopo}} entries</ion-item>
+        </div>
         <ion-item class="content-data-item" *ngFor="let info of infopo">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
@@ -147,31 +147,31 @@
         <ion-grid>
           <ion-item no-lines style="margin-left:-1%;width:101%;border-bottom:1px solid;border-color:#dedede;">
             <ion-label style="margin-left:1%;">DATE :</ion-label>
-            <ion-input style="border:0px;" type="date" [(ngModel)]="datearrival" (ionChange)="selectdate(datearrival)"></ion-input>
+            <ion-input style="border:0px;" type="date" [(ngModel)]="datearrivalInfoPO" (ionChange)="selectdateInfoPO(datearrivalInfoPO)"></ion-input>
           </ion-item>
           <div class="content-search" style="width:100%;">
             <ion-searchbar (ionInput)="getSearchInfoPO($event)" placeholder="Search PO Number"></ion-searchbar>
           </div>
           <ion-row class="row-content">
-            <ion-col padding class="col-content" col-xl-2 (click)="doSort('order_no')">PO No
-              <ion-icon *ngIf="filter == 'order_no' && sort == 'ASC'" name="md-arrow-dropdown"></ion-icon>
-              <ion-icon *ngIf="filter == 'order_no' && sort == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortInfoPO('order_no')">PO No
+              <ion-icon *ngIf="filter == 'order_no' && sortInfoPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'order_no' && sortInfoPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="doSort('doc_no')">No Document
-              <ion-icon *ngIf="filter == 'doc_no' && sort == 'ASC'" name="md-arrow-dropdown"></ion-icon>
-              <ion-icon *ngIf="filter == 'doc_no' && sort == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortInfoPO('doc_no')">No Document
+              <ion-icon *ngIf="filter == 'doc_no' && sortInfoPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'doc_no' && sortInfoPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="doSort('total_item')">Items
-              <ion-icon *ngIf="filter == 'total_item' && sort == 'ASC'" name="md-arrow-dropdown"></ion-icon>
-              <ion-icon *ngIf="filter == 'total_item' && sort == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortInfoPO('total_item')">Items
+              <ion-icon *ngIf="filter == 'total_item' && sortInfoPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'total_item' && sortInfoPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="doSort('transfer_date')">Estimated Time Of Arrival
-              <ion-icon *ngIf="filter == 'transfer_date' && sort == 'ASC'" name="md-arrow-dropdown"></ion-icon>
-              <ion-icon *ngIf="filter == 'transfer_date' && sort == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortInfoPO('transfer_date')">Estimated Time Of Arrival
+              <ion-icon *ngIf="filter == 'transfer_date' && sortInfoPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'transfer_date' && sortInfoPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
             </ion-col>
-            <ion-col padding class="col-content" col-xl-2 (click)="doSort('status')">Status
-              <ion-icon *ngIf="filter == 'status' && sort == 'ASC'" name="md-arrow-dropdown"></ion-icon>
-              <ion-icon *ngIf="filter == 'status' && sort == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortInfoPO('status')">Status
+              <ion-icon *ngIf="filter == 'status' && sortInfoPO == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'status' && sortInfoPO == 'DESC'" name="md-arrow-dropup"></ion-icon>
             </ion-col>
             <ion-col padding class="col-content" col-xl-2>Options
             </ion-col>
@@ -216,10 +216,10 @@
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
       </ion-refresher>
-      <div>
-        <ion-item no-lines class="toolbar-scroll">Showing {{totaldatapreparation}} entries</ion-item>
-      </div>
       <div *ngIf="width < 900" class="android-content">
+        <div>
+          <ion-item no-lines class="toolbar-scroll">Showing {{totaldatapreparation}} entries</ion-item>
+        </div>
         <ion-item class="content-data-item" *ngFor="let prepare of preparation">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
@@ -231,23 +231,35 @@
         </ion-item>
       </div>
       <div *ngIf="width >= 900" class="pc-content">
-        <ion-grid padding>
-          <ion-item no-lines>
-            <ion-label style="text-align:right;">
-              <ion-icon name="ios-funnel"></ion-icon> Filter</ion-label>
-            <ion-select [(ngModel)]="filter" (ionChange)="doFilter(filter)">
-              <ion-option value="order_no">Order No</ion-option>
-              <ion-option value="doc_no">Document No</ion-option>
-              <ion-option value="posting_date">Posting Date</ion-option>
-              <ion-option value="total_item">Jumlah Item</ion-option>
-            </ion-select>
+        <ion-grid>
+          <ion-item no-lines style="margin-left:-1%;width:101%;border-bottom:1px solid;border-color:#dedede;">
+            <ion-label style="margin-left:1%;">DATE :</ion-label>
+            <ion-input style="border:0px;" type="date" [(ngModel)]="datearrivalPrepare" (ionChange)="selectdatePrepare(datearrivalPrepare)"></ion-input>
           </ion-item>
+          <div class="content-search" style="width:100%;">
+            <ion-searchbar (ionInput)="getSearchPrepare($event)" placeholder="Search PO Number"></ion-searchbar>
+          </div>
           <ion-row class="row-content">
-            <ion-col padding class="col-content" col-xl-2>No Order</ion-col>
-            <ion-col padding class="col-content" col-xl-2>No Document</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Items</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Posting Date</ion-col>
-            <ion-col padding class="col-content" col-xl-2>Status</ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPrepare('order_no')">No Order
+              <ion-icon *ngIf="filter == 'order_no' && sortPrepare == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'order_no' && sortPrepare == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPrepare('doc_no')">No Document
+              <ion-icon *ngIf="filter == 'doc_no' && sortPrepare == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'doc_no' && sortPrepare == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPrepare('total_item')">Items
+              <ion-icon *ngIf="filter == 'total_item' && sortPrepare == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'total_item' && sortPrepare == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPrepare('transfer_date')">Estimated Time Of Arrival
+              <ion-icon *ngIf="filter == 'transfer_date' && sortPrepare == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'transfer_date' && sortPrepare == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
+            <ion-col padding class="col-content" col-xl-2 (click)="doSortPrepare('status')">Status
+              <ion-icon *ngIf="filter == 'status' && sortPrepare == 'ASC'" name="md-arrow-dropdown"></ion-icon>
+              <ion-icon *ngIf="filter == 'status' && sortPrepare == 'DESC'" name="md-arrow-dropup"></ion-icon>
+            </ion-col>
             <ion-col padding class="col-content" col-xl-2>Options</ion-col>
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let prepare of preparation">

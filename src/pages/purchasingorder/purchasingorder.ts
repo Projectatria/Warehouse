@@ -37,7 +37,9 @@ export class PurchasingorderPage {
   private height: number;
   private datearrival = '';
   filter = '';
-  sort = '';
+  sortPO = '';
+  sortInfoPO = '';
+  sortPrepare = '';
 
   constructor(
     public navCtrl: NavController,
@@ -63,7 +65,9 @@ export class PurchasingorderPage {
       this.width = platform.width();
       this.height = platform.height();
     });
-    this.sort = ''
+    this.sortPO = ''
+    this.sortInfoPO = ''
+    this.sortPrepare = ''
   }
   ionViewDidLoad() {
     console.log(this.width);
@@ -660,16 +664,33 @@ export class PurchasingorderPage {
       { cssClass: "modal-fullscreen" });
     locationModal.present();
   }
-  doSort(filter) {
+  doSortPO(filter) {
     console.log(filter)
-    if (this.sort == 'ASC') {
-      this.sort = 'DESC'
+    if (this.sortPO == 'ASC') {
+      this.sortPO = 'DESC'
     }
     else {
-      this.sort = 'ASC'
+      this.sortPO = 'ASC'
     }
-    console.log(this.sort)
-    this.api.get("table/purchasing_order", { params: { filter: "status='INP1'", sort: filter + " " + this.sort + " " } }).subscribe(val => {
+    console.log(this.sortPO)
+    this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'", sort: filter + " " + this.sortPO + " " } }).subscribe(val => {
+      this.purchasing_order = val['data'];
+      this.totaldata = val['count'];
+      console.log(this.purchasing_order);
+      console.log(this.totaldata);
+      this.filter = filter
+    });
+  }
+  doSortInfoPO(filter) {
+    console.log(filter)
+    if (this.sortInfoPO == 'ASC') {
+      this.sortInfoPO = 'DESC'
+    }
+    else {
+      this.sortInfoPO = 'ASC'
+    }
+    console.log(this.sortInfoPO)
+    this.api.get("table/purchasing_order", { params: { filter: "status='INP1'", sort: filter + " " + this.sortInfoPO + " " } }).subscribe(val => {
       this.infopo = val['data'];
       this.totaldatainfopo = val['count'];
       console.log(this.infopo);
@@ -677,9 +698,45 @@ export class PurchasingorderPage {
       this.filter = filter
     });
   }
-  selectdate(datearrival) {
-    console.log('date', datearrival)
-    if (datearrival == '') {
+  doSortPrepare(filter) {
+    console.log(filter)
+    if (this.sortPrepare == 'ASC') {
+      this.sortPrepare = 'DESC'
+    }
+    else {
+      this.sortPrepare = 'ASC'
+    }
+    console.log(this.sortPrepare)
+    this.api.get("table/purchasing_order", { params: { filter: "status='INP2'", sort: filter + " " + this.sortPrepare + " " } }).subscribe(val => {
+      this.preparation = val['data'];
+      this.totaldatapreparation = val['count'];
+      console.log(this.preparation);
+      console.log(this.totaldatapreparation);
+      this.filter = filter
+    });
+  }
+  selectdatePO(datearrivalPO) {
+    console.log('date', datearrivalPO)
+    if (datearrivalPO == '') {
+      this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'"} }).subscribe(val => {
+        this.purchasing_order = val['data'];
+        this.totaldata = val['count'];
+        console.log(this.purchasing_order);
+        console.log(this.totaldata);
+      });
+    }
+    else {
+      this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'" + " AND " + "transfer_date=" + "'" + datearrivalPO + "'" } }).subscribe(val => {
+        this.purchasing_order = val['data'];
+        this.totaldata = val['count'];
+        console.log(this.purchasing_order);
+        console.log(this.totaldata);
+      });
+    }
+  }
+  selectdateInfoPO(datearrivalInfoPO) {
+    console.log('date', datearrivalInfoPO)
+    if (datearrivalInfoPO == '') {
       this.api.get("table/purchasing_order", { params: { filter: "status='INP1'"} }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
@@ -688,11 +745,30 @@ export class PurchasingorderPage {
       });
     }
     else {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" + " AND " + "transfer_date=" + "'" + datearrival + "'" } }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" + " AND " + "transfer_date=" + "'" + datearrivalInfoPO + "'" } }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
         console.log(this.infopo);
         console.log(this.totaldatainfopo);
+      });
+    }
+  }
+  selectdatePrepare(datearrivalPrepare) {
+    console.log('date', datearrivalPrepare)
+    if (datearrivalPrepare == '') {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'"} }).subscribe(val => {
+        this.preparation = val['data'];
+        this.totaldatapreparation = val['count'];
+        console.log(this.preparation);
+        console.log(this.totaldatapreparation);
+      });
+    }
+    else {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "transfer_date=" + "'" + datearrivalPrepare + "'" } }).subscribe(val => {
+        this.preparation = val['data'];
+        this.totaldatapreparation = val['count'];
+        console.log(this.preparation);
+        console.log(this.totaldatapreparation);
       });
     }
   }

@@ -16,6 +16,7 @@ export class QcinPage {
   private staging_in = [];
   private quality_control = [];
   private qcresult = [];
+  private qcinpic = [];
   searchstaging: any;
   searchqc: any;
   halaman = 0;
@@ -190,57 +191,101 @@ export class QcinPage {
         {
           text: 'OK',
           handler: data => {
-            this.api.get('nextno/qc_in/qc_no')
+            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "batch_no=" + "'" + staging.batch_no + "'" + " AND " + "item_no=" + "'" + staging.item_no + "'" } })
               .subscribe(val => {
-                console.log('Get Next No')
-                this.nextnoqc = val['nextno'];
-                console.log('qc 1', this.nextnoqc)
-                const headers = new HttpHeaders()
-                  .set("Content-Type", "application/json");
-                let date = moment().format('YYYY-MM-DD');
-                this.api.post("table/qc_in",
-                  {
-                    "qc_no": this.nextnoqc,
-                    "receiving_no": staging.receiving_no,
-                    "doc_no": staging.doc_no,
-                    "order_no": staging.order_no,
-                    "batch_no": staging.batch_no,
-                    "item_no": staging.item_no,
-                    "pic": '12345',
-                    "qty": data.qty,
-                    "unit": staging.unit,
-                    "staging": staging.staging,
-                    "status": 'OPEN',
-                    "uuid": UUID.UUID()
-                  },
-                  { headers })
-                  .subscribe(val => {
-                    console.log('Sukses 1')
-                    const headers = new HttpHeaders()
-                      .set("Content-Type", "application/json");
-                    this.api.put("table/staging_in",
-                      {
-                        "staging_no": staging.staging_no,
-                        "qty": staging.qty - data.qty
-                      },
-                      { headers })
-                      .subscribe(val => {
-                        console.log('Sukses 2')
-                        this.api.get('table/staging_in')
-                          .subscribe(val => {
-                            this.staging_in = val['data'];
-                            this.totaldata = val['count'];
-                            this.searchstaging = this.staging_in;
-                            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
-                              .subscribe(val => {
-                                this.quality_control = val['data'];
-                                this.totaldataqc = val['count'];
-                                this.searchqc = this.quality_control;
-                              });
-                          });
+                this.qcinpic = val['data'];
+                if (this.qcinpic.length == 0) {
+                  this.api.get('nextno/qc_in/qc_no')
+                    .subscribe(val => {
+                      console.log('Get Next No')
+                      this.nextnoqc = val['nextno'];
+                      console.log('qc 1', this.nextnoqc)
+                      const headers = new HttpHeaders()
+                        .set("Content-Type", "application/json");
+                      let date = moment().format('YYYY-MM-DD');
+                      this.api.post("table/qc_in",
+                        {
+                          "qc_no": this.nextnoqc,
+                          "receiving_no": staging.receiving_no,
+                          "doc_no": staging.doc_no,
+                          "order_no": staging.order_no,
+                          "batch_no": staging.batch_no,
+                          "item_no": staging.item_no,
+                          "pic": '12345',
+                          "qty": data.qty,
+                          "unit": staging.unit,
+                          "staging": staging.staging,
+                          "status": 'OPEN',
+                          "uuid": UUID.UUID()
+                        },
+                        { headers })
+                        .subscribe(val => {
+                          console.log('Sukses 1')
+                          const headers = new HttpHeaders()
+                            .set("Content-Type", "application/json");
+                          this.api.put("table/staging_in",
+                            {
+                              "staging_no": staging.staging_no,
+                              "qty": staging.qty - data.qty
+                            },
+                            { headers })
+                            .subscribe(val => {
+                              console.log('Sukses 2')
+                              this.api.get('table/staging_in')
+                                .subscribe(val => {
+                                  this.staging_in = val['data'];
+                                  this.totaldata = val['count'];
+                                  this.searchstaging = this.staging_in;
+                                  this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+                                    .subscribe(val => {
+                                      this.quality_control = val['data'];
+                                      this.totaldataqc = val['count'];
+                                      this.searchqc = this.quality_control;
+                                    });
+                                });
 
-                      });
-                  });
+                            });
+                        });
+                    });
+                }
+                else {
+                  const headers = new HttpHeaders()
+                    .set("Content-Type", "application/json");
+                  let date = moment().format('YYYY-MM-DD');
+                  this.api.put("table/qc_in",
+                    {
+                      "qc_no": this.qcinpic[0].qc_no,
+                      "qty": parseInt(this.qcinpic[0].qty) + parseInt(data.qty)
+                    },
+                    { headers })
+                    .subscribe(val => {
+                      console.log('Sukses 1')
+                      const headers = new HttpHeaders()
+                        .set("Content-Type", "application/json");
+                      this.api.put("table/staging_in",
+                        {
+                          "staging_no": staging.staging_no,
+                          "qty": staging.qty - data.qty
+                        },
+                        { headers })
+                        .subscribe(val => {
+                          console.log('Sukses 2')
+                          this.api.get('table/staging_in')
+                            .subscribe(val => {
+                              this.staging_in = val['data'];
+                              this.totaldata = val['count'];
+                              this.searchstaging = this.staging_in;
+                              this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+                                .subscribe(val => {
+                                  this.quality_control = val['data'];
+                                  this.totaldataqc = val['count'];
+                                  this.searchqc = this.quality_control;
+                                });
+                            });
+
+                        });
+                    });
+                }
               });
           }
         }
