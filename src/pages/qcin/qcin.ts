@@ -19,6 +19,7 @@ export class QcinPage {
   private staging_in = [];
   private quality_control = [];
   private qcresult = [];
+  private qcresultopen = [];
   private qcinpic = [];
   private qcinbarcode = [];
   private photos = [];
@@ -28,6 +29,7 @@ export class QcinPage {
   totaldata: any;
   totaldataqc: any;
   totaldataqcresult: any;
+  totaldataqcresultopen: any;
   totalphoto: any;
   public toggled: boolean = false;
   qc: string = "qcin";
@@ -42,7 +44,10 @@ export class QcinPage {
   imageFileName: string = '';
   private uuid = '';
   private uuidqcresult = '';
+  private qcno = '';
+  private qcnoresult = '';
   private viewfoto = '';
+  private qcqty = '';
 
   constructor(
     public navCtrl: NavController,
@@ -62,7 +67,7 @@ export class QcinPage {
     this.qc = "qcin"
     this.detailqc = false;
     this.button = false;
-    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
         this.totaldataqc = val['count'];
@@ -72,9 +77,7 @@ export class QcinPage {
   getStagingin() {
     return new Promise(resolve => {
       let offsetstagingin = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -99,14 +102,12 @@ export class QcinPage {
   getStagingqc() {
     return new Promise(resolve => {
       let offsetqc = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
         this.halaman++;
-        this.api.get('table/qc_in', { params: { limit: 30, offset: offsetqc, filter: "pic='12345'" } })
+        this.api.get('table/qc_in', { params: { limit: 30, offset: offsetqc, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -124,7 +125,6 @@ export class QcinPage {
 
   }
   getSearchStagingDetail(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -167,7 +167,7 @@ export class QcinPage {
       });
   }
   doRefreshmyqc(refresher) {
-    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
         this.totaldataqc = val['count'];
@@ -203,7 +203,6 @@ export class QcinPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -215,9 +214,7 @@ export class QcinPage {
                 if (this.qcinpic.length == 0) {
                   this.api.get('nextno/qc_in/qc_no')
                     .subscribe(val => {
-                      console.log('Get Next No')
                       this.nextnoqc = val['nextno'];
-                      console.log('qc 1', this.nextnoqc)
                       const headers = new HttpHeaders()
                         .set("Content-Type", "application/json");
                       let date = moment().format('YYYY-MM-DD');
@@ -238,7 +235,6 @@ export class QcinPage {
                         },
                         { headers })
                         .subscribe(val => {
-                          console.log('Sukses 1')
                           const headers = new HttpHeaders()
                             .set("Content-Type", "application/json");
                           this.api.put("table/staging_in",
@@ -248,13 +244,12 @@ export class QcinPage {
                             },
                             { headers })
                             .subscribe(val => {
-                              console.log('Sukses 2')
                               this.api.get('table/staging_in')
                                 .subscribe(val => {
                                   this.staging_in = val['data'];
                                   this.totaldata = val['count'];
                                   this.searchstaging = this.staging_in;
-                                  this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" } })
+                                  this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
                                     .subscribe(val => {
                                       this.quality_control = val['data'];
                                       this.totaldataqc = val['count'];
@@ -277,7 +272,6 @@ export class QcinPage {
                     },
                     { headers })
                     .subscribe(val => {
-                      console.log('Sukses 1')
                       const headers = new HttpHeaders()
                         .set("Content-Type", "application/json");
                       this.api.put("table/staging_in",
@@ -287,7 +281,6 @@ export class QcinPage {
                         },
                         { headers })
                         .subscribe(val => {
-                          console.log('Sukses 2')
                           this.api.get('table/staging_in')
                             .subscribe(val => {
                               this.staging_in = val['data'];
@@ -315,6 +308,7 @@ export class QcinPage {
     this.qcresult = [];
     this.qclist = myqc.item_no;
     this.batchnolist = myqc.batch_no;
+    this.qcqty = myqc.qty
     this.detailqc = this.detailqc ? false : true;
     this.getQCResult(myqc);
   }
@@ -342,18 +336,15 @@ export class QcinPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
           }
         },
         {
           text: 'OK',
           handler: data => {
-
-            console.log(data.barcode)
             var barcodeno = data.barcode;
             var batchno = barcodeno.substring(0, 6);
             var itemno = barcodeno.substring(6, 14);
-            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "batch_no=" + "'" + batchno + "'" + " AND " + "item_no=" + "'" + itemno + "'" } })
+            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "batch_no=" + "'" + batchno + "'" + " AND " + "item_no=" + "'" + itemno + "'" + " AND " + "status='OPEN'" } })
               .subscribe(val => {
                 this.qcinbarcode = val['data'];
                 if (this.qcinbarcode.length == 0) {
@@ -365,58 +356,86 @@ export class QcinPage {
                   alert.present();
                 }
                 else {
-                  let alert = this.alertCtrl.create({
-                    title: 'Confirm Start',
-                    message: 'Do you want to QC Now?',
-                    buttons: [
-                      {
-                        text: 'Cancel',
-                        role: 'cancel',
-                        handler: () => {
-                          console.log('Cancel clicked');
-                        }
-                      },
-                      {
-                        text: 'Start',
-                        handler: () => {
-                          this.getNextNoQCResult().subscribe(val => {
-                            let time = moment().format('HH:mm:ss');
-                            let date = moment().format('YYYY-MM-DD');
-                            let uuid = UUID.UUID();
-                            this.nextnoqcresult = val['nextno'];
-                            const headers = new HttpHeaders()
-                              .set("Content-Type", "application/json");
-                            this.api.post("table/qc_in_result",
-                              {
-                                "qc_result_no": this.nextnoqcresult,
-                                "qc_no": this.qcinbarcode[0].qc_no,
-                                "batch_no": this.qcinbarcode[0].batch_no,
-                                "item_no": this.qcinbarcode[0].item_no,
-                                "date_start": date,
-                                "date_finish": date,
-                                "time_start": time,
-                                "time_finish": time,
-                                "qc_pic": 'AJI',
-                                "qty_receiving": 25,
-                                "unit": this.qcinbarcode[0].unit,
-                                "qc_status": "OPEN",
-                                "qc_description": "",
-                                "uuid": uuid
-                              },
-                              { headers })
-                              .subscribe(val => {
-                                document.getElementById("myQCChecking").style.display = "block";
-                                document.getElementById("myHeader").style.display = "none";
-                                this.button = true;
-                                this.uuidqcresult = uuid;
-                              })
-                          });
-                        }
-                      }
-                    ]
+                  this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcinbarcode[0].qc_no + "'" } }).subscribe(val => {
+                    this.qcresult = val['data'];
+                    this.totaldataqcresult = val['count'];
+                    if (this.qcinbarcode.length == 0) {
+                      let alert = this.alertCtrl.create({
+                        title: 'Error',
+                        subTitle: 'Data Not Found In My QC',
+                        buttons: ['OK']
+                      });
+                      alert.present();
+                    }
+                    else if (this.totaldataqcresult == this.qcinbarcode[0].qty) {
+                      let alert = this.alertCtrl.create({
+                        title: 'Error',
+                        subTitle: 'Data Already Create',
+                        buttons: ['OK']
+                      });
+                      alert.present();
+                    }
+                    else {
+                      let alert = this.alertCtrl.create({
+                        title: 'Confirm Start',
+                        message: 'Do you want to QC Now?',
+                        buttons: [
+                          {
+                            text: 'Cancel',
+                            role: 'cancel',
+                            handler: () => {
+                            }
+                          },
+                          {
+                            text: 'Start',
+                            handler: () => {
+                              this.getNextNoQCResult().subscribe(val => {
+                                let time = moment().format('HH:mm:ss');
+                                let date = moment().format('YYYY-MM-DD');
+                                let uuid = UUID.UUID();
+                                this.nextnoqcresult = val['nextno'];
+                                const headers = new HttpHeaders()
+                                  .set("Content-Type", "application/json");
+                                this.api.post("table/qc_in_result",
+                                  {
+                                    "qc_result_no": this.nextnoqcresult,
+                                    "qc_no": this.qcinbarcode[0].qc_no,
+                                    "batch_no": this.qcinbarcode[0].batch_no,
+                                    "item_no": this.qcinbarcode[0].item_no,
+                                    "date_start": date,
+                                    "date_finish": date,
+                                    "time_start": time,
+                                    "time_finish": time,
+                                    "qc_pic": 'AJI',
+                                    "qty_receiving": 25,
+                                    "unit": this.qcinbarcode[0].unit,
+                                    "qc_status": "OPEN",
+                                    "qc_description": "",
+                                    "uuid": uuid
+                                  },
+                                  { headers })
+                                  .subscribe(val => {
+                                    document.getElementById("myQCChecking").style.display = "block";
+                                    document.getElementById("myHeader").style.display = "none";
+                                    this.button = true;
+                                    this.uuidqcresult = uuid;
+                                    this.qcnoresult = this.nextnoqcresult;
+                                    this.qcno = this.qcinbarcode[0].qc_no
+                                    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidqcresult + "'" } }).subscribe(val => {
+                                      this.photos = val['data'];
+                                      this.totalphoto = val['count'];
+                                    });
+                                  })
+                              });
+                            }
+                          }
+                        ]
+                      });
+                      alert.present();
+                    }
                   });
-                  alert.present();
                 }
+
               });
 
           }
@@ -435,13 +454,14 @@ export class QcinPage {
       this.photos = val['data'];
       this.totalphoto = val['count'];
       this.uuidqcresult = result.uuid;
+      this.qcnoresult = result.qc_result_no;
+      this.qcno = result.qc_no;
       document.getElementById("myQCChecking").style.display = "block";
       document.getElementById("myHeader").style.display = "none";
       this.button = true;
     });
   }
   doViewPhoto(foto) {
-    console.log(foto.img_src)
     this.viewfoto = foto.img_src
     document.getElementById("foto").style.display = "block";
     document.getElementById("button").style.display = "none";
@@ -511,12 +531,10 @@ export class QcinPage {
           this.imageURI = '';
           this.imageFileName = '';
         }, (err) => {
-          console.log(err);
           loader.dismiss();
           this.presentToast(err);
         });
     }, (err) => {
-      console.log(err);
       this.presentToast(err);
     });
   }
@@ -528,12 +546,197 @@ export class QcinPage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();
   }
   getNextNoQCResult() {
     return this.api.get('nextno/qc_in_result/qc_result_no')
+  }
+  doPassedQC() {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Passed',
+      message: 'Do you want to Passed this Item?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Passed',
+          handler: () => {
+            let alert = this.alertCtrl.create({
+              title: 'Description',
+              inputs: [
+                {
+                  name: 'description',
+                  placeholder: 'Description'
+                }
+              ],
+              buttons: [
+                {
+                  text: 'SAVE',
+                  handler: data => {
+                    this.getNextNoQCResult().subscribe(val => {
+                      let time = moment().format('HH:mm:ss');
+                      let date = moment().format('YYYY-MM-DD');
+                      let uuid = UUID.UUID();
+                      this.nextnoqcresult = val['nextno'];
+                      const headers = new HttpHeaders()
+                        .set("Content-Type", "application/json");
+                      this.api.put("table/qc_in_result",
+                        {
+                          "qc_result_no": this.qcnoresult,
+                          "date_finish": date,
+                          "time_finish": time,
+                          "qc_status": "PASSED",
+                          "qc_description": data.description
+                        },
+                        { headers })
+                        .subscribe(val => {
+                          document.getElementById("myQCChecking").style.display = "none";
+                          document.getElementById("myHeader").style.display = "block";
+                          this.button = false;
+                          this.qcnoresult = '';
+                          this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
+                            this.qcresult = val['data'];
+                            this.totaldataqcresult = val['count'];
+                            this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" + " AND " + "qc_status='OPEN'" } }).subscribe(val => {
+                              this.qcresultopen = val['data'];
+                              this.totaldataqcresultopen = val['count'];
+                              if ((this.totaldataqcresult == this.qcqty) && this.totaldataqcresultopen == 0) {
+                                const headers = new HttpHeaders()
+                                  .set("Content-Type", "application/json");
+                                this.api.put("table/qc_in",
+                                  {
+                                    "qc_no": this.qcno,
+                                    "status": 'CLSD'
+                                  },
+                                  { headers })
+                                  .subscribe(val => {
+                                    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
+                                      .subscribe(val => {
+                                        this.quality_control = val['data'];
+                                        this.totaldataqc = val['count'];
+                                      });
+                                  });
+                              }
+                            });
+                          });
+                          let alert = this.alertCtrl.create({
+                            title: 'Sukses',
+                            subTitle: 'Save Sukses',
+                            buttons: ['OK']
+                          });
+                          alert.present();
+                        })
+                    });
+                  }
+                }
+              ]
+            });
+            alert.present();
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+  doRejectQC() {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Reject',
+      message: 'Do you want to Reject this Item?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Reject',
+          handler: () => {
+            let alert = this.alertCtrl.create({
+              title: 'Description',
+              inputs: [
+                {
+                  name: 'description',
+                  placeholder: 'Description'
+                }
+              ],
+              buttons: [
+                {
+                  text: 'SAVE',
+                  handler: data => {
+                    this.getNextNoQCResult().subscribe(val => {
+                      let time = moment().format('HH:mm:ss');
+                      let date = moment().format('YYYY-MM-DD');
+                      let uuid = UUID.UUID();
+                      this.nextnoqcresult = val['nextno'];
+                      const headers = new HttpHeaders()
+                        .set("Content-Type", "application/json");
+                      this.api.put("table/qc_in_result",
+                        {
+                          "qc_result_no": this.qcnoresult,
+                          "date_finish": date,
+                          "time_finish": time,
+                          "qc_status": "REJECT",
+                          "qc_description": data.description
+                        },
+                        { headers })
+                        .subscribe(val => {
+                          document.getElementById("myQCChecking").style.display = "none";
+                          document.getElementById("myHeader").style.display = "block";
+                          this.button = false;
+                          this.qcnoresult = '';
+                          this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
+                            this.qcresult = val['data'];
+                            this.totaldataqcresult = val['count'];
+                          });
+                          this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
+                            this.qcresult = val['data'];
+                            this.totaldataqcresult = val['count'];
+                            this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" + " AND " + "qc_status='OPEN'" } }).subscribe(val => {
+                              this.qcresultopen = val['data'];
+                              this.totaldataqcresultopen = val['count'];
+                              if ((this.totaldataqcresult == this.qcqty) && this.totaldataqcresultopen == 0) {
+                                const headers = new HttpHeaders()
+                                  .set("Content-Type", "application/json");
+                                this.api.put("table/qc_in",
+                                  {
+                                    "qc_no": this.qcno,
+                                    "status": 'CLSD'
+                                  },
+                                  { headers })
+                                  .subscribe(val => {
+                                    this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
+                                      .subscribe(val => {
+                                        this.quality_control = val['data'];
+                                        this.totaldataqc = val['count'];
+                                      });
+                                  });
+                              }
+                            });
+                          });
+                          let alert = this.alertCtrl.create({
+                            title: 'Sukses',
+                            subTitle: 'Save Sukses',
+                            buttons: ['OK']
+                          });
+                          alert.present();
+                        })
+                    });
+                  }
+                }
+              ]
+            });
+            alert.present();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }
