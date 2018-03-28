@@ -24,12 +24,14 @@ export class PutawayPage {
   private getputawaylist = [];
   private location = [];
   private listputaway = [];
+  private listputawaydetail = [];
   searchrcv: any;
   searchloc: any;
   searchputaway: any;
   halaman = 0;
   totaldata: any;
   totaldataputaway: any;
+  totaldataputawaydetail: any;
   totaldatalistputaway: any;
   divisioncode = '';
   divdesc = '';
@@ -56,6 +58,7 @@ export class PutawayPage {
   private nextno = '';
   public toggled: boolean = false;
   public detailput: boolean = false;
+  public detailputlist: boolean = false;
   put: string = "qcin";
   public buttonText: string;
   public loading: boolean;
@@ -63,6 +66,9 @@ export class PutawayPage {
   data = {};
   groupby = '';
   search = '';
+  itemnolist = '';
+  batchnolist = '';
+  locationlist = '';
 
   constructor(
     public navCtrl: NavController,
@@ -144,12 +150,41 @@ export class PutawayPage {
     });
   }
   getSetGroupBy(groupby) {
-    console.log(groupby)
     this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'", group: groupby, groupSummary: "sum (qty) as qtysum" } })
       .subscribe(val => {
         this.listputaway = val['data'];
         this.totaldataputaway = val['count'];
         this.searchputaway = this.listputaway;
+      });
+  }
+  getDetailGroupByItems(listpu) {
+    this.listputawaydetail = [];
+    this.detailputlist = this.detailputlist ? false : true
+    this.itemnolist = listpu.item_no
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "item_no=" + "'" + listpu.item_no + "'"} })
+      .subscribe(val => {
+        this.listputawaydetail = val['data'];
+        this.totaldataputawaydetail = val['count'];
+      });
+  }
+  getDetailGroupByBatchno(listpu) {
+    this.listputawaydetail = [];
+    this.detailputlist = this.detailputlist ? false : true
+    this.batchnolist = listpu.batch_no
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "batch_no=" + "'" + listpu.batch_no + "'"} })
+      .subscribe(val => {
+        this.listputawaydetail = val['data'];
+        this.totaldataputawaydetail = val['count'];
+      });
+  }
+  getDetailGroupByLocation(listpu) {
+    this.listputawaydetail = [];
+    this.detailputlist = this.detailputlist ? false : true
+    this.locationlist = listpu.location_position
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "location_position=" + "'" + listpu.location_position + "'"} })
+      .subscribe(val => {
+        this.listputawaydetail = val['data'];
+        this.totaldataputawaydetail = val['count'];
       });
   }
   getSearchItems(ev: any) {
