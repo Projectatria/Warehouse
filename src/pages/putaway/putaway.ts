@@ -161,7 +161,7 @@ export class PutawayPage {
     this.listputawaydetail = [];
     this.detailputlist = this.detailputlist ? false : true
     this.itemnolist = listpu.item_no
-    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "item_no=" + "'" + listpu.item_no + "'"} })
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "item_no=" + "'" + listpu.item_no + "'" } })
       .subscribe(val => {
         this.listputawaydetail = val['data'];
         this.totaldataputawaydetail = val['count'];
@@ -171,7 +171,7 @@ export class PutawayPage {
     this.listputawaydetail = [];
     this.detailputlist = this.detailputlist ? false : true
     this.batchnolist = listpu.batch_no
-    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "batch_no=" + "'" + listpu.batch_no + "'"} })
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "batch_no=" + "'" + listpu.batch_no + "'" } })
       .subscribe(val => {
         this.listputawaydetail = val['data'];
         this.totaldataputawaydetail = val['count'];
@@ -181,7 +181,7 @@ export class PutawayPage {
     this.listputawaydetail = [];
     this.detailputlist = this.detailputlist ? false : true
     this.locationlist = listpu.location_position
-    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "location_position=" + "'" + listpu.location_position + "'"} })
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" + " AND " + "location_position=" + "'" + listpu.location_position + "'" } })
       .subscribe(val => {
         this.listputawaydetail = val['data'];
         this.totaldataputawaydetail = val['count'];
@@ -1081,5 +1081,8 @@ export class PutawayPage {
       console.log(this.totaldatalistputaway);
       this.filter = filter
     });
+  }
+  doSortPUTDetail(filter, listpu) {
+
   }
 }
