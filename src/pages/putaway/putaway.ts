@@ -23,11 +23,14 @@ export class PutawayPage {
   private receivingputawaylist = [];
   private getputawaylist = [];
   private location = [];
+  private listputaway = [];
   searchrcv: any;
   searchloc: any;
+  searchputaway: any;
   halaman = 0;
   totaldata: any;
   totaldataputaway: any;
+  totaldatalistputaway: any;
   divisioncode = '';
   divdesc = '';
   setdiv = '';
@@ -47,15 +50,19 @@ export class PutawayPage {
   rcvlist = '';
   barcodeno = '';
   rackno = '';
+  sortPUT = '';
+  filter = '';
   public totalqty: any;
   private nextno = '';
   public toggled: boolean = false;
   public detailput: boolean = false;
-  put: string = "putaway";
+  put: string = "qcin";
   public buttonText: string;
   public loading: boolean;
   option: BarcodeScannerOptions;
   data = {};
+  groupby = '';
+  search = '';
 
   constructor(
     public navCtrl: NavController,
@@ -74,8 +81,16 @@ export class PutawayPage {
       location: ['', Validators.compose([Validators.required])],
     })
     this.getrcv();
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" } })
+      .subscribe(val => {
+        this.listputaway = val['data'];
+        this.totaldataputaway = val['count'];
+        this.searchputaway = this.listputaway;
+      });
     this.toggled = false;
-    this.put = "putaway"
+    this.put = "qcin"
+    this.groupby = ""
+    this.search = 'item_no';
   }
 
   ionViewDidLoad() {
@@ -103,6 +118,81 @@ export class PutawayPage {
           });
       }
     });
+  }
+  getputaway() {
+    return new Promise(resolve => {
+      let offsetputaway = 30 * this.halaman
+      if (this.halaman == -1) {
+        resolve();
+      }
+      else {
+        this.halaman++;
+        this.api.get('table/putaway', { params: { limit: 30, offset: offsetputaway, filter: "status='OPEN'" } })
+          .subscribe(val => {
+            let data = val['data'];
+            for (let i = 0; i < data.length; i++) {
+              this.listputaway.push(data[i]);
+              this.totaldatalistputaway = val['count'];
+              this.searchputaway = this.listputaway;
+            }
+            if (data.length == 0) {
+              this.halaman = -1
+            }
+            resolve();
+          });
+      }
+    });
+  }
+  getSetGroupBy(groupby) {
+    console.log(groupby)
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'", group: groupby } })
+      .subscribe(val => {
+        this.listputaway = val['data'];
+        this.totaldataputaway = val['count'];
+        this.searchputaway = this.listputaway;
+      });
+  }
+  getSearchItems(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listputaway = this.searchputaway.filter(put => {
+        return put.item_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.listputaway = this.searchputaway;
+    }
+  }
+  getSearchbatch(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listputaway = this.searchputaway.filter(put => {
+        return put.batch_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.listputaway = this.searchputaway;
+    }
+  }
+  getSearchlocations(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listputaway = this.searchputaway.filter(put => {
+        return put.location_position.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.listputaway = this.searchputaway;
+    }
   }
   menuShow() {
     this.menu.enable(true);
@@ -134,6 +224,15 @@ export class PutawayPage {
         this.receiving = val['data'];
         this.totaldata = val['count'];
         this.searchrcv = this.receiving;
+        refresher.complete();
+      });
+  }
+  doRefreshputaway(refresher) {
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" } })
+      .subscribe(val => {
+        this.listputaway = val['data'];
+        this.totaldataputaway = val['count'];
+        this.searchputaway = this.listputaway;
         refresher.complete();
       });
   }
@@ -512,7 +611,56 @@ export class PutawayPage {
                 },
                 { headers })
                 .subscribe(val => {
-                  if (this.position == this.myFormModal.value.location) {
+                  const headers = new HttpHeaders()
+                    .set("Content-Type", "application/json");
+                  console.log('posisi', this.position)
+                  this.api.put("table/location_master",
+                    {
+                      "location_alocation": this.position,
+                      "batch_no": '',
+                      "item_no": '',
+                      "qty": 0,
+                      "status": 'TRUE'
+                    },
+                    { headers })
+                    .subscribe(val => {
+                      console.log('update receiving')
+                      this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
+                        .subscribe(val => {
+                          if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
+                            var position = this.myFormModal.value.location.substring(0, 2);
+                            console.log('update lokasi false')
+                            this.api.put("table/receiving",
+                              {
+                                "receiving_no": this.receivingno,
+                                "staging": 'RACK',
+                                "position": position
+                              },
+                              { headers })
+                              .subscribe(val => {
+                                this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
+                                  .subscribe(val => {
+                                    this.receiving = val['data'];
+                                  });
+                              });
+                          }
+                          console.log('get putaway')
+                          this.putaway = val['data'];
+                          this.rcvlist = this.receivingno;
+                          this.totaldataputaway = val['count'];
+                          this.detailput = this.detailput ? false : true;
+                          let alert = this.alertCtrl.create({
+                            title: 'Sukses',
+                            subTitle: 'Save Sukses',
+                            buttons: ['OK']
+                          });
+                          alert.present();
+                          this.doOffPutaway();
+                          this.receivingno = '';
+                          this.qtyprevious = '';
+                        });
+                    });
+                  /*if (this.position == this.myFormModal.value.location) {
                     console.log('posisi sama')
                     this.api.put("table/location_master",
                       {
@@ -597,7 +745,7 @@ export class PutawayPage {
                               });
                           });
                       });
-                  }
+                  }*/
                 });
             });
           }
@@ -839,5 +987,22 @@ export class PutawayPage {
   }
   getNextNoPUTemp() {
     return this.api.get('nextno/putawaylist_temp/putawaylisttemp_no')
+  }
+  doSortPUT(filter) {
+    console.log(filter)
+    if (this.sortPUT == 'ASC') {
+      this.sortPUT = 'DESC'
+    }
+    else {
+      this.sortPUT = 'ASC'
+    }
+    console.log(this.sortPUT)
+    this.api.get("table/putaway", { params: { filter: "status='OPEN'", sort: filter + " " + this.sortPUT + " " } }).subscribe(val => {
+      this.listputaway = val['data'];
+      this.totaldatalistputaway = val['count'];
+      console.log(this.listputaway);
+      console.log(this.totaldatalistputaway);
+      this.filter = filter
+    });
   }
 }
