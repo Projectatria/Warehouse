@@ -106,8 +106,16 @@
           <ion-searchbar *ngIf="search == 'location_position'" style="margin-top:-10px;margin-left:-10px;padding:0px;width:105%;" (ionInput)="getSearchlocations($event)"
             placeholder="Search Locations"></ion-searchbar>
         </ion-item>
+        <ion-item no-lines *ngIf="groupby != ''">
+            <ion-searchbar *ngIf="search == 'item_no'" style="margin-top:-10px;margin-left:-10px;padding:0px;width:105%;" (ionInput)="getSearchGroupItems($event)"
+              placeholder="Search Items"></ion-searchbar>
+            <ion-searchbar *ngIf="search == 'batch_no'" style="margin-top:-10px;margin-left:-10px;padding:0px;width:105%;" (ionInput)="getSearchGroupbatch($event)"
+              placeholder="Search Batch Number"></ion-searchbar>
+            <ion-searchbar *ngIf="search == 'location_position'" style="margin-top:-10px;margin-left:-10px;padding:0px;width:105%;" (ionInput)="getSearchGrouplocations($event)"
+              placeholder="Search Locations"></ion-searchbar>
+          </ion-item>
       </div>
-      <div style="background:#ffffff;">
+      <div *ngIf="groupby == ''" style="background:#ffffff;">
         <ion-grid>
           <ion-row>
             <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
@@ -140,6 +148,22 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+      </div>
+      <div *ngIf="groupby != ''" >
+        <ion-card *ngFor="let listpu of listputaway">
+          <ion-item *ngIf="groupby == 'item_no'">
+            Item No : {{listpu.item_no}}
+            <ion-note style="color:red" item-end>{{listpu.qtysum}}</ion-note>
+          </ion-item>
+          <ion-item *ngIf="groupby == 'location_position'">
+            Location : {{listpu.location_position}}
+            <ion-note style="color:red" item-end>{{listpu.qtysum}}</ion-note>
+          </ion-item>
+          <ion-item *ngIf="groupby == 'batch_no'">
+            Batch No : {{listpu.batch_no}}
+            <ion-note style="color:red" item-end>{{listpu.qtysum}}</ion-note>
+          </ion-item>
+        </ion-card>
       </div>
     </ion-list>
     <ion-list *ngSwitchCase="'history'">

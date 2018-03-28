@@ -145,7 +145,7 @@ export class PutawayPage {
   }
   getSetGroupBy(groupby) {
     console.log(groupby)
-    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'", group: groupby } })
+    this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'", group: groupby, groupSummary: "sum (qty) as qtysum" } })
       .subscribe(val => {
         this.listputaway = val['data'];
         this.totaldataputaway = val['count'];
@@ -181,6 +181,48 @@ export class PutawayPage {
     }
   }
   getSearchlocations(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listputaway = this.searchputaway.filter(put => {
+        return put.location_position.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.listputaway = this.searchputaway;
+    }
+  }
+  getSearchGroupItems(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listputaway = this.searchputaway.filter(put => {
+        return put.item_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.listputaway = this.searchputaway;
+    }
+  }
+  getSearchGroupbatch(ev: any) {
+    console.log(ev)
+    // set val to the value of the searchbar
+    let val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listputaway = this.searchputaway.filter(put => {
+        return put.batch_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+      })
+    } else {
+      this.listputaway = this.searchputaway;
+    }
+  }
+  getSearchGrouplocations(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
