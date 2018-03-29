@@ -4,7 +4,7 @@
       <ion-icon name="menu" style="font-size:30px;"></ion-icon>
     </button>
     <div style="text-align:right;height:0px;">
-      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="doSaveToPutaway()">
+      <button ion-button clear style="color:#ffffff;background:transparent;font-size:25px;" (click)="doSaveToMovement()">
         <ion-icon name="md-checkbox-outline"></ion-icon>
       </button>
     </div>
@@ -54,13 +54,13 @@
               <ion-col>Tools</ion-col>
             </ion-row>
           </ion-col>
-          <ion-col *ngFor="let putemp of putawaytemp" col-12 style="border-top:1px solid;border-color:#dedede;">
+          <ion-col *ngFor="let movetemp of movementtemp" col-12 style="border-top:1px solid;border-color:#dedede;">
             <ion-row>
-              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.batch_no}}</ion-col>
-              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.item_no}}</ion-col>
-              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.variant_no}}</ion-col>
-              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{putemp.qty}}</ion-col>
-              <ion-col style="color:white;background:#ac0000;text-align:center;" (click)="doDeletePutawayList(putemp)">
+              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{movetemp.batch_no}}</ion-col>
+              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{movetemp.item_no}}</ion-col>
+              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{movetemp.variant_no}}</ion-col>
+              <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{movetemp.qty}}</ion-col>
+              <ion-col style="color:white;background:#ac0000;text-align:center;" (click)="doDeletePutawayList(movetemp)">
                 <ion-icon name="md-close"></ion-icon>
               </ion-col>
             </ion-row>

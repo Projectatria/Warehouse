@@ -19,6 +19,7 @@ export class PutawayPage {
   private location_master = [];
   private division = [];
   private putaway = [];
+  private putawaylist = [];
   private putawaytemp = [];
   private receivingputawaylist = [];
   private getputawaylist = [];
@@ -640,7 +641,7 @@ export class PutawayPage {
     this.doOffLocations();
   }
   doSavePutaway() {
-    this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
+    this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + "'" + this.receivingno + "'" } })
       .subscribe(val => {
         this.putaway = val['data'];
         this.totalqty = this.putaway.reduce(function (prev, cur) {
@@ -660,72 +661,28 @@ export class PutawayPage {
         else {
           if (this.qtyprevious == '') {
             console.log('qty previous kosong')
-            const headers = new HttpHeaders()
-              .set("Content-Type", "application/json");
-            this.getNextNo().subscribe(val => {
-              this.nextno = val['nextno'];
-              let date = moment().format('YYYY-MM-DD');
-              this.api.post("table/putaway",
-                {
-                  "putaway_no": this.nextno,
-                  "receiving_no": this.receivingno,
-                  "doc_no": this.docno,
-                  "order_no": this.orderno,
-                  "batch_no": this.batchno,
-                  "item_no": this.itemno,
-                  "posting_date": date,
-                  "location_code": this.locationcode,
-                  "location_position": this.myFormModal.value.location,
-                  "division": this.divisionno,
-                  "qty": this.myFormModal.value.qty,
-                  "qty_receiving": this.qty,
-                  "unit": this.unit,
-                  "flag": '',
-                  "pic": '',
-                  "status": 'OPEN',
-                  "chronology_no": '',
-                  "uuid": UUID.UUID()
-                },
-                { headers })
-                .subscribe(val => {
+            this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno + " AND " + "location_position=" + "'" + this.myFormModal.value.location + "'" } })
+              .subscribe(val => {
+                this.putawaylist = val['data'];
+                if (this.putawaylist.length != 0 && (this.putawaylist[0].location_position == this.myFormModal.value.location)) {
+                  console.log('lokasi sama')
                   const headers = new HttpHeaders()
                     .set("Content-Type", "application/json");
-                  console.log('posisi', this.position)
-                  this.api.put("table/location_master",
+                  let date = moment().format('YYYY-MM-DD');
+                  this.api.put("table/putaway",
                     {
-                      "location_alocation": this.position,
-                      "batch_no": '',
-                      "item_no": '',
-                      "qty": 0,
-                      "status": 'TRUE'
+                      "putaway_no": this.putawaylist[0].putaway_no,
+                      "qty": parseInt(this.putawaylist[0].qty) + parseInt(this.myFormModal.value.qty)
                     },
                     { headers })
                     .subscribe(val => {
-                      console.log('update receiving')
+                      console.log('update putaway')
                       this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
                         .subscribe(val => {
-                          if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
-                            var position = this.myFormModal.value.location.substring(0, 2);
-                            console.log('update lokasi false')
-                            this.api.put("table/receiving",
-                              {
-                                "receiving_no": this.receivingno,
-                                "staging": 'RACK',
-                                "position": position
-                              },
-                              { headers })
-                              .subscribe(val => {
-                                this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
-                                  .subscribe(val => {
-                                    this.receiving = val['data'];
-                                  });
-                              });
-                          }
                           console.log('get putaway')
                           this.putaway = val['data'];
                           this.rcvlist = this.receivingno;
                           this.totaldataputaway = val['count'];
-                          this.detailput = this.detailput ? false : true;
                           let alert = this.alertCtrl.create({
                             title: 'Sukses',
                             subTitle: 'Save Sukses',
@@ -737,94 +694,90 @@ export class PutawayPage {
                           this.qtyprevious = '';
                         });
                     });
-                  /*if (this.position == this.myFormModal.value.location) {
-                    console.log('posisi sama')
-                    this.api.put("table/location_master",
+                }
+                else {
+                  console.log('lokasi tidak sama')
+                  const headers = new HttpHeaders()
+                    .set("Content-Type", "application/json");
+                  this.getNextNo().subscribe(val => {
+                    this.nextno = val['nextno'];
+                    let date = moment().format('YYYY-MM-DD');
+                    this.api.post("table/putaway",
                       {
-                        "location_alocation": this.myFormModal.value.location,
+                        "putaway_no": this.nextno,
+                        "receiving_no": this.receivingno,
+                        "doc_no": this.docno,
+                        "order_no": this.orderno,
                         "batch_no": this.batchno,
                         "item_no": this.itemno,
+                        "posting_date": date,
+                        "location_code": this.locationcode,
+                        "location_position": this.myFormModal.value.location,
+                        "division": this.divisionno,
                         "qty": this.myFormModal.value.qty,
-                        "status": 'FALSE'
+                        "qty_receiving": this.qty,
+                        "unit": this.unit,
+                        "flag": '',
+                        "pic": '',
+                        "status": 'OPEN',
+                        "chronology_no": '',
+                        "uuid": UUID.UUID()
                       },
                       { headers })
                       .subscribe(val => {
-                        console.log('update lokasi master')
-                        this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
-                          .subscribe(val => {
-                            console.log('get putaway')
-                            this.putaway = val['data'];
-                            this.rcvlist = this.receivingno;
-                            this.totaldataputaway = val['count'];
-                            this.detailput = this.detailput ? false : true;
-                            let alert = this.alertCtrl.create({
-                              title: 'Sukses',
-                              subTitle: 'Save Sukses',
-                              buttons: ['OK']
-                            });
-                            alert.present();
-                            this.doOffPutaway();
-                            this.receivingno = '';
-                            this.qtyprevious = '';
-                          });
-                      });
-                  }
-                  else {
-                    console.log('posisi tidak sama')
-                    this.api.put("table/location_master",
-                      {
-                        "location_alocation": this.position,
-                        "batch_no": '',
-                        "item_no": '',
-                        "qty": '',
-                        "status": 'TRUE'
-                      },
-                      { headers })
-                      .subscribe(val => {
-                        console.log('update lokasi master true')
+                        const headers = new HttpHeaders()
+                          .set("Content-Type", "application/json");
+                        console.log('posisi', this.position)
                         this.api.put("table/location_master",
                           {
-                            "location_alocation": this.myFormModal.value.location,
-                            "batch_no": this.batchno,
-                            "item_no": this.itemno,
-                            "qty": this.myFormModal.value.qty,
-                            "status": 'FALSE'
+                            "location_alocation": this.position,
+                            "batch_no": '',
+                            "item_no": '',
+                            "qty": 0,
+                            "status": 'TRUE'
                           },
                           { headers })
                           .subscribe(val => {
-                            console.log('update lokasi false')
-                            this.api.put("table/receiving",
-                              {
-                                "receiving_no": this.receivingno,
-                                "staging": 'RACK',
-                                "position": this.myFormModal.value.location
-                              },
-                              { headers })
+                            console.log('update receiving')
+                            this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
                               .subscribe(val => {
-                                console.log('update receiving')
-                                this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
-                                  .subscribe(val => {
-                                    console.log('get putaway')
-                                    this.putaway = val['data'];
-                                    this.rcvlist = this.receivingno;
-                                    this.totaldataputaway = val['count'];
-                                    this.detailput = this.detailput ? false : true;
-                                    let alert = this.alertCtrl.create({
-                                      title: 'Sukses',
-                                      subTitle: 'Save Sukses',
-                                      buttons: ['OK']
+                                if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
+                                  var position = this.myFormModal.value.location.substring(0, 2);
+                                  console.log('update lokasi false')
+                                  this.api.put("table/receiving",
+                                    {
+                                      "receiving_no": this.receivingno,
+                                      "staging": 'RACK',
+                                      "position": position
+                                    },
+                                    { headers })
+                                    .subscribe(val => {
+                                      this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
+                                        .subscribe(val => {
+                                          this.receiving = val['data'];
+                                        });
                                     });
-                                    alert.present();
-                                    this.doOffPutaway();
-                                    this.receivingno = '';
-                                    this.qtyprevious = '';
-                                  });
+                                }
+                                console.log('get putaway')
+                                this.putaway = val['data'];
+                                this.rcvlist = this.receivingno;
+                                this.totaldataputaway = val['count'];
+                                this.detailput = this.detailput ? false : true;
+                                let alert = this.alertCtrl.create({
+                                  title: 'Sukses',
+                                  subTitle: 'Save Sukses',
+                                  buttons: ['OK']
+                                });
+                                alert.present();
+                                this.doOffPutaway();
+                                this.receivingno = '';
+                                this.qtyprevious = '';
                               });
                           });
                       });
-                  }*/
-                });
-            });
+                  });
+                }
+              });
           }
           else {
             console.log('qty previous ada isinya');

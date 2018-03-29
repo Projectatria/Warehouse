@@ -43,4 +43,7 @@ export class HomePage {
   doPutaway() {
     this.navCtrl.push('PutawayPage');
   }
+  doMovement() {
+    this.navCtrl.push('MovementPage');
+  }
 }
