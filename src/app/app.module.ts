@@ -3,7 +3,6 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
-
 import { MyApp } from './app.component';
 import { ApiProvider } from '../providers/api/api';
 import { UsertableComponent } from '../components/usertable/usertable';
@@ -14,13 +13,14 @@ import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-sca
 import { FileChooser } from "@ionic-native/file-chooser";
 import { FileOpener } from "@ionic-native/file-opener";
 import { FilePath } from "@ionic-native/file-path";
-import {Camera} from '@ionic-native/camera';
+import { Camera } from '@ionic-native/camera';
 import { FileTransfer } from '@ionic-native/file-transfer';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgxBarcodeModule } from 'ngx-barcode';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 import { IonicStorageModule } from '@ionic/storage';
 import { VideoPlayer } from '@ionic-native/video-player';
+import { Push, PushObject, PushOptions } from '@ionic-native/push';
 
 @NgModule({
   declarations: [
@@ -29,7 +29,7 @@ import { VideoPlayer } from '@ionic-native/video-player';
     UsertableComponent
   ],
   imports: [
-    BrowserModule,  
+    BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpClientModule,
     NgxPaginationModule,
@@ -46,7 +46,7 @@ import { VideoPlayer } from '@ionic-native/video-player';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
     ApiProvider,
     BarcodeScanner,
     FileChooser,
@@ -54,7 +54,8 @@ import { VideoPlayer } from '@ionic-native/video-player';
     FilePath,
     Camera,
     FileTransfer,
-    VideoPlayer
+    VideoPlayer,
+    Push
   ]
 })
 export class AppModule {

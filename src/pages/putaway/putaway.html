@@ -51,7 +51,7 @@
                 </ion-row>
               </ion-col>
               <ion-col *ngFor="let put of putaway" col-12 style="border-top:1px solid;border-color:#dedede;">
-                <ion-row (click)="doUpdatePutaway(put);">
+                <ion-row (click)="doUpdatePutaway;">
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{put.item_no}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{put.qty}}</ion-col>
                   <ion-col style="color:green">{{put.location_position}}</ion-col>

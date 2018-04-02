@@ -140,43 +140,43 @@ export class DetailpoaddPage {
               },
               { headers })
               .subscribe();
-              console.log(
-                this.nextno,
-                this.myForm.value.docno,
-                this.batchno,
-                this.myForm.value.orderno,
-                this.myForm.value.itemno,
-                this.locationcode,
-                this.transferdate,
-                this.myForm.value.qty,
-                this.myForm.value.unit,
-                this.itemdiv
-              )
-              let uuid2 = UUID.UUID();
-              this.uuid2 = uuid2;
-              const headersrcv = new HttpHeaders()
+            console.log(
+              this.nextno,
+              this.myForm.value.docno,
+              this.batchno,
+              this.myForm.value.orderno,
+              this.myForm.value.itemno,
+              this.locationcode,
+              this.transferdate,
+              this.myForm.value.qty,
+              this.myForm.value.unit,
+              this.itemdiv
+            )
+            let uuid2 = UUID.UUID();
+            this.uuid2 = uuid2;
+            const headersrcv = new HttpHeaders()
               .set("Content-Type", "application/json");
-              this.api.post("table/receiving",
-                {
-                  "receiving_no": this.nextno,
-                  "doc_no": this.myForm.value.docno,
-                  "order_no": this.myForm.value.orderno,
-                  "batch_no": this.batchno,
-                  "item_no": this.myForm.value.itemno,
-                  "location_code": this.locationcode,
-                  "transfer_date": this.transferdate,
-                  "qty": this.myForm.value.qty,
-                  "unit": this.myForm.value.unit,
-                  "division": this.itemdiv,
-                  "staging": "",
-                  "position": "",
-                  "status": "OPEN",
-                  "receiving_pic": "",
-                  "chronology_no": "",
-                  "uuid": this.uuid2
-                },
-                { headersrcv })
-                .subscribe();
+            this.api.post("table/receiving",
+              {
+                "receiving_no": this.nextno,
+                "doc_no": this.myForm.value.docno,
+                "order_no": this.myForm.value.orderno,
+                "batch_no": this.batchno,
+                "item_no": this.myForm.value.itemno,
+                "location_code": this.locationcode,
+                "transfer_date": this.transferdate,
+                "qty": this.myForm.value.qty,
+                "unit": this.myForm.value.unit,
+                "division": this.itemdiv,
+                "staging": "",
+                "position": "",
+                "status": "OPEN",
+                "receiving_pic": "",
+                "chronology_no": "",
+                "uuid": this.uuid2
+              },
+              { headersrcv })
+              .subscribe();
             this.myForm.reset()
             let alert = this.alertCtrl.create({
               title: 'Sukses',
