@@ -13,35 +13,9 @@ export class MyApp {
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
     public menu: MenuController, public alertCtrl: AlertController, public push: Push) {
     platform.ready().then(() => {
-      // statusBar.styleDefault();
-      // splashScreen.hide();
-      this.pushsetup();
+
     });
-  }
-  pushsetup() {
-    const options: PushOptions = {
-      android: {
-        senderID: '985026959746'
-      },
-      ios: {
-        alert: 'true',
-        badge: true,
-        sound: 'false'
-      },
-      windows: {}
-    };
-    const pushObject: PushObject = this.push.init(options);
-    pushObject.on('notification').subscribe((notification: any) => {
-      if (notification.additionalData.foreground) {
-        let youralert = this.alertCtrl.create({
-          title: 'Notification',
-          message: notification.message
-        })
-        youralert.present();
-      }
-    });
-    pushObject.on('registration').subscribe((registration: any) => alert('Deviced registered' + registration));
-    pushObject.on('error').subscribe((error: any) => alert('Error with Push Plugin' + error));
+
   }
   open(pageName) {
     this.rootPage = pageName;

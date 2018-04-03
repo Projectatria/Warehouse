@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "784937619783",
+    "firebase_url": "https://warehouse-544eb.firebaseio.com",
+    "project_id": "warehouse-544eb",
+    "storage_bucket": "warehouse-544eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784937619783:android:7ae046b8bd08ea96",
+        "android_client_info": {
+          "package_name": "com.atria.warehouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784937619783-2pg6nt57k3s9vgc1n7eapcaph6kjq7r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwjS951Msb4I61gTFC8JUFGh3IXJICUbA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
