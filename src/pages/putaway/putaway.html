@@ -34,8 +34,8 @@
         <ion-item *ngIf="rcv.staging != 'RACK'" (click)="viewDetail(rcv)">
           <h3 style="font-weight:bold;padding-bottom:5px;text-align:left;">ITEM NO - {{rcv.item_no}}</h3>
           <p>Qty : {{rcv.qty}}</p>
-          <p style="float:left;">Staging : {{rcv.staging}}</p>
-          <p style="float:right;">Batch No : {{rcv.batch_no}}</p>
+          <p>Staging : {{rcv.staging}}</p>
+          <p item-end>Batch No : {{rcv.batch_no}}</p>
         </ion-item>
         <div *ngIf="detailput && rcv.receiving_no == rcvlist" style="border-top:1px solid;border-color:#dedede;background:#ffffff;">
           <div padding style="font-weight:bold;">
@@ -115,19 +115,19 @@
           <ion-row>
             <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
               <ion-row>
-                <ion-col (click)="doSortPUT('location_position')">Location
+                <ion-col class="col-select" (click)="doSortPUT('location_position')" style="padding-left:10px;">Location
                   <ion-icon *ngIf="filter == 'location_position' && sortPUT == 'ASC'" name="md-arrow-dropdown"></ion-icon>
                   <ion-icon *ngIf="filter == 'location_position' && sortPUT == 'DESC'" name="md-arrow-dropup"></ion-icon>
                 </ion-col>
-                <ion-col (click)="doSortPUT('item_no')">Item No
+                <ion-col class="col-select" (click)="doSortPUT('item_no')">Item No
                   <ion-icon *ngIf="filter == 'item_no' && sortPUT == 'ASC'" name="md-arrow-dropdown"></ion-icon>
                   <ion-icon *ngIf="filter == 'item_no' && sortPUT == 'DESC'" name="md-arrow-dropup"></ion-icon>
                 </ion-col>
-                <ion-col (click)="doSortPUT('qty')">Qty
+                <ion-col class="col-select" (click)="doSortPUT('qty')">Qty
                   <ion-icon *ngIf="filter == 'qty' && sortPUT == 'ASC'" name="md-arrow-dropdown"></ion-icon>
                   <ion-icon *ngIf="filter == 'qty' && sortPUT == 'DESC'" name="md-arrow-dropup"></ion-icon>
                 </ion-col>
-                <ion-col (click)="doSortPUT('batch_no')">Batch No
+                <ion-col class="col-select" (click)="doSortPUT('batch_no')">Batch No
                   <ion-icon *ngIf="filter == 'batch_no' && sortPUT == 'ASC'" name="md-arrow-dropdown"></ion-icon>
                   <ion-icon *ngIf="filter == 'batch_no' && sortPUT == 'DESC'" name="md-arrow-dropup"></ion-icon>
                 </ion-col>
@@ -135,7 +135,7 @@
             </ion-col>
             <ion-col *ngFor="let listpu of listputaway" col-12 style="border-top:1px solid;border-color:#dedede;">
               <ion-row>
-                <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{listpu.location_position}}</ion-col>
+                <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede;padding-left:10px;">{{listpu.location_position}}</ion-col>
                 <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{listpu.item_no}}</ion-col>
                 <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{listpu.qty}}</ion-col>
                 <ion-col style="color:black">{{listpu.batch_no}}</ion-col>
@@ -349,9 +349,6 @@
             <ion-icon name="md-checkbox-outline"></ion-icon>
           </button>
         </div>
-        <!-- <button ion-button menuToggle color="light">
-          <ion-icon name="menu" style="font-size:30px;"></ion-icon>
-        </button> -->
         <ion-title class="side-title">
           <div style="text-align:left;">
             <img src="assets/imgs/logoatriawhite.png" height="45" />
