@@ -4,6 +4,10 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
+import { FCM } from '@ionic-native/fcm';
+import { ApiProvider } from '../providers/api/api';
+import { HttpHeaders } from "@angular/common/http";
+import moment from 'moment';
 
 @Component({
   templateUrl: 'app.html'
@@ -11,11 +15,40 @@ import { Push, PushObject, PushOptions } from '@ionic-native/push';
 export class MyApp {
   rootPage: any = HomePage;
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
-    public menu: MenuController, public alertCtrl: AlertController, public push: Push) {
+    public menu: MenuController, public alertCtrl: AlertController, public push: Push, private fcm: FCM, public api: ApiProvider) {
     platform.ready().then(() => {
-
+      this.fcm.getToken().then(token => {
+        let date = moment().format('YYYY-MM-DD h:mm:ss');
+        const headers = new HttpHeaders()
+          .set("Content-Type", "application/json");
+        this.api.post("table/token_notification",
+          {
+            "token": token,
+            "date" : date
+          },
+          { headers })
+          .subscribe()
+        this.fcm.onNotification().subscribe(data => {
+          if (data.wasTapped) {
+            let alert = this.alertCtrl.create({
+              subTitle: data.title,
+              message: data.body,
+              buttons: ['OK']
+            });
+            alert.present();
+          } else {
+            let alert = this.alertCtrl.create({
+              subTitle: data.title,
+              message: data.body,
+              buttons: ['OK']
+            });
+            alert.present();
+          };
+        });
+      }, (e) => {
+        console.log(e)
+      });
     });
-
   }
   open(pageName) {
     this.rootPage = pageName;

@@ -3,7 +3,7 @@ import { ActionSheetController, Platform, ModalController, MenuController, Ionic
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
 @IonicPage()
@@ -19,6 +19,7 @@ export class DetailpoactionPage {
   private locations = [];
   private location_master = [];
   private division = [];
+  private tokennotification = [];
   searchpodetail: any;
   searchloc: any;
   poid = '';
@@ -57,7 +58,8 @@ export class DetailpoactionPage {
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner,
     private platform: Platform,
-    public actionSheetCtrl: ActionSheetController
+    public actionSheetCtrl: ActionSheetController,
+    private http: HttpClient
   ) {
     platform.ready().then(() => {
       this.width = platform.width();
@@ -91,9 +93,7 @@ export class DetailpoactionPage {
   getPODetail() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -116,7 +116,6 @@ export class DetailpoactionPage {
 
   }
   getSearchPODetail(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -170,15 +169,7 @@ export class DetailpoactionPage {
   ionViewDidLoad() {
     this.getPODetail();
   }
-  /*doBarcode(detailpo) {
-    this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE,
-      detailpo.item_no).then((res) => {
-        console.log(res)
-        this.barcode = res;
-      }, (err) => {
-        console.log(err);
-      })
-  }*/
+
   doListBarcode(detailpo) {
     let locationModal = this.modalCtrl.create('BarcodelistPage', {
       batchno: detailpo.batch_no,
@@ -197,14 +188,10 @@ export class DetailpoactionPage {
     return new Promise(resolve => {
       this.getLocations(detailpo).subscribe(val => {
         let data = val['data'];
-        console.log('data', data)
-        console.log('lokasi', detailpo.location_code)
-        console.log('division', detailpo.division)
         for (let i = 0; i < data.length; i++) {
           this.locations.push(data[i]);
           this.totaldatalocation = val['count'];
         }
-        console.log('Lokasi', this.locations[0].location_alocation);
         if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
           this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
           this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
@@ -256,8 +243,7 @@ export class DetailpoactionPage {
       { headers })
       .subscribe(
         (val) => {
-          console.log("Update call successful value returned in body",
-            val);
+          this.doSendNotification();
           document.getElementById("myModal").style.display = "none";
           const headers = new HttpHeaders()
             .set("Content-Type", "application/json");
@@ -296,10 +282,8 @@ export class DetailpoactionPage {
           this.getPOD();
         },
         response => {
-          console.log("Update call in error", response);
         },
         () => {
-          console.log("The Update observable is now completed.");
         });
   }
   doOpenLocation() {
@@ -321,11 +305,9 @@ export class DetailpoactionPage {
     });
   }
   doSetLoc(div) {
-    console.log('div', div.code)
     this.setdiv = div.code;
   }
   doLocation() {
-    console.log(this.setdiv);
     this.api.get('table/location_master', { params: { limit: 1000, filter: 'division=' + "'" + this.setdiv + "'" } }).subscribe(val => {
       this.location_master = val['data'];
       this.searchloc = this.location_master
@@ -341,7 +323,6 @@ export class DetailpoactionPage {
     this.doOffLocations();
   }
   getSearchLoc(ev) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -369,7 +350,6 @@ export class DetailpoactionPage {
               text: 'Cancel',
               role: 'cancel',
               handler: () => {
-                console.log('Cancel clicked');
               }
             },
             {
@@ -408,8 +388,6 @@ export class DetailpoactionPage {
                   { headers })
                   .subscribe(
                     (val) => {
-                      console.log("Posting call successful value returned in body",
-                        val);
                       let alert = this.alertCtrl.create({
                         title: 'Sukses',
                         subTitle: 'Posting Sukses',
@@ -425,10 +403,8 @@ export class DetailpoactionPage {
 
                     },
                     response => {
-                      console.log("Posting call in error", response);
                     },
                     () => {
-                      console.log("The Posting observable is now completed.");
                     });
               }
             }
@@ -462,7 +438,6 @@ export class DetailpoactionPage {
                       text: 'Cancel',
                       role: 'cancel',
                       handler: () => {
-                        console.log('Cancel clicked');
                       }
                     },
                     {
@@ -501,8 +476,6 @@ export class DetailpoactionPage {
                           { headers })
                           .subscribe(
                             (val) => {
-                              console.log("Posting call successful value returned in body",
-                                val);
                               let alert = this.alertCtrl.create({
                                 title: 'Sukses',
                                 subTitle: 'Posting Sukses',
@@ -518,10 +491,8 @@ export class DetailpoactionPage {
 
                             },
                             response => {
-                              console.log("Posting call in error", response);
                             },
                             () => {
-                              console.log("The Posting observable is now completed.");
                             });
                       }
                     }
@@ -544,14 +515,10 @@ export class DetailpoactionPage {
             return new Promise(resolve => {
               this.getLocations(detailpo).subscribe(val => {
                 let data = val['data'];
-                console.log('data', data)
-                console.log('lokasi', detailpo.location_code)
-                console.log('division', detailpo.division)
                 for (let i = 0; i < data.length; i++) {
                   this.locations.push(data[i]);
                   this.totaldatalocation = val['count'];
                 }
-                console.log('Lokasi', this.locations[0].location_alocation);
                 if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
                   this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
                   this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
@@ -589,13 +556,46 @@ export class DetailpoactionPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
           }
         }
       ]
     });
 
     actionSheet.present();
+  }
+  doSendNotification() {
+    this.api.get("table/token_notification").subscribe(val => {
+      this.tokennotification = val['data'];
+      const headers = new HttpHeaders({
+        "Content-Type": "application/json",
+        "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+      })
+      this.http.post("https://fcm.googleapis.com/fcm/send",
+        {
+          "to": this.tokennotification[0].token,
+          "notification": {
+            "body": "You have new notifications",
+            "title": "Atria Warehouse",
+            "content_available": true,
+            "priority": "high",
+            "sound":"default",
+            "click_action":"FCM_PLUGIN_ACTIVITY",
+            "color": "#FFFFFF",
+            "icon": "atria"
+          },
+          "data": {
+            "body": "You have new notifications",
+            "title": "Atria Warehouse",
+            "key_1": "Data for key one",
+            "key_2": "Hellowww"
+          }
+        },
+        { headers })
+        .subscribe(data => {
+        }, (e) => {
+        });
+    });
+
   }
 
 }

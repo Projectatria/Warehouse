@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuController, AlertController, Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
-
-
+import { Push, PushObject, PushOptions } from '@ionic-native/push';
 /**
  * Generated class for the HomePage page.
  *
@@ -23,23 +22,9 @@ export class HomePage {
     public api: ApiProvider,
     public menu: MenuController,
     public platform: Platform,
-    public alert: AlertController) {
+    public alert: AlertController,
+    private push: Push) {
     this.atria = "warehouse";
-    this.onNotification();
-  }
-  async onNotification() {
-    try {
-      await this.platform.ready();
-      var FCMPlugin: any;
-      FCMPlugin.onNotification((data) => {
-        this.alert.create({
-          message: data.message
-        }).present();
-      }, (error) => console.log(error))
-    }
-    catch (e) {
-      console.log(e)
-    }
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad HomePage');

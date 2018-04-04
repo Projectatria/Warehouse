@@ -21,6 +21,8 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
 import { IonicStorageModule } from '@ionic/storage';
 import { VideoPlayer } from '@ionic-native/video-player';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
+import { FCM } from '@ionic-native/fcm';
+import { HTTP } from '@ionic-native/http';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,9 @@ import { Push, PushObject, PushOptions } from '@ionic-native/push';
     Camera,
     FileTransfer,
     VideoPlayer,
-    Push
+    Push,
+    FCM,
+    HTTP
   ]
 })
 export class AppModule {
