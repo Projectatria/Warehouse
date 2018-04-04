@@ -1,15 +1,56 @@
-
-<ion-header class="header-menu">
-  <ion-navbar class="header-navbar">
-    <ion-title class="header-title-menu">Warehouse Locator</ion-title>
-  </ion-navbar>
-</ion-header>
-<ion-content padding>
-  <ion-card>
-    <ion-card-header class="header-title-menu">
-      Home
-    </ion-card-header>
-    <ion-card-content class="content-body-menu">
-    </ion-card-content>
-  </ion-card> 
+<ion-content style="background-image: url('http://www.salesdemy.ir/wp-content/uploads/2018/02/%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%DB%8C%D8%A7%D8%A8%DB%8C-00010-1.gif');background-position: center;background-repeat: no-repeat;background-size:cover;">
+  <div *ngIf="width < 900" class="android-content">
+    <ion-card style="margin-top:10px;background:transparent;opacity: 1;opacity: 0.9;">
+      <ion-card-header style="background:#217481;color:#ffffff;text-align:center;">
+        <div>
+          <img src="assets/imgs/logoatriawhite.png" height="45" style="width:60px;margin:auto;" />
+        </div>
+      </ion-card-header>
+    </ion-card>
+    <ion-card style="background:transparent;opacity: 0.9;">
+      <ion-card-content style="background:#217481;color:#ffffff;">
+        <ion-list style="background:#217481;color:#ffffff;border:0px;">
+          <ion-item style="background:#217481;color:#ffffff;border:0px;">
+            <ion-label style="color:#ffffff;" stacked>Username</ion-label>
+            <ion-input style="color:#ffffff;" type="text"></ion-input>
+          </ion-item>
+          <ion-item style="background:#217481;color:#ffffff;border:0px;">
+            <ion-label style="color:#ffffff;" stacked>Password</ion-label>
+            <ion-input style="color:#ffffff;" type="password"></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-buttons style="margin-top:10px;text-align:center;">
+          <button ion-button color="primary" round>LOG IN</button>
+        </ion-buttons>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div *ngIf="width >= 900" class="android-content">
+    <ion-card style="margin-top:15%;background:transparent;opacity: 0.9;width:40%;margin-left:auto;margin-right:auto;">
+      <ion-card-header style="background:#217481;color:#db8484;text-align:center;">
+        <div>
+          <img src="assets/imgs/logoatriawhite.png" height="45" style="width:60px;margin:auto;" />
+        </div>
+      </ion-card-header>
+    </ion-card>
+    <ion-card style="background:transparent;opacity: 0.9;width:40%;margin:auto;">
+      <ion-card-content style="background:#217481;color:#ffffff;">
+        <ion-list style="background:#217481;color:#ffffff;border:0px;">
+          <form [formGroup]="myForm">
+            <ion-item style="background:#217481;color:#ffffff;border:0px;">
+              <ion-label style="color:#ffffff;" stacked>Username</ion-label>
+              <ion-input formControlName="username" style="color:#ffffff;" type="text"></ion-input>
+            </ion-item>
+            <ion-item style="background:#217481;color:#ffffff;border:0px;">
+              <ion-label style="color:#ffffff;" stacked>Password</ion-label>
+              <ion-input formControlName="password" style="color:#ffffff;" type="password"></ion-input>
+            </ion-item>
+          </form>
+        </ion-list>
+        <ion-buttons style="margin-top:10px;text-align:center;">
+          <button ion-button color="primary" round [disabled]="!myForm.valid" (click)="doLogin()">LOG IN</button>
+        </ion-buttons>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

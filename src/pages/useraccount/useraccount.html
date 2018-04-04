@@ -1,0 +1,50 @@
+<ion-header class="header-menu">
+  <ion-navbar class="header-navbar">
+    <button ion-button menuToggle color="light">
+      <ion-icon name="menu" style="font-size:30px;"></ion-icon>
+    </button>
+    <div style="text-align:right;height:0px;">
+      <button ion-button clear style="color:#ffffff;background:transparent;font-size:23px;" (click)="doProfile()">
+        <ion-icon name="md-person"></ion-icon>
+      </button>
+    </div>
+    <ion-title class="side-title">
+      <img src="assets/imgs/logoatriawhite.png" height="45" />
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content class="content">
+  <ion-list>
+    <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;background:#217481;">
+      <div padding>
+        <h2 style="font-weight:bold;color:#ffffff;font-size:20px;">Aji Dwi Pangestu</h2>
+        <ion-note style="color:#ffffff;">Staff IT</ion-note>
+      </div>
+      <button item-end clear ion-button>
+        <ion-icon name="md-create" style="font-size:30px;color:#ffffff;"></ion-icon>
+      </button>
+    </ion-item>
+    <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;">
+      <ion-thumbnail padding item-left>
+        <ion-icon name="md-calendar" style="font-size:50px;"></ion-icon>
+      </ion-thumbnail>
+      <div>
+        <h2>Work Schedule</h2>
+      </div>
+      <button item-end clear ion-button>
+          <ion-icon name="ios-arrow-forward" style="font-size:30px;color:#217481;"></ion-icon>
+        </button>
+    </ion-item>
+    <ion-item no-lines style="border-bottom:1px solid;border-color:#dedede;" (click)="doLogin()">
+      <ion-thumbnail padding item-left style="text-align:center;">
+        <ion-icon name="md-log-out" style="font-size:50px;"></ion-icon>
+      </ion-thumbnail>
+      <div>
+        <h2>Log Out</h2>
+      </div>
+      <button item-end clear ion-button>
+          <ion-icon name="ios-arrow-forward" style="font-size:30px;color:#217481;"></ion-icon>
+        </button>
+    </ion-item>
+  </ion-list>
+</ion-content>

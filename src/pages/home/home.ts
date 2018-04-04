@@ -2,12 +2,6 @@ import { Component } from '@angular/core';
 import { MenuController, AlertController, Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
-/**
- * Generated class for the HomePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @IonicPage()
 @Component({
@@ -44,5 +38,8 @@ export class HomePage {
   }
   doMovement() {
     this.navCtrl.push('MovementPage');
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
 }
