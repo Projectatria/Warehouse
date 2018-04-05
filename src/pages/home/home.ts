@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MenuController, AlertController, Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -10,6 +11,8 @@ import { Push, PushObject, PushOptions } from '@ionic-native/push';
 })
 export class HomePage {
   atria: string = "warehouse";
+  private token = '';
+  private username = '';
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -17,11 +20,19 @@ export class HomePage {
     public menu: MenuController,
     public platform: Platform,
     public alert: AlertController,
-    private push: Push) {
+    private push: Push,
+    public storage: Storage) {
     this.atria = "warehouse";
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+    this.storage.get('username').then((val) => {
+      console.log(val);
+      this.username = val;
+    });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad HomePage');
   }
 
   doPreparationPO() {
@@ -41,5 +52,5 @@ export class HomePage {
   }
   doProfile() {
     this.navCtrl.push('UseraccountPage');
-  }
+  } 
 }

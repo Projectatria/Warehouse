@@ -1,15 +1,10 @@
 import { Component } from '@angular/core';
-import { Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, App, ViewController, Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
-/**
- * Generated class for the LoginPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { HomePage } from '../../pages/home/home';
 
 @IonicPage()
 @Component({
@@ -21,6 +16,8 @@ export class LoginPage {
   private width: number;
   private height: number;
   login: string = "signin";
+  rootPage: any;
+  private token = '';
 
   constructor(
     public platform: Platform,
@@ -28,7 +25,10 @@ export class LoginPage {
     public navParams: NavParams,
     private storage: Storage,
     public fb: FormBuilder,
-    public api: ApiProvider) {
+    public api: ApiProvider,
+    public viewCtrl: ViewController,
+    public appCtrl: App,
+    private alertCtrl: AlertController) {
     this.myForm = fb.group({
       username: ['', Validators.compose([Validators.required])],
       password: ['', Validators.compose([Validators.required])]
@@ -53,11 +53,20 @@ export class LoginPage {
       },
       { headers })
       .subscribe((val) => {
-        console.log('Login Sukses')
+        this.token = val['token'];
+        console.log(this.token)
+        this.storage.set('token', this.token);
+        this.storage.set('username', this.myForm.value.username);
+        this.navCtrl.setRoot(HomePage)
         this.myForm.reset();
       }, (e) => {
-        console.log('Login Failed')
-      } );
+        let alert = this.alertCtrl.create({
+          title: 'Error',
+          subTitle: 'Username or Password is Incorrect',
+          buttons: ['OK']
+        });
+        alert.present();
+      });
   }
 
 }

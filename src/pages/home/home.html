@@ -4,8 +4,9 @@
       <ion-icon name="menu" style="font-size:30px;"></ion-icon>
     </button>
     <div style="text-align:right;height:0px;">
-      <button ion-button clear style="color:#ffffff;background:transparent;font-size:23px;" (click)="doProfile()">
-        <ion-icon name="md-person"></ion-icon>
+      <button class="btn-profile" ion-button clear style="color:#ffffff;background:transparent;font-size:18px;" (click)="doProfile()">
+        <ion-icon style="margin-right:8px;" name="md-arrow-dropdown"></ion-icon>
+        <h5 style="text-decoration: underline;">{{username}}</h5>
       </button>
     </div>
     <ion-title class="side-title">
@@ -15,9 +16,6 @@
 </ion-header>
 <ion-content class="content">
   <ion-segment [(ngModel)]="atria">
-    <ion-segment-button value="home" style="color:#ffffff;">
-      Home
-    </ion-segment-button>
     <ion-segment-button value="warehouse" style="color:#ffffff;">
       Warehouse
     </ion-segment-button>
@@ -27,10 +25,6 @@
   </ion-segment>
 
   <div [ngSwitch]="atria">
-    <ion-list *ngSwitchCase="'home'">
-
-    </ion-list>
-
     <ion-list *ngSwitchCase="'warehouse'" style="border-top:1px solid;border-bottom:1px solid;border-color:#dedede;">
       <img src="assets/imgs/warehouseicon.png" style="width:100%;" />
       <ion-grid>

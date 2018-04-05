@@ -8,6 +8,7 @@ import { ApiProvider } from '../providers/api/api';
 import { UsertableComponent } from '../components/usertable/usertable';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { LoginPage } from '../pages/login/login';
 import { HomePage } from '../pages/home/home';
 import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 import { FileChooser } from "@ionic-native/file-chooser";
@@ -27,6 +28,7 @@ import { HTTP } from '@ionic-native/http';
 @NgModule({
   declarations: [
     MyApp,
+    LoginPage,
     HomePage,
     UsertableComponent
   ],
@@ -43,6 +45,7 @@ import { HTTP } from '@ionic-native/http';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
+    LoginPage,
     HomePage
   ],
   providers: [
