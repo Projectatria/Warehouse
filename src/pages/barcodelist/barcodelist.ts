@@ -36,18 +36,18 @@ export class BarcodelistPage {
     for (this.i = 0; this.i < this.qty; this.i++) {
       this.arr.push(this.i);
     }    
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getItems() {
     this.api.get("table/purchasing_order_detail", {

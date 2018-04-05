@@ -69,18 +69,18 @@ export class PurchasingorderaddPage {
     this.getVendor();
     this.getLocation();
     this.myForm.get('locationcode').setValue('81003')
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad PurchasingorderaddPage');

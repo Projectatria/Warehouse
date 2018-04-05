@@ -71,18 +71,18 @@ export class PurchasingorderPage {
     this.sortPO = ''
     this.sortInfoPO = ''
     this.sortPrepare = ''
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   ionViewDidLoad() {
     console.log(this.width);

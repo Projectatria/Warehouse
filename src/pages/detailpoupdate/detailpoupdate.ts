@@ -80,18 +80,18 @@ export class DetailpoupdatePage {
     this.myForm.get('itemno').setValue(this.itemno);
     this.myForm.get('qty').setValue(this.qty);
     this.myForm.get('unit').setValue(this.unit);
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {

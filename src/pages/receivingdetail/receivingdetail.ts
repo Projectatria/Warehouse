@@ -87,18 +87,18 @@ export class ReceivingdetailPage {
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
     this.getRCVChecked();
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getRCVChecked() {
     return new Promise(resolve => {

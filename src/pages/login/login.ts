@@ -17,7 +17,7 @@ export class LoginPage {
   private height: number;
   login: string = "signin";
   rootPage: any;
-  private token = '';
+  private token:any;
 
   constructor(
     public platform: Platform,

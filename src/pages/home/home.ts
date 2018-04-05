@@ -33,12 +33,16 @@ export class HomePage {
     });
   }
   ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    });
   }
   doPreparationPO() {
     this.navCtrl.push('PurchasingorderPage');

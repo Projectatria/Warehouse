@@ -84,18 +84,18 @@ export class DetailpoactionPage {
     this.totalpost = navParams.get('totalpost')
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getPOD() {
     this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {

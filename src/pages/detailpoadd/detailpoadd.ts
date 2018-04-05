@@ -84,18 +84,18 @@ export class DetailpoaddPage {
     this.totalcount = navParams.get('totalcount')
     this.myForm.get('docno').setValue(this.docno);
     this.myForm.get('orderno').setValue(this.orderno);    
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {

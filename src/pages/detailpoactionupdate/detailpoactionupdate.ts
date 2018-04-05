@@ -87,18 +87,18 @@ export class DetailpoactionupdatePage {
     this.myForm.get('qty').setValue(this.qty);
     this.myForm.get('receivingpic').setValue(this.receivingpic);
     this.myForm.get('locationplan').setValue(this.locationplan);
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {

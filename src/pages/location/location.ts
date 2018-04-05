@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ViewController, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { Button } from 'ionic-angular/components/button/button';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -15,8 +16,14 @@ export class LocationPage {
   private location_area = [];
   private location_rack = [];
   public toggled: boolean = false;
+  private token:any;
   
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, private viewCtrl : ViewController) {
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    public api: ApiProvider, 
+    private viewCtrl : ViewController,
+    public storage: Storage) {
   this.getLocationMaster();
   this.getLocationRoom();
   this.getLocationCodeArea();
@@ -24,7 +31,18 @@ export class LocationPage {
   this.getLocationRack();
   this.toggled = false;
   }
-
+  ionViewCanEnter() {
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    });
+  }
   ionViewDidLoad() {
     console.log('ionViewDidLoad LocationPage');
   }

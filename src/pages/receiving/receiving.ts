@@ -47,18 +47,18 @@ export class ReceivingPage {
       this.width = platform.width();
       this.height = platform.height();
     });
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   getPO() {
     return new Promise(resolve => {

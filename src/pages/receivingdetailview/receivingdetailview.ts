@@ -50,18 +50,18 @@ export class ReceivingdetailviewPage {
     this.locationcode = navParams.get('locationcode');
     this.uuidrcv = navParams.get('uuid');
     this.getPhotos();
+  }
+  ionViewCanEnter() {
     this.storage.get('token').then((val) => {
       console.log(val);
       this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
     });
-  }
-  ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   ionViewDidLoad() {
     console.log(this.uuidrcv, this.detailno, this.orderno, this.locationcode);
