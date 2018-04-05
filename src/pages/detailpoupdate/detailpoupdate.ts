@@ -3,6 +3,7 @@ import { ViewController, IonicPage, NavController, NavParams, AlertController } 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
+import { Storage } from '@ionic/storage';
 
 
 /**
@@ -29,6 +30,7 @@ export class DetailpoupdatePage {
   private unit = '';
   private itemdesc = '';
   private itemdiv = '';
+  private token:any;
 
   error_messages = {
     'docno': [
@@ -56,7 +58,8 @@ export class DetailpoupdatePage {
     public viewCtrl: ViewController,
     public fb: FormBuilder,
     public api: ApiProvider,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public storage: Storage
   ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
@@ -77,6 +80,18 @@ export class DetailpoupdatePage {
     this.myForm.get('itemno').setValue(this.itemno);
     this.myForm.get('qty').setValue(this.qty);
     this.myForm.get('unit').setValue(this.unit);
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {

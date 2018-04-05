@@ -7,6 +7,7 @@ import { UUID } from 'angular2-uuid';
 import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -71,6 +72,7 @@ export class PutawayPage {
   itemnolist = '';
   batchnolist = '';
   locationlist = '';
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -82,7 +84,8 @@ export class PutawayPage {
     public menu: MenuController,
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner,
-    public actionSheetCtrl: ActionSheetController
+    public actionSheetCtrl: ActionSheetController,
+    public storage: Storage
   ) {
     this.myFormModal = formBuilder.group({
       qty: ['', Validators.compose([Validators.required])],
@@ -99,8 +102,19 @@ export class PutawayPage {
     this.put = "qcin"
     this.groupby = ""
     this.search = 'item_no';
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
   }
-
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   ionViewDidLoad() {
   }
   getrcv() {

@@ -4,6 +4,7 @@ import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
 import { HttpHeaders } from "@angular/common/http";
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -25,6 +26,8 @@ export class DetailpoPage {
   poid = '';
   totalitem: any;
   detailpo: string = "detailpoitem";
+  private token:any;
+
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -33,7 +36,8 @@ export class DetailpoPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public storage: Storage
   ) {
     this.getPOD();
     this.toggled = false;
@@ -45,6 +49,18 @@ export class DetailpoPage {
     this.transferdate = navParams.get('transferdate');
     this.totalitem = navParams.get('totalitem');
     this.poid = navParams.get('poid');
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getPOD() {
     this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {

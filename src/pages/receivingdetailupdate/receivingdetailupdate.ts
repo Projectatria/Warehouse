@@ -7,6 +7,7 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { HttpClient } from "@angular/common/http";
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { UUID } from 'angular2-uuid';
+import { Storage } from '@ionic/storage';
 /**
  * Generated class for the ReceivingdetailupdatePage page.
  *
@@ -34,6 +35,7 @@ export class ReceivingdetailupdatePage {
   private totalphoto: any;
   imageURI: string = '';
   imageFileName: string = '';
+  private token:any;
 
   error_messages = {
     'docno': [
@@ -61,7 +63,8 @@ export class ReceivingdetailupdatePage {
     private alertCtrl: AlertController,
     public api: ApiProvider,
     public fb: FormBuilder,
-    public http: HttpClient
+    public http: HttpClient,
+    public storage: Storage
   ) {
     this.myForm = fb.group({
       orderno: [''],
@@ -85,8 +88,19 @@ export class ReceivingdetailupdatePage {
     this.myForm.get('staging').setValue(this.staging);
     this.myForm.get('description').setValue(this.description);
     this.getPhotos();
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
   }
-
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   ionViewDidLoad() {
     console.log('ionViewDidLoad ReceivingdetailupdatePage');
   }

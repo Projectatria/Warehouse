@@ -9,6 +9,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { UUID } from 'angular2-uuid';
 import moment from 'moment';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -57,6 +58,7 @@ export class QcindetailPage {
   public noqcresultparam: any;
   public detailinspection = '';
   private nextnoqc = '';
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -71,6 +73,7 @@ export class QcindetailPage {
     private transfer: FileTransfer,
     private camera: Camera,
     public loadingCtrl: LoadingController,
+    public storage: Storage
   ) {
     this.orderno = navParams.get('orderno')
     this.batchno = navParams.get('batchno')
@@ -85,6 +88,18 @@ export class QcindetailPage {
     this.shippingmark = false;
     this.qc = "qcin"
     this.button = "qcin"
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getQC() {
     return new Promise(resolve => {

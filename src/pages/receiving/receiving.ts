@@ -4,6 +4,7 @@ import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpHeaders } from "@angular/common/http";
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -23,6 +24,7 @@ export class ReceivingPage {
   rcv: string = "receiving";
   private width: number;
   private height: number;
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -34,7 +36,8 @@ export class ReceivingPage {
     public menu: MenuController,
     public modalCtrl: ModalController,
     public platform: Platform,
-    public viewCtrl: ViewController
+    public viewCtrl: ViewController,
+    public storage: Storage
 
   ) {
     this.getPO();
@@ -44,8 +47,19 @@ export class ReceivingPage {
       this.width = platform.width();
       this.height = platform.height();
     });
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
   }
-  
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   getPO() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
@@ -73,7 +87,7 @@ export class ReceivingPage {
     })
 
   }
-  
+
   getSearchPO(ev: any) {
     console.log(ev)
     // set val to the value of the searchbar
@@ -92,7 +106,7 @@ export class ReceivingPage {
     this.menu.enable(true);
     this.menu.swipeEnable(true);
   };
- 
+
   viewDetail(po) {
     this.navCtrl.push('ReceivingdetailPage', {
       orderno: po.order_no,
@@ -104,7 +118,7 @@ export class ReceivingPage {
       poid: po.po_id
     });
   }
-  
+
   doInfinite(infiniteScroll) {
     this.getPO().then(response => {
       infiniteScroll.complete();
@@ -114,7 +128,7 @@ export class ReceivingPage {
   toggleSearch() {
     this.toggled = this.toggled ? false : true;
   }
-  
+
   doRefresh(refresher) {
     this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INPG'" } }).subscribe(val => {
       this.purchasing_order = val['data'];
@@ -123,7 +137,7 @@ export class ReceivingPage {
       refresher.complete();
     });
   }
-  
+
   doPostingPO(po) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Posting',
@@ -177,5 +191,5 @@ export class ReceivingPage {
     });
     alert.present();
   }
-  
+
 }

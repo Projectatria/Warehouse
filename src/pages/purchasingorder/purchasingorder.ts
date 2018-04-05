@@ -8,6 +8,7 @@ import { FileChooser } from "@ionic-native/file-chooser";
 import { FileOpener } from "@ionic-native/file-opener";
 import { FilePath } from "@ionic-native/file-path";
 import moment from 'moment';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -40,6 +41,7 @@ export class PurchasingorderPage {
   sortPO = '';
   sortInfoPO = '';
   sortPrepare = '';
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -54,7 +56,8 @@ export class PurchasingorderPage {
     public fileOpener: FileOpener,
     public filePath: FilePath,
     private platform: Platform,
-    public actionSheetCtrl: ActionSheetController
+    public actionSheetCtrl: ActionSheetController,
+    public storage: Storage
   ) {
     this.getPO();
     this.getInfoPO();
@@ -68,6 +71,18 @@ export class PurchasingorderPage {
     this.sortPO = ''
     this.sortInfoPO = ''
     this.sortPrepare = ''
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   ionViewDidLoad() {
     console.log(this.width);

@@ -3,6 +3,7 @@ import { ModalController, ViewController, IonicPage, NavController, NavParams, A
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
+import { Storage } from '@ionic/storage';
 
 
 /**
@@ -28,6 +29,7 @@ export class DetailpoactionupdatePage {
   private qty = '';
   private receivingpic = '';
   private locationplan = '';
+  private token:any;
 
   error_messages = {
     'docno': [
@@ -59,7 +61,9 @@ export class DetailpoactionupdatePage {
     public fb: FormBuilder,
     public api: ApiProvider,
     public alertCtrl: AlertController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public storage: Storage
+    
   ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
@@ -83,6 +87,18 @@ export class DetailpoactionupdatePage {
     this.myForm.get('qty').setValue(this.qty);
     this.myForm.get('receivingpic').setValue(this.receivingpic);
     this.myForm.get('locationplan').setValue(this.locationplan);
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {

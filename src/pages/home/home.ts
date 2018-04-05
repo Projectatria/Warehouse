@@ -32,9 +32,14 @@ export class HomePage {
       this.username = val;
     });
   }
-  ionViewDidLoad() {
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
-
   doPreparationPO() {
     this.navCtrl.push('PurchasingorderPage');
   }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ApiProvider } from '../../providers/api/api';
-
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -16,9 +16,18 @@ export class BarcodelistPage {
   qty = null;
   i = null;
   arr = [];
+  private token:any;
+
   private barcode = [];
   private totaldata: any;
-  constructor(public api: ApiProvider, public navCtrl: NavController, public navParams: NavParams, private barcodeScanner: BarcodeScanner, private viewCtrl: ViewController) {
+  constructor(
+    public api: ApiProvider, 
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    private barcodeScanner: BarcodeScanner, 
+    private viewCtrl: ViewController,
+    public storage: Storage
+  ) {
     this.batchno = navParams.get('batchno');
     this.orderno = navParams.get('orderno');
     this.itemno = navParams.get('itemno');
@@ -26,6 +35,18 @@ export class BarcodelistPage {
     this.getItems();
     for (this.i = 0; this.i < this.qty; this.i++) {
       this.arr.push(this.i);
+    }    
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
     }
   }
   getItems() {

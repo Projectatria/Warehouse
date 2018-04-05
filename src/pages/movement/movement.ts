@@ -7,6 +7,7 @@ import { UUID } from 'angular2-uuid';
 import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -45,6 +46,7 @@ export class MovementPage {
   unit = '';
   rcvlist = '';
   totaldataputaway: any;
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -56,11 +58,22 @@ export class MovementPage {
     public menu: MenuController,
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner,
-    public actionSheetCtrl: ActionSheetController
-  ) {
-
+    public actionSheetCtrl: ActionSheetController,
+    public storage: Storage) 
+    {
+      this.storage.get('token').then((val) => {
+        console.log(val);
+        this.token = val;
+      });
   }
-
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   ionViewDidLoad() {
   }
   doOpenQty(barcodeno) {

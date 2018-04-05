@@ -5,6 +5,7 @@ import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
 import moment from 'moment';
+import { Storage } from '@ionic/storage';
 
 /**
  * Generated class for the PurchasingorderaddPage page.
@@ -24,6 +25,7 @@ export class PurchasingorderaddPage {
   private location = [];
   private nextno = '';
   private uuid = '';
+  private token:any;
 
   error_messages = {
     'docno': [
@@ -53,7 +55,8 @@ export class PurchasingorderaddPage {
     public viewCtrl: ViewController,
     public fb: FormBuilder,
     public api: ApiProvider,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public storage: Storage
   ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
@@ -66,6 +69,22 @@ export class PurchasingorderaddPage {
     this.getVendor();
     this.getLocation();
     this.myForm.get('locationcode').setValue('81003')
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad PurchasingorderaddPage');
+    console.log(this.nextno);
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {
@@ -76,10 +95,6 @@ export class PurchasingorderaddPage {
     this.api.get('table/location', { params: { limit: 100 } }).subscribe(val => {
       this.location = val['data'];
     });
-  }
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderaddPage');
-    console.log(this.nextno);
   }
   closeModal() {
     this.viewCtrl.dismiss();

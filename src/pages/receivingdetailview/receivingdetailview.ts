@@ -6,6 +6,7 @@ import { ApiProvider } from '../../providers/api/api';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from "@angular/common/http";
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -23,6 +24,7 @@ export class ReceivingdetailviewPage {
   private locationcode = '';
   private photos = [];
   private totalphoto: any;
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -35,7 +37,8 @@ export class ReceivingdetailviewPage {
     private alertCtrl: AlertController,
     public api: ApiProvider,
     public fb: FormBuilder,
-    public http: HttpClient
+    public http: HttpClient,
+    public storage: Storage
   ) 
   { 
     this.detailno = navParams.get('detailno');
@@ -47,6 +50,18 @@ export class ReceivingdetailviewPage {
     this.locationcode = navParams.get('locationcode');
     this.uuidrcv = navParams.get('uuid');
     this.getPhotos();
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   ionViewDidLoad() {
     console.log(this.uuidrcv, this.detailno, this.orderno, this.locationcode);

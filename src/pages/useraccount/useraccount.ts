@@ -10,7 +10,7 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'useraccount.html',
 })
 export class UseraccountPage {
-  private token = '';
+  private token:any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -19,8 +19,19 @@ export class UseraccountPage {
     public platform: Platform,
     public alert: AlertController,
     public storage: Storage) {
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
   }
-
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   ionViewDidLoad() {
     console.log('ionViewDidLoad UseraccountPage');
   }

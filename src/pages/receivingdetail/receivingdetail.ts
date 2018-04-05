@@ -7,6 +7,7 @@ import { UUID } from 'angular2-uuid';
 import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -58,6 +59,7 @@ export class ReceivingdetailPage {
   private eventId: number;
   public eventTitle: string;
   private barcodedata: any;
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -68,7 +70,8 @@ export class ReceivingdetailPage {
     public navParams: NavParams,
     public menu: MenuController,
     public modalCtrl: ModalController,
-    private barcodeScanner: BarcodeScanner
+    private barcodeScanner: BarcodeScanner,
+    public storage: Storage
   ) {
     this.myFormModal = formBuilder.group({
       location: ['', Validators.compose([Validators.required])],
@@ -84,6 +87,18 @@ export class ReceivingdetailPage {
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
     this.getRCVChecked();
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getRCVChecked() {
     return new Promise(resolve => {

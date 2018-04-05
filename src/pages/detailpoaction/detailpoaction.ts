@@ -5,6 +5,7 @@ import { AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -47,6 +48,8 @@ export class DetailpoactionPage {
   barcode: {};
   private width: number;
   private height: number;
+  private token:any;
+
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
@@ -59,7 +62,8 @@ export class DetailpoactionPage {
     private barcodeScanner: BarcodeScanner,
     private platform: Platform,
     public actionSheetCtrl: ActionSheetController,
-    private http: HttpClient
+    private http: HttpClient,
+    public storage: Storage
   ) {
     platform.ready().then(() => {
       this.width = platform.width();
@@ -80,9 +84,18 @@ export class DetailpoactionPage {
     this.totalpost = navParams.get('totalpost')
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
   }
-  getPO() {
-
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getPOD() {
     this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {

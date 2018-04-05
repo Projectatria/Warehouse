@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 import { UUID } from 'angular2-uuid';
+import { Storage } from '@ionic/storage';
 
 /**
  * Generated class for the PurchasingorderaddPage page.
@@ -36,6 +37,7 @@ export class DetailpoaddPage {
   private uuid2 = '';
   totalitem: any;
   totalcount: any;
+  private token:any;
 
   error_messages = {
     'docno': [
@@ -61,7 +63,8 @@ export class DetailpoaddPage {
     public viewCtrl: ViewController,
     public fb: FormBuilder,
     public api: ApiProvider,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public storage: Storage
   ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
@@ -80,7 +83,19 @@ export class DetailpoaddPage {
     this.poid = navParams.get('poid');
     this.totalcount = navParams.get('totalcount')
     this.myForm.get('docno').setValue(this.docno);
-    this.myForm.get('orderno').setValue(this.orderno);
+    this.myForm.get('orderno').setValue(this.orderno);    
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getItems() {
     this.api.get('table/items', { params: { limit: 100 } }).subscribe(val => {

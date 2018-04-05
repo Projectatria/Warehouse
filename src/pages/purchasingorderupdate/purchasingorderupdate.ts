@@ -3,6 +3,7 @@ import { ViewController, IonicPage, NavController, NavParams, AlertController } 
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -21,6 +22,7 @@ export class PurchasingorderupdatePage {
   private locationcode = '';
   private description = '';
   private purchasing_order = [];
+  private token:any;
 
   error_messages = {
     'docno': [
@@ -47,7 +49,8 @@ export class PurchasingorderupdatePage {
     public viewCtrl: ViewController,
     public fb: FormBuilder,
     public api: ApiProvider,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public storage: Storage
   ) {
     this.myForm = fb.group({
       docno: ['', Validators.compose([Validators.required])],
@@ -71,6 +74,18 @@ export class PurchasingorderupdatePage {
     this.myForm.get('transferdate').setValue(this.transferdate);
     this.myForm.get('locationcode').setValue(this.locationcode);
     this.myForm.get('description').setValue(this.description);
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {

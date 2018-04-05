@@ -8,7 +8,8 @@ import { UUID } from 'angular2-uuid';
 import moment from 'moment';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
-import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";
+import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-scanner";;
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -48,6 +49,7 @@ export class QcinPage {
   private qcnoresult = '';
   private viewfoto = '';
   private qcqty = '';
+  private token:any;
 
   constructor(
     public navCtrl: NavController,
@@ -61,6 +63,7 @@ export class QcinPage {
     private transfer: FileTransfer,
     private camera: Camera,
     public loadingCtrl: LoadingController,
+    public storage: Storage
   ) {
     this.getStagingin();
     this.toggled = false;
@@ -73,6 +76,18 @@ export class QcinPage {
         this.totaldataqc = val['count'];
         this.searchqc = this.quality_control;
       });
+    this.storage.get('token').then((val) => {
+      console.log(val);
+      this.token = val;
+    });
+  }
+  ionViewCanEnter() {
+    if (this.token != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   getStagingin() {
     return new Promise(resolve => {
