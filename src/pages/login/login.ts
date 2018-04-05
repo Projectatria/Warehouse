@@ -20,6 +20,7 @@ export class LoginPage {
   myForm: FormGroup;
   private width: number;
   private height: number;
+  login: string = "signin";
 
   constructor(
     public platform: Platform,
@@ -36,6 +37,7 @@ export class LoginPage {
       this.width = platform.width();
       this.height = platform.height();
     });
+    this.login = "signin";
   }
 
   ionViewDidLoad() {
@@ -50,10 +52,11 @@ export class LoginPage {
         "password": this.myForm.value.password
       },
       { headers })
-      .subscribe(val => {
+      .subscribe((val) => {
         console.log('Login Sukses')
+        this.myForm.reset();
       }, (e) => {
-        console.log(e)
+        console.log('Login Failed')
       } );
   }
 
