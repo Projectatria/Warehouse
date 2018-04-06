@@ -39,6 +39,7 @@ export class MyApp {
         }
       });
       this.fcm.getToken().then(token => {
+        this.storage.set('tokennotification', token);
         let date = moment().format('YYYY-MM-DD h:mm:ss');
         const headers = new HttpHeaders()
           .set("Content-Type", "application/json");

@@ -3,6 +3,7 @@ import { MenuController, AlertController, Platform, IonicPage, NavController, Na
 import { ApiProvider } from '../../providers/api/api';
 import { LoginPage } from '../../pages/login/login';
 import { Storage } from '@ionic/storage';
+import { HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
 @Component({
@@ -10,7 +11,10 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'useraccount.html',
 })
 export class UseraccountPage {
-  private token:any;
+  private token: any;
+  private users = [];
+  private user = '';
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -19,6 +23,10 @@ export class UseraccountPage {
     public platform: Platform,
     public alert: AlertController,
     public storage: Storage) {
+    this.storage.get('username').then((val) => {
+      console.log(val);
+      this.user = val;
+    });
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
@@ -36,8 +44,24 @@ export class UseraccountPage {
     console.log('ionViewDidLoad UseraccountPage');
   }
   doLogout() {
-    this.storage.remove('token');
-    this.navCtrl.setRoot(LoginPage)
+    console.log(this.user)
+    this.api.get('table/user_role', { params: { filter: "name=" + "'" + this.user + "'" } })
+      .subscribe(val => {
+        this.users = val['data'];
+        const headers = new HttpHeaders()
+          .set("Content-Type", "application/json");
+        this.api.put("table/user_role",
+          {
+            "id_user": this.users[0].id_user,
+            "token": ''
+          },
+          { headers })
+          .subscribe(val => {
+            this.storage.remove('token');
+            this.storage.remove('username');
+            this.navCtrl.setRoot(LoginPage)
+          })
+      });
   }
 
 }

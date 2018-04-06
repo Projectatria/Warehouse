@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { AlertController, App, ViewController, Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, App, ViewController, Platform, NavController, NavParams } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
 import { HttpHeaders } from "@angular/common/http";
 import { HomePage } from '../../pages/home/home';
 
-@IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
@@ -17,7 +16,9 @@ export class LoginPage {
   private height: number;
   login: string = "signin";
   rootPage: any;
-  private token:any;
+  private token: any;
+  private user = [];
+  private tokennotification = '';
 
   constructor(
     public platform: Platform,
@@ -57,6 +58,23 @@ export class LoginPage {
         console.log(this.token)
         this.storage.set('token', this.token);
         this.storage.set('username', this.myForm.value.username);
+        this.api.get('table/user_role', { params: { filter: "name=" + "'" + this.myForm.value.username + "'" } })
+          .subscribe(val => {
+            this.user = val['data'];
+            this.storage.get('tokennotification').then((val) => {
+              console.log(val);
+              this.tokennotification = val;
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.put("table/user_role",
+                {
+                  "id_user": this.user[0].id_user,
+                  "token": this.tokennotification
+                },
+                { headers })
+                .subscribe()
+            });
+          });
         this.navCtrl.setRoot(HomePage)
         this.myForm.reset();
       }, (e) => {

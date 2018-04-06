@@ -183,8 +183,6 @@ export class DetailpoaddPage {
                 "qty": this.myForm.value.qty,
                 "unit": this.myForm.value.unit,
                 "division": this.itemdiv,
-                "staging": "",
-                "position": "",
                 "status": "OPEN",
                 "receiving_pic": "",
                 "chronology_no": "",

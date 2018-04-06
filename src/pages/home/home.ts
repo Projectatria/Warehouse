@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { MenuController, AlertController, Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { MenuController, AlertController, Platform, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
 import { Storage } from '@ionic/storage';
 
-@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',

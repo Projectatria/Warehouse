@@ -90,7 +90,7 @@
           <ion-item *ngIf="status == 'INP1'" class="item-rcv" style="border-bottom:1px solid;border-color:#dedede;">
             <ion-label floating>PIC</ion-label>
             <ion-select formControlName="pic">
-              <ion-option *ngFor="let user of users" value="{{user.id_user}}">{{user.id_user}} {{user.nama}} {{user.id_role}}</ion-option>
+              <ion-option *ngFor="let user of users" value="{{user.id_user}}" (ionSelect)="onChange(user)">{{user.id_user}} {{user.name}} {{user.id_role}}</ion-option>
             </ion-select>
           </ion-item>
           <ion-item *ngIf="status == 'INP2'" class="item-rc" style="border:0px;">

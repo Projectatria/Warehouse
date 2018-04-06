@@ -48,7 +48,10 @@ export class DetailpoactionPage {
   barcode: {};
   private width: number;
   private height: number;
-  private token:any;
+  private token: any;
+  private user = '';
+  private userrole = [];
+  private userpic = '';
 
   constructor(
     public navCtrl: NavController,
@@ -84,6 +87,10 @@ export class DetailpoactionPage {
     this.totalpost = navParams.get('totalpost')
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
+    this.storage.get('username').then((val) => {
+      console.log(val);
+      this.user = val;
+    });
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
@@ -256,7 +263,9 @@ export class DetailpoactionPage {
       { headers })
       .subscribe(
         (val) => {
-          this.doSendNotification();
+          if (this.myFormModal.value.location == '') {
+            this.doSendNotification();
+          }
           document.getElementById("myModal").style.display = "none";
           const headers = new HttpHeaders()
             .set("Content-Type", "application/json");
@@ -576,23 +585,28 @@ export class DetailpoactionPage {
 
     actionSheet.present();
   }
+  onChange(user) {
+    console.log('Testing', user);
+    this.userpic = user.name;
+  }
   doSendNotification() {
-    this.api.get("table/token_notification").subscribe(val => {
-      this.tokennotification = val['data'];
+    this.api.get("table/user_role", { params: { filter: "name=" + "'" + this.userpic + "'" } }).subscribe(val => {
+      this.userrole = val['data'];
       const headers = new HttpHeaders({
         "Content-Type": "application/json",
         "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
       })
+      console.log(this.userrole[0].token)
       this.http.post("https://fcm.googleapis.com/fcm/send",
         {
-          "to": this.tokennotification[0].token,
+          "to": this.userrole[0].token,
           "notification": {
             "body": "You have new notifications",
             "title": "Atria Warehouse",
             "content_available": true,
             "priority": "high",
-            "sound":"default",
-            "click_action":"FCM_PLUGIN_ACTIVITY",
+            "sound": "default",
+            "click_action": "FCM_PLUGIN_ACTIVITY",
             "color": "#FFFFFF",
             "icon": "atria"
           },
