@@ -39,7 +39,6 @@ export class BarcodelistPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -64,7 +63,6 @@ export class BarcodelistPage {
     })
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad BarcodelistPage');
   }
   closeModal() {
     this.viewCtrl.dismiss();

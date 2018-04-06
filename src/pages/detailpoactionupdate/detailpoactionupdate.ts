@@ -90,7 +90,6 @@ export class DetailpoactionupdatePage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -106,14 +105,11 @@ export class DetailpoactionupdatePage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderupdatePage');
-    console.log(this.detailno);
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   onChange(item) {
-    console.log('Testing',item);
     this.item = item;
   }
   doUpdateReceiving() {
@@ -130,8 +126,6 @@ export class DetailpoactionupdatePage {
         { headers })
         .subscribe(
         (val) => {
-          console.log("Update call successful value returned in body",
-            val);
           this.myForm.reset()
           let alert = this.alertCtrl.create({
             title: 'Sukses',
@@ -142,10 +136,8 @@ export class DetailpoactionupdatePage {
           this.viewCtrl.dismiss();
         },
         response => {
-          console.log("Update call in error", response);
         },
         () => {
-          console.log("The Update observable is now completed.");
         });
   }
   showLocation(){

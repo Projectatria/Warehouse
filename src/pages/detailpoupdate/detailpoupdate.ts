@@ -83,7 +83,6 @@ export class DetailpoupdatePage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -99,14 +98,12 @@ export class DetailpoupdatePage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderupdatePage');
-    console.log(this.nextno);
+
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   onChange(item) {
-    console.log('Testing', item);
     this.item = item;
     this.itemdesc = item.description;
     this.itemdiv = item.division_code;
@@ -129,8 +126,6 @@ export class DetailpoupdatePage {
       { headers })
       .subscribe(
         (val) => {
-          console.log("Update call successful value returned in body",
-            val);
           this.api.put("table/receiving",
             {
               "receiving_no": this.detailno,
@@ -153,10 +148,10 @@ export class DetailpoupdatePage {
           this.viewCtrl.dismiss();
         },
         response => {
-          console.log("Update call in error", response);
+
         },
         () => {
-          console.log("The Update observable is now completed.");
+
         });
   }
 }

@@ -91,7 +91,6 @@ export class QcindetailPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -127,7 +126,6 @@ export class QcindetailPage {
 
   }
   getSearchQCDetail(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -165,7 +163,6 @@ export class QcindetailPage {
       });
   }
   ionViewDidLoad() {
-    console.log(this.orderno)
   }
   doPassed(qcparam) {
     let alert = this.alertCtrl.create({
@@ -181,7 +178,6 @@ export class QcindetailPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -222,7 +218,7 @@ export class QcindetailPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -249,21 +245,6 @@ export class QcindetailPage {
     });
     alert.present();
   }
-  // doChecked() {
-  //   this.buttonText = "Loading..";
-  //   this.loading = true;
-  //   this.option = {
-  //     prompt: "Please scan your code"
-  //   }
-  //   this.barcodeScanner.scan().then((barcodeData) => {
-  //     if (barcodeData.cancelled) {
-  //       console.log("User cancelled the action!");
-  //       this.loading = false;
-  //       return false;
-  //     }
-  //     this.data = barcodeData;
-  //   });
-  // }
   doUpdateChecked(result) {
     this.api.get("table/qc_in_result_parameter", { params: { filter: "qc_result_no=" + "'" + result.qc_result_no + "'" } }).subscribe(val => {
       this.qcparameter = val['data'];
@@ -272,8 +253,6 @@ export class QcindetailPage {
         this.noqcresultparam = result.qc_result_param_no
         this.noqcresult = result.qc_result_no
         this.uuidresult = result.uuid
-        console.log(this.noqcresult)
-        console.log(this.uuidresult)
         document.getElementById("myQCChecking").style.display = "block";
         document.getElementById("myHeader").style.display = "none";
         this.button = "qccheck"
@@ -295,7 +274,6 @@ export class QcindetailPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -390,7 +368,6 @@ export class QcindetailPage {
                             .subscribe(val => {
                               this.getNextNoQCResultParam().subscribe(val => {
                                 this.nextnoqcresultparam = val['nextno'];
-                                console.log(this.nextnoqcresultparam, this.nextnoqcresult);
                                 const headers = new HttpHeaders()
                                   .set("Content-Type", "application/json");
                                 this.api.post("table/qc_in_result_parameter",
@@ -421,7 +398,6 @@ export class QcindetailPage {
                                         .subscribe(val => {
                                           this.getNextNoQCResultParam().subscribe(val => {
                                             this.nextnoqcresultparam = val['nextno'];
-                                            console.log(this.nextnoqcresultparam, this.nextnoqcresult);
                                             const headers = new HttpHeaders()
                                               .set("Content-Type", "application/json");
                                             this.api.post("table/qc_in_result_parameter",
@@ -437,7 +413,6 @@ export class QcindetailPage {
                                               .subscribe(val => {
                                                 this.getNextNoQCResultParam().subscribe(val => {
                                                   this.nextnoqcresultparam = val['nextno'];
-                                                  console.log(this.nextnoqcresultparam, this.nextnoqcresult);
                                                   const headers = new HttpHeaders()
                                                     .set("Content-Type", "application/json");
                                                   this.api.post("table/qc_in_result_parameter",
@@ -573,12 +548,10 @@ export class QcindetailPage {
           this.imageURI = '';
           this.imageFileName = '';
         }, (err) => {
-          console.log(err);
           loader.dismiss();
           this.presentToast(err);
         });
     }, (err) => {
-      console.log(err);
       this.presentToast(err);
     });
   }
@@ -590,7 +563,7 @@ export class QcindetailPage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
+
     });
 
     toast.present();

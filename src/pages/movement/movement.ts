@@ -62,7 +62,6 @@ export class MovementPage {
     public storage: Storage) 
     {
       this.storage.get('token').then((val) => {
-        console.log(val);
         this.token = val;
       });
   }
@@ -96,7 +95,7 @@ export class MovementPage {
                 text: 'Cancel',
                 role: 'cancel',
                 handler: data => {
-                  console.log('Cancel clicked');
+
                 }
               },
               {
@@ -239,7 +238,7 @@ export class MovementPage {
                     text: 'Cancel',
                     role: 'cancel',
                     handler: () => {
-                      console.log('Cancel clicked');
+
                     }
                   },
                   {
@@ -321,7 +320,6 @@ export class MovementPage {
                                           .subscribe(val => {
                                             const headers = new HttpHeaders()
                                               .set("Content-Type", "application/json");
-                                            console.log(this.getmovementlist[0].movementtemp_no)
                                             this.api.delete("table/movement_temp", { params: { filter: "movementtemp_no=" + "'" + this.getmovementlist[0].movementtemp_no + "'" }, headers })
                                               .subscribe(val => {
                                                 this.api.get('table/movement_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
@@ -366,7 +364,7 @@ export class MovementPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -378,15 +376,13 @@ export class MovementPage {
             this.api.delete("table/movement_temp", { params: { filter: 'movementtemp_no=' + "'" + putemp.movementtemp_no + "'" }, headers })
               .subscribe(
                 (val) => {
-                  console.log("DELETE call successful value returned in body",
-                    val);
                   this.getMovementTemp();
                 },
                 response => {
-                  console.log("DELETE call in error", response);
+
                 },
                 () => {
-                  console.log("The DELETE observable is now completed.");
+
                 });
           }
         }
@@ -402,7 +398,6 @@ export class MovementPage {
     }
     this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
       if (barcodeData.cancelled) {
-        console.log("User cancelled the action!");
         this.loading = false;
         return false;
       }
@@ -426,7 +421,6 @@ export class MovementPage {
                   text: 'Cancel',
                   role: 'cancel',
                   handler: data => {
-                    console.log('Cancel clicked');
                   }
                 },
                 {
@@ -530,7 +524,6 @@ export class MovementPage {
     }
     this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
       if (barcodeData.cancelled) {
-        console.log("User cancelled the action!");
         this.loading = false;
         return false;
       }
@@ -540,7 +533,6 @@ export class MovementPage {
   getMovementTemp() {
     this.api.get('table/movement_temp', { params: { limit: 30, filter: "pic='12345'" } })
       .subscribe(val => {
-        console.log('get movementtemp')
         this.movementtemp = val['data'];
       });
   }

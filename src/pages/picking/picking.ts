@@ -19,7 +19,7 @@ export class PickingPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PickingPage');
+
   }
 
 }

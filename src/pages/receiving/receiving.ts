@@ -50,7 +50,6 @@ export class ReceivingPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -63,9 +62,7 @@ export class ReceivingPage {
   getPO() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -89,7 +86,6 @@ export class ReceivingPage {
   }
 
   getSearchPO(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -147,7 +143,7 @@ export class ReceivingPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -164,8 +160,6 @@ export class ReceivingPage {
               { headers })
               .subscribe(
                 (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -180,10 +174,10 @@ export class ReceivingPage {
 
                 },
                 response => {
-                  console.log("Posting call in error", response);
+
                 },
                 () => {
-                  console.log("The Posting observable is now completed.");
+
                 });
           }
         }

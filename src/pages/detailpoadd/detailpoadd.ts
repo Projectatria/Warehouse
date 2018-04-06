@@ -87,7 +87,6 @@ export class DetailpoaddPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -104,16 +103,12 @@ export class DetailpoaddPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderaddPage');
-    console.log('Next No', this.nextno);
-    console.log('Order No', this.orderno);
-    console.log('Total', this.totalcount);
+
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   onChange(item) {
-    console.log('Testing', item);
     this.item = item;
     this.itemdesc = item.description;
     this.itemdiv = item.division_code;
@@ -146,8 +141,6 @@ export class DetailpoaddPage {
         { headers })
         .subscribe(
           (val) => {
-            console.log("POST call successful value returned in body",
-              val);
             this.api.put("table/purchasing_order",
               {
                 "po_id": this.poid,
@@ -155,18 +148,7 @@ export class DetailpoaddPage {
               },
               { headers })
               .subscribe();
-            console.log(
-              this.nextno,
-              this.myForm.value.docno,
-              this.batchno,
-              this.myForm.value.orderno,
-              this.myForm.value.itemno,
-              this.locationcode,
-              this.transferdate,
-              this.myForm.value.qty,
-              this.myForm.value.unit,
-              this.itemdiv
-            )
+
             let uuid2 = UUID.UUID();
             this.uuid2 = uuid2;
             const headersrcv = new HttpHeaders()
@@ -200,10 +182,10 @@ export class DetailpoaddPage {
             this.viewCtrl.dismiss();
           },
           response => {
-            console.log("POST call in error", response);
+
           },
           () => {
-            console.log("The POST observable is now completed.");
+
           });
     });
   }

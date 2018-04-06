@@ -74,7 +74,6 @@ export class PurchasingorderPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -85,15 +84,11 @@ export class PurchasingorderPage {
     });
   }
   ionViewDidLoad() {
-    console.log(this.width);
-    console.log(this.height);
   }
   getPO() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -118,9 +113,7 @@ export class PurchasingorderPage {
   getInfoPO() {
     return new Promise(resolve => {
       let offsetinfopo = 30 * this.halamaninfopo
-      console.log('offset', this.halamaninfopo);
       if (this.halamaninfopo == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -145,9 +138,7 @@ export class PurchasingorderPage {
   getPrepare() {
     return new Promise(resolve => {
       let offsetprepare = 30 * this.halamanpreparation
-      console.log('offset', this.halamanpreparation);
       if (this.halamanpreparation == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -170,7 +161,6 @@ export class PurchasingorderPage {
 
   }
   getSearchPO(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -184,7 +174,6 @@ export class PurchasingorderPage {
     }
   }
   getSearchInfoPO(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -198,7 +187,6 @@ export class PurchasingorderPage {
     }
   }
   getSearchPrepare(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -300,7 +288,6 @@ export class PurchasingorderPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -312,8 +299,6 @@ export class PurchasingorderPage {
             this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
               .subscribe(
                 (val) => {
-                  console.log("DELETE call successful value returned in body",
-                    val);
                   this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
@@ -321,10 +306,10 @@ export class PurchasingorderPage {
                   });
                 },
                 response => {
-                  console.log("DELETE call in error", response);
+
                 },
                 () => {
-                  console.log("The DELETE observable is now completed.");
+
                 });
           }
         }
@@ -380,7 +365,7 @@ export class PurchasingorderPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -400,8 +385,6 @@ export class PurchasingorderPage {
               { headers })
               .subscribe(
                 (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -416,10 +399,10 @@ export class PurchasingorderPage {
 
                 },
                 response => {
-                  console.log("Posting call in error", response);
+
                 },
                 () => {
-                  console.log("The Posting observable is now completed.");
+
                 });
           }
         }
@@ -436,7 +419,7 @@ export class PurchasingorderPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -453,8 +436,6 @@ export class PurchasingorderPage {
               { headers })
               .subscribe(
                 (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -469,10 +450,8 @@ export class PurchasingorderPage {
 
                 },
                 response => {
-                  console.log("Posting call in error", response);
                 },
                 () => {
-                  console.log("The Posting observable is now completed.");
                 });
           }
         }
@@ -489,7 +468,6 @@ export class PurchasingorderPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -506,8 +484,6 @@ export class PurchasingorderPage {
               { headers })
               .subscribe(
                 (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -522,10 +498,10 @@ export class PurchasingorderPage {
 
                 },
                 response => {
-                  console.log("Posting call in error", response);
+
                 },
                 () => {
-                  console.log("The Posting observable is now completed.");
+
                 });
           }
         }
@@ -549,7 +525,7 @@ export class PurchasingorderPage {
                   text: 'Cancel',
                   role: 'cancel',
                   handler: () => {
-                    console.log('Cancel clicked');
+
                   }
                 },
                 {
@@ -567,8 +543,6 @@ export class PurchasingorderPage {
                       { headers })
                       .subscribe(
                         (val) => {
-                          console.log("Posting call successful value returned in body",
-                            val);
                           let alert = this.alertCtrl.create({
                             title: 'Sukses',
                             subTitle: 'Posting Sukses',
@@ -583,10 +557,10 @@ export class PurchasingorderPage {
 
                         },
                         response => {
-                          console.log("Posting call in error", response);
+
                         },
                         () => {
-                          console.log("The Posting observable is now completed.");
+
                         });
                   }
                 }
@@ -625,7 +599,7 @@ export class PurchasingorderPage {
                   text: 'Cancel',
                   role: 'cancel',
                   handler: () => {
-                    console.log('Cancel clicked');
+
                   }
                 },
                 {
@@ -637,8 +611,6 @@ export class PurchasingorderPage {
                     this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
                       .subscribe(
                         (val) => {
-                          console.log("DELETE call successful value returned in body",
-                            val);
                           this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
                             this.purchasing_order = val['data'];
                             this.totaldata = val['count'];
@@ -646,10 +618,10 @@ export class PurchasingorderPage {
                           });
                         },
                         response => {
-                          console.log("DELETE call in error", response);
+
                         },
                         () => {
-                          console.log("The DELETE observable is now completed.");
+
                         });
                   }
                 }
@@ -663,7 +635,7 @@ export class PurchasingorderPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         }
       ]
@@ -680,110 +652,83 @@ export class PurchasingorderPage {
     locationModal.present();
   }
   doSortPO(filter) {
-    console.log(filter)
     if (this.sortPO == 'ASC') {
       this.sortPO = 'DESC'
     }
     else {
       this.sortPO = 'ASC'
     }
-    console.log(this.sortPO)
     this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'", sort: filter + " " + this.sortPO + " " } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
-      console.log(this.purchasing_order);
-      console.log(this.totaldata);
       this.filter = filter
     });
   }
   doSortInfoPO(filter) {
-    console.log(filter)
     if (this.sortInfoPO == 'ASC') {
       this.sortInfoPO = 'DESC'
     }
     else {
       this.sortInfoPO = 'ASC'
     }
-    console.log(this.sortInfoPO)
     this.api.get("table/purchasing_order", { params: { filter: "status='INP1'", sort: filter + " " + this.sortInfoPO + " " } }).subscribe(val => {
       this.infopo = val['data'];
       this.totaldatainfopo = val['count'];
-      console.log(this.infopo);
-      console.log(this.totaldatainfopo);
       this.filter = filter
     });
   }
   doSortPrepare(filter) {
-    console.log(filter)
     if (this.sortPrepare == 'ASC') {
       this.sortPrepare = 'DESC'
     }
     else {
       this.sortPrepare = 'ASC'
     }
-    console.log(this.sortPrepare)
     this.api.get("table/purchasing_order", { params: { filter: "status='INP2'", sort: filter + " " + this.sortPrepare + " " } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
-      console.log(this.preparation);
-      console.log(this.totaldatapreparation);
       this.filter = filter
     });
   }
   selectdatePO(datearrivalPO) {
-    console.log('date', datearrivalPO)
     if (datearrivalPO == '') {
       this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'"} }).subscribe(val => {
         this.purchasing_order = val['data'];
         this.totaldata = val['count'];
-        console.log(this.purchasing_order);
-        console.log(this.totaldata);
       });
     }
     else {
       this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'" + " AND " + "transfer_date=" + "'" + datearrivalPO + "'" } }).subscribe(val => {
         this.purchasing_order = val['data'];
         this.totaldata = val['count'];
-        console.log(this.purchasing_order);
-        console.log(this.totaldata);
       });
     }
   }
   selectdateInfoPO(datearrivalInfoPO) {
-    console.log('date', datearrivalInfoPO)
     if (datearrivalInfoPO == '') {
       this.api.get("table/purchasing_order", { params: { filter: "status='INP1'"} }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
-        console.log(this.infopo);
-        console.log(this.totaldatainfopo);
       });
     }
     else {
       this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" + " AND " + "transfer_date=" + "'" + datearrivalInfoPO + "'" } }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
-        console.log(this.infopo);
-        console.log(this.totaldatainfopo);
       });
     }
   }
   selectdatePrepare(datearrivalPrepare) {
-    console.log('date', datearrivalPrepare)
     if (datearrivalPrepare == '') {
       this.api.get("table/purchasing_order", { params: { filter: "status='INP2'"} }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
-        console.log(this.preparation);
-        console.log(this.totaldatapreparation);
       });
     }
     else {
       this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "transfer_date=" + "'" + datearrivalPrepare + "'" } }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
-        console.log(this.preparation);
-        console.log(this.totaldatapreparation);
       });
     }
   }

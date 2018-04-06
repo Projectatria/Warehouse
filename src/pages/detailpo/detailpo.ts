@@ -52,7 +52,6 @@ export class DetailpoPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -71,9 +70,7 @@ export class DetailpoPage {
   getPODetail() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -96,7 +93,6 @@ export class DetailpoPage {
 
   }
   getSearchPODetail(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -160,7 +156,6 @@ export class DetailpoPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -172,8 +167,6 @@ export class DetailpoPage {
             this.api.delete("table/purchasing_order_detail", { params: { filter: 'po_detail_no=' + "'" + detailpo.po_detail_no + "'" }, headers })
               .subscribe(
                 (val) => {
-                  console.log("DELETE call successful value returned in body",
-                    val);
                   this.api.delete("table/receiving", { params: { filter: 'receiving_no=' + "'" + detailpo.po_detail_no + "'" }, headers })
                     .subscribe();
                   this.api.put("table/purchasing_order",
@@ -190,10 +183,8 @@ export class DetailpoPage {
                   });
                 },
                 response => {
-                  console.log("DELETE call in error", response);
                 },
                 () => {
-                  console.log("The DELETE observable is now completed.");
                 });
           }
         }
@@ -210,7 +201,6 @@ export class DetailpoPage {
     });
   }
   ionViewDidLoad() {
-    console.log(this.docno, this.orderno, this.batchno, this.locationcode, this.transferdate);
     this.getPODetail();
   }
 }

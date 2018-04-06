@@ -105,7 +105,6 @@ export class PutawayPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -204,7 +203,6 @@ export class PutawayPage {
       });
   }
   getSearchItems(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -218,7 +216,6 @@ export class PutawayPage {
     }
   }
   getSearchbatch(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -232,7 +229,6 @@ export class PutawayPage {
     }
   }
   getSearchlocations(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -246,7 +242,6 @@ export class PutawayPage {
     }
   }
   getSearchGroupItems(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -260,7 +255,6 @@ export class PutawayPage {
     }
   }
   getSearchGroupbatch(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -274,7 +268,6 @@ export class PutawayPage {
     }
   }
   getSearchGrouplocations(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -368,7 +361,7 @@ export class PutawayPage {
                 text: 'Cancel',
                 role: 'cancel',
                 handler: data => {
-                  console.log('Cancel clicked');
+
                 }
               },
               {
@@ -499,7 +492,7 @@ export class PutawayPage {
                     text: 'Cancel',
                     role: 'cancel',
                     handler: () => {
-                      console.log('Cancel clicked');
+  
                     }
                   },
                   {
@@ -514,7 +507,6 @@ export class PutawayPage {
                               .subscribe(val => {
                                 this.putawayfound = val['data'];
                                 if (this.putawayfound.length == 0) {
-                                  console.log('data tidak ada')
                                   const headers = new HttpHeaders()
                                     .set("Content-Type", "application/json");
                                   this.getNextNo().subscribe(val => {
@@ -545,7 +537,6 @@ export class PutawayPage {
                                       .subscribe(val => {
                                         const headers = new HttpHeaders()
                                           .set("Content-Type", "application/json");
-                                        console.log(this.getputawaylist[0].putawaylisttemp_no)
                                         this.api.delete("table/putawaylist_temp", { params: { filter: "putawaylisttemp_no=" + "'" + this.getputawaylist[0].putawaylisttemp_no + "'" }, headers })
                                           .subscribe(val => {
                                             this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
@@ -567,7 +558,6 @@ export class PutawayPage {
                                   });
                                 }
                                 else {
-                                  console.log('data ada')
                                   const headers = new HttpHeaders()
                                     .set("Content-Type", "application/json");
                                   let date = moment().format('YYYY-MM-DD');
@@ -580,7 +570,6 @@ export class PutawayPage {
                                     .subscribe(val => {
                                       const headers = new HttpHeaders()
                                         .set("Content-Type", "application/json");
-                                      console.log(this.getputawaylist[0].putawaylisttemp_no)
                                       this.api.delete("table/putawaylist_temp", { params: { filter: "putawaylisttemp_no=" + "'" + this.getputawaylist[0].putawaylisttemp_no + "'" }, headers })
                                         .subscribe(val => {
                                           this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
@@ -718,12 +707,10 @@ export class PutawayPage {
         }
         else {
           if (this.qtyprevious == '') {
-            console.log('qty previous kosong')
             this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno + " AND " + "location_position=" + "'" + this.myFormModal.value.location + "'" } })
               .subscribe(val => {
                 this.putawaylist = val['data'];
                 if (this.putawaylist.length != 0 && (this.putawaylist[0].location_position == this.myFormModal.value.location)) {
-                  console.log('lokasi sama')
                   const headers = new HttpHeaders()
                     .set("Content-Type", "application/json");
                   let date = moment().format('YYYY-MM-DD');
@@ -734,10 +721,8 @@ export class PutawayPage {
                     },
                     { headers })
                     .subscribe(val => {
-                      console.log('update putaway')
                       this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
                         .subscribe(val => {
-                          console.log('get putaway')
                           this.putaway = val['data'];
                           this.rcvlist = this.receivingno;
                           this.totaldataputaway = val['count'];
@@ -754,7 +739,6 @@ export class PutawayPage {
                     });
                 }
                 else {
-                  console.log('lokasi tidak sama')
                   const headers = new HttpHeaders()
                     .set("Content-Type", "application/json");
                   this.getNextNo().subscribe(val => {
@@ -785,7 +769,6 @@ export class PutawayPage {
                       .subscribe(val => {
                         const headers = new HttpHeaders()
                           .set("Content-Type", "application/json");
-                        console.log('posisi', this.position)
                         this.api.put("table/location_master",
                           {
                             "location_alocation": this.position,
@@ -796,12 +779,10 @@ export class PutawayPage {
                           },
                           { headers })
                           .subscribe(val => {
-                            console.log('update receiving')
                             this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
                               .subscribe(val => {
                                 if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
                                   var position = this.myFormModal.value.location.substring(0, 2);
-                                  console.log('update lokasi false')
                                   this.api.put("table/receiving",
                                     {
                                       "receiving_no": this.receivingno,
@@ -816,7 +797,6 @@ export class PutawayPage {
                                         });
                                     });
                                 }
-                                console.log('get putaway')
                                 this.putaway = val['data'];
                                 this.rcvlist = this.receivingno;
                                 this.totaldataputaway = val['count'];
@@ -838,11 +818,6 @@ export class PutawayPage {
               });
           }
           else {
-            console.log('qty previous ada isinya');
-            console.log(this.totalqty);
-            console.log(this.qtyprevious);
-            console.log(this.myFormModal.value.qty);
-            console.log(this.qtyreceiving);
             if (((parseInt(this.totalqty) - parseInt(this.qtyprevious)) + parseInt(this.myFormModal.value.qty)) > parseInt(this.qtyreceiving)) {
               let alert = this.alertCtrl.create({
                 title: 'Error ',
@@ -862,10 +837,8 @@ export class PutawayPage {
                 },
                 { headers })
                 .subscribe(val => {
-                  console.log('update putaway')
                   this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
                     .subscribe(val => {
-                      console.log('get putaway')
                       this.putaway = val['data'];
                       this.rcvlist = this.receivingno;
                       this.totaldataputaway = val['count'];
@@ -895,7 +868,7 @@ export class PutawayPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -907,15 +880,13 @@ export class PutawayPage {
             this.api.delete("table/putawaylist_temp", { params: { filter: 'putawaylisttemp_no=' + "'" + putemp.putawaylisttemp_no + "'" }, headers })
               .subscribe(
                 (val) => {
-                  console.log("DELETE call successful value returned in body",
-                    val);
                   this.getPutawayTemp();
                 },
                 response => {
-                  console.log("DELETE call in error", response);
+
                 },
                 () => {
-                  console.log("The DELETE observable is now completed.");
+
                 });
           }
         }
@@ -931,7 +902,6 @@ export class PutawayPage {
     }
     this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
       if (barcodeData.cancelled) {
-        console.log("User cancelled the action!");
         this.loading = false;
         return false;
       }
@@ -955,7 +925,7 @@ export class PutawayPage {
                   text: 'Cancel',
                   role: 'cancel',
                   handler: data => {
-                    console.log('Cancel clicked');
+
                   }
                 },
                 {
@@ -1056,7 +1026,6 @@ export class PutawayPage {
     }
     this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
       if (barcodeData.cancelled) {
-        console.log("User cancelled the action!");
         this.loading = false;
         return false;
       }
@@ -1066,7 +1035,6 @@ export class PutawayPage {
   getPutawayTemp() {
     this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic='12345'" } })
       .subscribe(val => {
-        console.log('get putawaytemp')
         this.putawaytemp = val['data'];
       });
   }
@@ -1077,19 +1045,15 @@ export class PutawayPage {
     return this.api.get('nextno/putawaylist_temp/putawaylisttemp_no')
   }
   doSortPUT(filter) {
-    console.log(filter)
     if (this.sortPUT == 'ASC') {
       this.sortPUT = 'DESC'
     }
     else {
       this.sortPUT = 'ASC'
     }
-    console.log(this.sortPUT)
     this.api.get("table/putaway", { params: { filter: "status='OPEN'", sort: filter + " " + this.sortPUT + " " } }).subscribe(val => {
       this.listputaway = val['data'];
       this.totaldatalistputaway = val['count'];
-      console.log(this.listputaway);
-      console.log(this.totaldatalistputaway);
       this.filter = filter
     });
   }

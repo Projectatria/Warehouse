@@ -91,7 +91,6 @@ export class ReceivingdetailupdatePage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -102,7 +101,7 @@ export class ReceivingdetailupdatePage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ReceivingdetailupdatePage');
+
   }
   closeModal() {
     this.viewCtrl.dismiss();
@@ -115,7 +114,7 @@ export class ReceivingdetailupdatePage {
         {
           text: 'No',
           handler: () => {
-            console.log('Disagree clicked');
+
           }
         }, {
           text: 'Yes',
@@ -126,18 +125,14 @@ export class ReceivingdetailupdatePage {
             this.api.delete("table/link_image", { params: { filter: 'no=' + "'" + photo.no + "'" }, headers })
               .subscribe(
                 (val) => {
-                  console.log("DELETE call successful value returned in body",
-                    val);
                   this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + photo.parent + "'" } }).subscribe(val => {
                     this.photos = val['data'];
                     this.totalphoto = val['count'];
                   });
                 },
                 response => {
-                  console.log("DELETE call in error", response);
                 },
                 () => {
-                  console.log("The DELETE observable is now completed.");
                 });
           }
         }
@@ -212,12 +207,10 @@ export class ReceivingdetailupdatePage {
           this.imageURI = '';
           this.imageFileName = '';
         }, (err) => {
-          console.log(err);
           loader.dismiss();
           this.presentToast(err);
         });
     }, (err) => {
-      console.log(err);
       this.presentToast(err);
     });
   }
@@ -230,7 +223,7 @@ export class ReceivingdetailupdatePage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
+
     });
 
     toast.present();
@@ -252,8 +245,6 @@ export class ReceivingdetailupdatePage {
       { headers })
       .subscribe(
         (val) => {
-          console.log("Update call successful value returned in body",
-            val);
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',

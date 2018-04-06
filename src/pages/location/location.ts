@@ -33,7 +33,6 @@ export class LocationPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -44,7 +43,7 @@ export class LocationPage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LocationPage');
+
   }
   getLocationRoom() {
     this.api.get('table/location_room',{params:{limit:100}}).subscribe(val => {

@@ -24,21 +24,17 @@ export class HomePage {
     public storage: Storage) {
     this.atria = "warehouse";
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
     });
     this.storage.get('userid').then((val) => {
-      console.log(val);
       this.userid = val;
     });
     this.storage.get('name').then((val) => {
-      console.log(val);
       this.name = val;
     });
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;

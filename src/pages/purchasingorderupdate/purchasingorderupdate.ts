@@ -77,7 +77,6 @@ export class PurchasingorderupdatePage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -93,15 +92,12 @@ export class PurchasingorderupdatePage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderupdatePage');
-    console.log(this.poid);
 
   }
   closeModal() {
     this.viewCtrl.dismiss();
   }
   onChange(ven) {
-    console.log('Testing', ven);
     this.ven = ven;
   }
   updatePO() {
@@ -122,8 +118,6 @@ export class PurchasingorderupdatePage {
       { headers })
       .subscribe(
         (val) => {
-          console.log("Update call successful value returned in body",
-            val);
           this.myForm.reset()
           let alert = this.alertCtrl.create({
             title: 'Sukses',
@@ -134,10 +128,10 @@ export class PurchasingorderupdatePage {
           this.viewCtrl.dismiss();
         },
         response => {
-          console.log("Update call in error", response);
+
         },
         () => {
-          console.log("The Update observable is now completed.");
+
         });
   }
 }

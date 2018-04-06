@@ -72,7 +72,6 @@ export class PurchasingorderaddPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -83,8 +82,6 @@ export class PurchasingorderaddPage {
     });
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PurchasingorderaddPage');
-    console.log(this.nextno);
   }
   getVendor() {
     this.api.get('table/vendor', { params: { limit: 100 } }).subscribe(val => {
@@ -100,7 +97,6 @@ export class PurchasingorderaddPage {
     this.viewCtrl.dismiss();
   }
   onChange(ven) {
-    console.log('Testing',ven);
     this.ven = ven;
   }
   insertPO() {
@@ -109,7 +105,6 @@ export class PurchasingorderaddPage {
       let uuid = UUID.UUID();
       this.uuid = uuid;
       let batch = moment(this.myForm.value.transferdate).format('YYMMDD');
-      console.log(batch)
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -132,8 +127,6 @@ export class PurchasingorderaddPage {
         { headers })
         .subscribe(
         (val) => {
-          console.log("POST call successful value returned in body",
-            val);
           this.myForm.reset()
           let alert = this.alertCtrl.create({
             title: 'Sukses',
@@ -144,10 +137,10 @@ export class PurchasingorderaddPage {
           this.viewCtrl.dismiss();
         },
         response => {
-          console.log("POST call in error", response);
+
         },
         () => {
-          console.log("The POST observable is now completed.");
+
         });
     });
   }

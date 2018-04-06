@@ -90,7 +90,6 @@ export class ReceivingdetailPage {
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -125,9 +124,7 @@ export class ReceivingdetailPage {
   getRCVDetail() {
     return new Promise(resolve => {
       let offset = 30 * this.halaman
-      console.log('offset', this.halaman);
       if (this.halaman == -1) {
-        console.log('Data Tidak Ada')
         resolve();
       }
       else {
@@ -150,7 +147,6 @@ export class ReceivingdetailPage {
 
   }
   getSearchRCV(ev: any) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -195,7 +191,7 @@ export class ReceivingdetailPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -212,8 +208,6 @@ export class ReceivingdetailPage {
               { headers })
               .subscribe(
                 (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -237,10 +231,10 @@ export class ReceivingdetailPage {
 
                 },
                 response => {
-                  console.log("Posting call in error", response);
+
                 },
                 () => {
-                  console.log("The Posting observable is now completed.");
+
                 });
           }
         }
@@ -299,7 +293,6 @@ export class ReceivingdetailPage {
     }
     this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
       if (barcodeData.cancelled) {
-        console.log("User cancelled the action!");
         this.loading = false;
         return false;
       }
@@ -332,7 +325,7 @@ export class ReceivingdetailPage {
                   text: 'Cancel',
                   role: 'cancel',
                   handler: data => {
-                    console.log('Cancel clicked');
+
                   }
                 },
                 {
@@ -403,7 +396,7 @@ export class ReceivingdetailPage {
           })
       });
     }, (err) => {
-      console.log(err);
+
     });
   }
   doReceiving(detailrcv) {
@@ -421,7 +414,7 @@ export class ReceivingdetailPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -505,11 +498,9 @@ export class ReceivingdetailPage {
     });
   }
   doSetLoc(div) {
-    console.log('div', div.code)
     this.setdiv = div.code;
   }
   doLocation() {
-    console.log(this.setdiv);
     this.api.get('table/location_master', { params: { limit: 1000, filter: 'division=' + "'" + this.setdiv + "'" } }).subscribe(val => {
       this.location_master = val['data'];
       this.searchloc = this.location_master;
@@ -525,7 +516,6 @@ export class ReceivingdetailPage {
     this.doOffLocations();
   }
   getSearchLoc(ev) {
-    console.log(ev)
     // set val to the value of the searchbar
     let val = ev.target.value;
 
@@ -539,7 +529,6 @@ export class ReceivingdetailPage {
     }
   }
   doSaveStaging() {
-    console.log(this.receivingno, this.myFormModal.value.location)
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
 
@@ -551,8 +540,6 @@ export class ReceivingdetailPage {
       { headers })
       .subscribe(
         (val) => {
-          console.log("Posting call successful value returned in body",
-            val);
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',
@@ -571,7 +558,7 @@ export class ReceivingdetailPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         },
         {
@@ -588,8 +575,6 @@ export class ReceivingdetailPage {
               { headers })
               .subscribe(
                 (val) => {
-                  console.log("Posting call successful value returned in body",
-                    val);
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -599,17 +584,14 @@ export class ReceivingdetailPage {
                   this.getRCVChecked();
                 },
                 response => {
-                  console.log("Posting call in error", response);
+
                 },
                 () => {
-                  console.log("The Posting observable is now completed.");
+
                 });
-            console.log(this.totaldatachecked);
-            console.log('order no',cek.order_no)
             this.api.get('table/purchasing_order', { params: { limit: 30, filter: "order_no=" + "'" + cek.order_no + "'" } })
               .subscribe(val => {
                 this.purchasingorder = val['data'];
-                console.log('vendor',this.purchasingorder[0].vendor_status)
                 if (this.purchasingorder[0].vendor_status == 'FOREIGN') {
                   this.getNextNoStaging().subscribe(val => {
                     this.nextnostaging = val['nextno'];
