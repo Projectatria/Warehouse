@@ -13,7 +13,7 @@ import { HttpHeaders } from "@angular/common/http";
 export class UseraccountPage {
   private token: any;
   private users = [];
-  private user = '';
+  private userid = '';
 
   constructor(
     public navCtrl: NavController,
@@ -23,9 +23,9 @@ export class UseraccountPage {
     public platform: Platform,
     public alert: AlertController,
     public storage: Storage) {
-    this.storage.get('username').then((val) => {
+    this.storage.get('userid').then((val) => {
       console.log(val);
-      this.user = val;
+      this.userid = val;
     });
   }
   ionViewCanEnter() {
@@ -44,21 +44,22 @@ export class UseraccountPage {
     console.log('ionViewDidLoad UseraccountPage');
   }
   doLogout() {
-    console.log(this.user)
-    this.api.get('table/user_role', { params: { filter: "name=" + "'" + this.user + "'" } })
+    console.log(this.userid)
+    this.api.get('table/user', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
       .subscribe(val => {
         this.users = val['data'];
         const headers = new HttpHeaders()
           .set("Content-Type", "application/json");
-        this.api.put("table/user_role",
+        this.api.put("table/user",
           {
-            "id_user": this.users[0].id_user,
+            "id_user": this.userid,
             "token": ''
           },
           { headers })
           .subscribe(val => {
             this.storage.remove('token');
-            this.storage.remove('username');
+            this.storage.remove('userid');
+            this.storage.remove('name')
             this.navCtrl.setRoot(LoginPage)
           })
       });

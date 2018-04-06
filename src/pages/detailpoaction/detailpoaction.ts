@@ -49,8 +49,8 @@ export class DetailpoactionPage {
   private width: number;
   private height: number;
   private token: any;
-  private user = '';
-  private userrole = [];
+  private userid = '';
+  private usertoken = [];
   private userpic = '';
 
   constructor(
@@ -87,14 +87,12 @@ export class DetailpoactionPage {
     this.totalpost = navParams.get('totalpost')
     this.locationcode = navParams.get('locationcode');
     this.transferdate = navParams.get('transferdate');
-    this.storage.get('username').then((val) => {
-      console.log(val);
-      this.user = val;
+    this.storage.get('userid').then((val) => {
+      this.userid = val;
     });
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
-      console.log(val);
       this.token = val;
       if (this.token != null) {
         return true;
@@ -246,7 +244,7 @@ export class DetailpoactionPage {
     this.myFormModal.reset()
   }
   getUsers() {
-    this.api.get('table/user_role', { params: { limit: 100 } }).subscribe(val => {
+    this.api.get('table/user', { params: { limit: 100 } }).subscribe(val => {
       this.users = val['data'];
     });
   }
@@ -586,20 +584,19 @@ export class DetailpoactionPage {
     actionSheet.present();
   }
   onChange(user) {
-    console.log('Testing', user);
-    this.userpic = user.name;
+    this.userpic = user.id_user;
   }
   doSendNotification() {
-    this.api.get("table/user_role", { params: { filter: "name=" + "'" + this.userpic + "'" } }).subscribe(val => {
-      this.userrole = val['data'];
+    this.api.get("table/user", { params: { filter: "id_user=" + "'" + this.userpic + "'" } })
+    .subscribe(val => {
+      this.usertoken = val['data'];
       const headers = new HttpHeaders({
         "Content-Type": "application/json",
         "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
       })
-      console.log(this.userrole[0].token)
       this.http.post("https://fcm.googleapis.com/fcm/send",
         {
-          "to": this.userrole[0].token,
+          "to": this.usertoken[0].token,
           "notification": {
             "body": "You have new notifications",
             "title": "Atria Warehouse",

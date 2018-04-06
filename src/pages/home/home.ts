@@ -11,7 +11,8 @@ import { Storage } from '@ionic/storage';
 export class HomePage {
   atria: string = "warehouse";
   private token = '';
-  private username = '';
+  private userid = '';
+  private name: any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -26,9 +27,13 @@ export class HomePage {
       console.log(val);
       this.token = val;
     });
-    this.storage.get('username').then((val) => {
+    this.storage.get('userid').then((val) => {
       console.log(val);
-      this.username = val;
+      this.userid = val;
+    });
+    this.storage.get('name').then((val) => {
+      console.log(val);
+      this.name = val;
     });
   }
   ionViewCanEnter() {

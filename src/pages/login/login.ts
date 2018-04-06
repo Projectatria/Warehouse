@@ -31,7 +31,7 @@ export class LoginPage {
     public appCtrl: App,
     private alertCtrl: AlertController) {
     this.myForm = fb.group({
-      username: ['', Validators.compose([Validators.required])],
+      userid: ['', Validators.compose([Validators.required])],
       password: ['', Validators.compose([Validators.required])]
     })
     platform.ready().then(() => {
@@ -42,31 +42,29 @@ export class LoginPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
   }
   doLogin() {
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
     this.api.post("token",
       {
-        "userid": this.myForm.value.username,
+        "userid": this.myForm.value.userid,
         "password": this.myForm.value.password
       },
       { headers })
       .subscribe((val) => {
         this.token = val['token'];
-        console.log(this.token)
-        this.storage.set('token', this.token);
-        this.storage.set('username', this.myForm.value.username);
-        this.api.get('table/user_role', { params: { filter: "name=" + "'" + this.myForm.value.username + "'" } })
+        this.api.get('table/user', { params: { filter: "id_user=" + "'" + this.myForm.value.userid + "'" } })
           .subscribe(val => {
             this.user = val['data'];
+            this.storage.set('token', this.token);
+            this.storage.set('userid', this.myForm.value.userid);
+            this.storage.set('name', this.user[0].name);
             this.storage.get('tokennotification').then((val) => {
-              console.log(val);
               this.tokennotification = val;
               const headers = new HttpHeaders()
                 .set("Content-Type", "application/json");
-              this.api.put("table/user_role",
+              this.api.put("table/user",
                 {
                   "id_user": this.user[0].id_user,
                   "token": this.tokennotification
@@ -74,9 +72,9 @@ export class LoginPage {
                 { headers })
                 .subscribe()
             });
+            this.navCtrl.setRoot(HomePage)
+            this.myForm.reset();
           });
-        this.navCtrl.setRoot(HomePage)
-        this.myForm.reset();
       }, (e) => {
         let alert = this.alertCtrl.create({
           title: 'Error',
