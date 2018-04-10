@@ -59,6 +59,9 @@ export class HomePage {
   doMovement() {
     this.navCtrl.push('MovementPage');
   }
+  doPicking() {
+    this.navCtrl.push('PickingPage');
+  }
   doProfile() {
     this.navCtrl.push('UseraccountPage');
   } 

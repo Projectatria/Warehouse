@@ -46,7 +46,7 @@ export class MovementPage {
   unit = '';
   rcvlist = '';
   totaldataputaway: any;
-  private token:any;
+  private token: any;
 
   constructor(
     public navCtrl: NavController,
@@ -59,19 +59,22 @@ export class MovementPage {
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner,
     public actionSheetCtrl: ActionSheetController,
-    public storage: Storage) 
-    {
-      this.storage.get('token').then((val) => {
-        this.token = val;
-      });
+    public storage: Storage) {
+    this.storage.get('token').then((val) => {
+      this.token = val;
+    });
   }
   ionViewCanEnter() {
-    if (this.token != null) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    this.storage.get('token').then((val) => {
+      this.token = val;
+      if (this.token != null) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    })
+
   }
   ionViewDidLoad() {
   }
