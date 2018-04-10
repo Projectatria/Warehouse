@@ -40,7 +40,10 @@ import { HTTP } from '@ionic-native/http';
     QRCodeModule,
     NgxBarcodeModule,
     Angular2FontawesomeModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot({
+      name: '__mydb',
+         driverOrder: ['indexeddb', 'sqlite', 'websql']
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
