@@ -31,11 +31,11 @@
       <div>
         <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
       </div>
-      <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+      <ion-item class="content-data-item" *ngFor="let po of purchasing_order" (click)="viewDetail(po)">
         <ion-avatar item-start>
           <img src="assets/imgs/noimage.jpg" alt="">
         </ion-avatar>
-        <div no-padding (click)="viewDetail(po)">
+        <div no-padding>
           <h2>PO No : {{po.order_no}}</h2>
           <ion-note style="float:left;">items : {{po.total_item}}</ion-note>
           <ion-note style="float:right;">Receiving Date : {{po.transfer_date}}</ion-note>

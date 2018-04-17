@@ -55,15 +55,15 @@
           </div>
           <div class="body">
             <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
-              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;" *ngFor="let POREC of PORECEIVING">
+              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;" *ngFor="let POREC of PORECEIVING">
                 <ion-avatar item-start>
                   <img src="assets/imgs/noimage.jpg" alt="">
                 </ion-avatar>
                 <div no-padding>
                   <h2>No Order : {{POREC.order_no}}</h2>
                   <ion-note>{{POREC.transfer_date}} | items : {{POREC.total_item}}</ion-note>
-                  <ion-note item-end>{{POREC.pic}}</ion-note>
                 </div>
+                <ion-note style="margin-right:50px;" item-end>PIC : {{POREC.pic}}</ion-note>
               </ion-item>
             </ion-content>
           </div>
@@ -95,15 +95,15 @@
             <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Daftar Purchasing Order Sedang Disiapkan</h5>
           </div>
           <ion-content style="padding-bottom:490px;">
-            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;" *ngFor="let POPRE of POPREPARATION">
+            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;" *ngFor="let POPRE of POPREPARATION">
               <ion-avatar item-start>
                 <img src="assets/imgs/noimage.jpg" alt="">
               </ion-avatar>
               <div no-padding>
                 <h2>No Order : {{POPRE.order_no}}</h2>
                 <ion-note>{{POPRE.transfer_date}} | items : {{POPRE.total_item}}</ion-note>
-                <ion-note item-end>{{POPRE.pic}}</ion-note>
               </div>
+              <ion-note style="margin-right:50px;" item-end>PIC : {{POPRE.pic}}</ion-note>
             </ion-item>
           </ion-content>
         </div>

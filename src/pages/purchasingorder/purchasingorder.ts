@@ -747,20 +747,20 @@ export class PurchasingorderPage {
       this.users = val['data'];
     });
   }
-  doOpenToTL(info) {
+  doOpenToPIC(info) {
     this.getUsers();
     this.myFormModal.get('pic').setValue(info.pic);
-    document.getElementById("myModal").style.display = "block";
+    document.getElementById("myModalPic").style.display = "block";
     this.poid = info.po_id;
   }
-  doOffToTL() {
-    document.getElementById("myModal").style.display = "none";
+  doOffToPIC() {
+    document.getElementById("myModalPic").style.display = "none";
     this.myFormModal.reset()
   }
   onChange(user) {
     this.userpic = user.id_user;
   }
-  doSendToTL() {
+  doSendToPic() {
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
 
@@ -773,9 +773,9 @@ export class PurchasingorderPage {
       .subscribe(
         (val) => {
           if (this.myFormModal.value.location == '') {
-            this.doSendNotification();
+            this.doSendNotificationPic();
           }
-          document.getElementById("myModal").style.display = "none";
+          document.getElementById("myModalPic").style.display = "none";
           this.myFormModal.reset()
           let alert = this.alertCtrl.create({
             title: 'Sukses',
@@ -790,7 +790,7 @@ export class PurchasingorderPage {
         () => {
         });
   }
-  doSendNotification() {
+  doSendNotificationPic() {
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + this.userpic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
