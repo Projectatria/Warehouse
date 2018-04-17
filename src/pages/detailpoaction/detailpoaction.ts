@@ -601,7 +601,7 @@ export class DetailpoactionPage {
             "body": "You have new notifications",
             "title": "Atria Warehouse",
             "content_available": true,
-            "priority": "high",
+            "priority": 2,
             "sound": "default",
             "click_action": "FCM_PLUGIN_ACTIVITY",
             "color": "#FFFFFF",

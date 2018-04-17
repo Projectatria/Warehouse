@@ -61,5 +61,8 @@ export class UseraccountPage {
           })
       });
   }
+  doDashboard() {
+    this.navCtrl.push('DashboardtaskPage');
+  }
 
 }
