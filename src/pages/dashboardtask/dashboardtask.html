@@ -59,9 +59,10 @@
                 <ion-avatar item-start>
                   <img src="assets/imgs/noimage.jpg" alt="">
                 </ion-avatar>
-                <div no-padding (click)="viewDetail(POREC)">
+                <div no-padding>
                   <h2>No Order : {{POREC.order_no}}</h2>
                   <ion-note>{{POREC.transfer_date}} | items : {{POREC.total_item}}</ion-note>
+                  <ion-note item-end>{{POREC.pic}}</ion-note>
                 </div>
               </ion-item>
             </ion-content>
@@ -69,21 +70,21 @@
         </div>
         <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
           <ion-row>
-            <ion-col col-6 style="margin-right:0px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+            <ion-col class="dash" col-6 style="margin-right:0px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
               <div style="text-align:center;">PO Akan Datang</div>
               <div style="text-align:center;font-size:50px;">{{TOTALPOALL}}</div>
             </ion-col>
-            <ion-col col-6 style="background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+            <ion-col class="dash" col-6 style="background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
               <div style="text-align:center;">PO Datang Bulan Ini</div>
               <div style="text-align:center;font-size:50px;">{{TOTALPOMONTH}}</div>
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col col-6 style="margin-right:0px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+            <ion-col class="dash" col-6 style="margin-right:0px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
               <div style="text-align:center;">PO Datang Hari Ini</div>
               <div style="text-align:center;font-size:50px;">{{TOTALPODAY}}</div>
             </ion-col>
-            <ion-col col-6 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+            <ion-col class="dash" col-6 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
               <div style="text-align:center;">PO Selesai Diterima</div>
               <div style="text-align:center;font-size:50px;">{{TOTALPOFINISH}}</div>
             </ion-col>
@@ -98,9 +99,10 @@
               <ion-avatar item-start>
                 <img src="assets/imgs/noimage.jpg" alt="">
               </ion-avatar>
-              <div no-padding (click)="viewDetail(POPRE)">
+              <div no-padding>
                 <h2>No Order : {{POPRE.order_no}}</h2>
                 <ion-note>{{POPRE.transfer_date}} | items : {{POPRE.total_item}}</ion-note>
+                <ion-note item-end>{{POPRE.pic}}</ion-note>
               </div>
             </ion-item>
           </ion-content>

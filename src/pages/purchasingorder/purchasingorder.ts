@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
-import { FormBuilder } from "@angular/forms";
-import { HttpHeaders } from "@angular/common/http";
 import { FileChooser } from "@ionic-native/file-chooser";
 import { FileOpener } from "@ionic-native/file-opener";
 import { FilePath } from "@ionic-native/file-path";
 import moment from 'moment';
 import { Storage } from '@ionic/storage';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @IonicPage()
 @Component({
@@ -16,9 +16,12 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'purchasingorder.html',
 })
 export class PurchasingorderPage {
+  myFormModal: FormGroup;
+  private users = [];
   private purchasing_order = [];
   private infopo = [];
   private preparation = [];
+  private usertoken = [];
   searchpo: any;
   searchpoaction: any;
   searchinfopo: any;
@@ -41,7 +44,9 @@ export class PurchasingorderPage {
   sortPO = '';
   sortInfoPO = '';
   sortPrepare = '';
-  private token:any;
+  private token: any;
+  private userpic = '';
+  private poid = '';
 
   constructor(
     public navCtrl: NavController,
@@ -57,8 +62,13 @@ export class PurchasingorderPage {
     public filePath: FilePath,
     private platform: Platform,
     public actionSheetCtrl: ActionSheetController,
-    public storage: Storage
+    public storage: Storage,
+    private http: HttpClient
   ) {
+    this.myFormModal = formBuilder.group({
+      pic: ['', Validators.compose([Validators.required])],
+      location: ['', Validators.compose([Validators.required])],
+    })
     this.getPO();
     this.getInfoPO();
     this.getPrepare();
@@ -692,7 +702,7 @@ export class PurchasingorderPage {
   }
   selectdatePO(datearrivalPO) {
     if (datearrivalPO == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'"} }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'" } }).subscribe(val => {
         this.purchasing_order = val['data'];
         this.totaldata = val['count'];
       });
@@ -706,7 +716,7 @@ export class PurchasingorderPage {
   }
   selectdateInfoPO(datearrivalInfoPO) {
     if (datearrivalInfoPO == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'"} }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" } }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
       });
@@ -720,7 +730,7 @@ export class PurchasingorderPage {
   }
   selectdatePrepare(datearrivalPrepare) {
     if (datearrivalPrepare == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'"} }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" } }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
       });
@@ -731,6 +741,90 @@ export class PurchasingorderPage {
         this.totaldatapreparation = val['count'];
       });
     }
+  }
+  getUsers() {
+    this.api.get('table/user', { params: { limit: 100 } }).subscribe(val => {
+      this.users = val['data'];
+    });
+  }
+  doOpenToTL(info) {
+    this.getUsers();
+    this.myFormModal.get('pic').setValue(info.pic);
+    document.getElementById("myModal").style.display = "block";
+    this.poid = info.po_id;
+  }
+  doOffToTL() {
+    document.getElementById("myModal").style.display = "none";
+    this.myFormModal.reset()
+  }
+  onChange(user) {
+    this.userpic = user.id_user;
+  }
+  doSendToTL() {
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+
+    this.api.put("table/purchasing_order",
+      {
+        "po_id": this.poid,
+        "pic": this.myFormModal.value.pic
+      },
+      { headers })
+      .subscribe(
+        (val) => {
+          if (this.myFormModal.value.location == '') {
+            this.doSendNotification();
+          }
+          document.getElementById("myModal").style.display = "none";
+          this.myFormModal.reset()
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.getInfoPO();
+        },
+        response => {
+        },
+        () => {
+        });
+  }
+  doSendNotification() {
+    this.api.get("table/user", { params: { filter: "id_user=" + "'" + this.userpic + "'" } })
+      .subscribe(val => {
+        this.usertoken = val['data'];
+        console.log(this.usertoken)
+        const headers = new HttpHeaders({
+          "Content-Type": "application/json",
+          "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+        })
+        this.http.post("https://fcm.googleapis.com/fcm/send",
+          {
+            "to": this.usertoken[0].token,
+            "notification": {
+              "body": "You have new notifications",
+              "title": "Atria Warehouse",
+              "content_available": true,
+              "priority": 2,
+              "sound": "default",
+              "click_action": "FCM_PLUGIN_ACTIVITY",
+              "color": "#FFFFFF",
+              "icon": "atria"
+            },
+            "data": {
+              "body": "You have new notifications",
+              "title": "Atria Warehouse",
+              "key_1": "Data for key one",
+              "key_2": "Hellowww"
+            }
+          },
+          { headers })
+          .subscribe(data => {
+          }, (e) => {
+          });
+      });
+
   }
 
 }

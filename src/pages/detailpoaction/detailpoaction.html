@@ -56,7 +56,7 @@
           <ion-note>Qty : {{detailpo.qty}}</ion-note>
           <br/>
         </div>
-        <button *ngIf="(status == 'INP2' && width >= 600) || (status == 'INP1')" item-end ion-button clear color="greenlake" (click)="doOpenToTL(detailpo)">
+        <button *ngIf="status == 'INP2' && width >= 600" item-end ion-button clear color="greenlake" (click)="doOpenToTL(detailpo)">
           <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
         </button>
         <button *ngIf="status == 'INP2' && width >= 600" item-end ion-button clear color="greenlake" (click)="doListBarcode(detailpo)">

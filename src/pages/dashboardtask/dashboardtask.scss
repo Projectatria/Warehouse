@@ -21,9 +21,14 @@ page-dashboardtask {
 }
 
 .sidenav a:hover {
-    color: #f1f1f1;
+    color: #343d46;
+    background: #ffffff;
+    cursor: pointer;
 }
 .main {
     margin-left:250px;
+}
+.dash:hover {
+    cursor: pointer;
 }
 }

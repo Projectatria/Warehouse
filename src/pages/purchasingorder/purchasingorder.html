@@ -193,8 +193,8 @@
               {{info.status}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2>
-              <button *ngIf="info.status == 'INPG'" item-end ion-button clear color="greenlake" (click)="doListBarcode(info)">
-                <ion-icon name="md-barcode" style="font-size:30px;"></ion-icon>
+              <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doOpenToTL(info)">
+                <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
               </button>
               <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
                 <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
@@ -294,6 +294,24 @@
       </ion-item>
     </ion-list>
 
+  </div>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="closeModal" (click)="doOffToTL()">&times;</span>
+      <form [formGroup]="myFormModal">
+        <ion-list no-lines>
+          <ion-item class="item-rcv" style="border-bottom:1px solid;border-color:#dedede;">
+            <ion-label floating>PIC</ion-label>
+            <ion-select formControlName="pic">
+              <ion-option *ngFor="let user of users" value="{{user.id_user}}" (ionSelect)="onChange(user)">{{user.id_user}} {{user.name}} {{user.id_role}}</ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </form>
+      <ion-buttons end>
+        <button ion-button color="greenlake" (click)="doSendToTL();">Save</button>
+      </ion-buttons>
+    </div>
   </div>
 </ion-content>
 <div [ngSwitch]="po">
