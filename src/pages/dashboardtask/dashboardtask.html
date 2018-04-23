@@ -176,11 +176,66 @@
       </ion-card>
     </div>
     <div id="stagingin" style="display: none;">
-      <ion-list>
-        <ion-item>
-          Staging In
-        </ion-item>
-      </ion-list>
+      <ion-card style="width:98%;" padding>
+        <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
+          <div class="header" padding style="background: #217481;text-align:center;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Daftar Item Di Staging In</h5>
+          </div>
+          <div class="body">
+            <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
+              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let SI of STAGINGIN">
+                <ion-avatar item-start>
+                  <img src="assets/imgs/noimage.jpg" alt="">
+                </ion-avatar>
+                <div no-padding>
+                  <h2>No Order : {{SI.order_no}}</h2>
+                  <ion-note>{{SI.date_entry}} | Item No : {{SI.item_no}} | Qty : {{SI.qty}}</ion-note>
+                </div>
+                <ion-note style="margin-right:50px;" item-end>Batch No : {{SI.batch_no}}</ion-note>
+              </ion-item>
+            </ion-content>
+          </div>
+        </div>
+        <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
+          <ion-row>
+            <ion-col class="dash" col-6 style="margin-right:0px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">PO Di Staging In</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALPOSTAGINGIN}}</div>
+            </ion-col>
+            <ion-col class="dash" col-6 style="background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Item Di Staging In</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALSTAGINGIN}}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="dash" col-6 style="margin-right:0px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Qty</div>
+              <div style="text-align:center;font-size:50px;">{{QTYSUM}}</div>
+            </ion-col>
+            <ion-col class="dash" col-6 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Item Sudah Di Putaway</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALSTAGINGINFINISH}}</div>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
+          <div class="header" padding style="background: #217481;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Daftar PO Di Staging In</h5>
+          </div>
+          <ion-content style="padding-bottom:490px;">
+            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let POSI of POSTAGINGIN">
+              <ion-avatar item-start>
+                <img src="assets/imgs/noimage.jpg" alt="">
+              </ion-avatar>
+              <div no-padding>
+                <h2>No Order : {{POSI.order_no}}</h2>
+              </div>
+            </ion-item>
+          </ion-content>
+        </div>
+      </ion-card>
     </div>
     <div id="qcin" style="display: none;">
       <ion-list>

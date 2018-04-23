@@ -33,6 +33,15 @@ export class DashboardtaskPage {
   public TOTALRECPREPARATION: any;
   public RECEIVING = [];
   public TOTALRECEIVING: any;
+  public STAGINGIN = [];
+  public TOTALSTAGINGIN: any;
+  public POSTAGINGIN = [];
+  public TOTALPOSTAGINGIN: any;
+  public QTYSTAGINGIN = [];
+  public TOTALQTYSTAGINGIN: any;
+  public STAGINGINFINISH = [];
+  public TOTALSTAGINGINFINISH: any;
+  public QTYSUM: any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -50,6 +59,11 @@ export class DashboardtaskPage {
     this.doGetRECFinish();
     this.doGetRECPreparation();
     this.doGetReceiving();
+
+    this.doGetItemSI();
+    this.doGetPOSI();
+    this.doGetQTYSI();
+    this.doGetFinishSI();
   }
 
   ionViewDidLoad() {
@@ -150,6 +164,46 @@ export class DashboardtaskPage {
   }
 
   /*************************************************************************************************************/
+
+  /**********************************************STAGING IN*****************************************************/
+
+  doGetItemSI() {
+    this.api.get('table/staging_in', { params: { limit: 30, filter: "status='OPEN'" } })
+      .subscribe(val => {
+        this.STAGINGIN = val['data'];
+        this.TOTALSTAGINGIN = val['count']
+      });
+  }
+  doGetPOSI() {
+    this.api.get('table/staging_in', { params: { limit: 30, filter: "status='OPEN'", group: 'order_no', groupSummary: "sum (qty) as qtysumpo" } })
+      .subscribe(val => {
+        this.POSTAGINGIN = val['data'];
+        this.TOTALPOSTAGINGIN = val['count']
+      });
+  }
+  doGetQTYSI() {
+    this.api.get('table/staging_in', { params: { limit: 30, filter: "status='OPEN'", group: 'status', groupSummary: "sum (qty) as qtysum" } })
+      .subscribe(val => {
+        this.QTYSTAGINGIN = val['data'];
+        this.TOTALQTYSTAGINGIN = val['count']
+        if (this.QTYSTAGINGIN.length != 0) {
+          this.QTYSUM = this.QTYSTAGINGIN[0].qtysum
+        }
+        else {
+          this.QTYSUM = 0;
+        }
+      });
+  }
+  doGetFinishSI() {
+    this.api.get('table/staging_in', { params: { limit: 30, filter: "status='CLSD'" } })
+      .subscribe(val => {
+        this.STAGINGINFINISH = val['data'];
+        this.TOTALSTAGINGINFINISH = val['count']
+      });
+  }
+
+  /*************************************************************************************************************/
+
   doRefresh() {
     this.doGetPO();
     this.doGetPOMonth();
@@ -163,6 +217,10 @@ export class DashboardtaskPage {
     this.doGetRECFinish();
     this.doGetRECPreparation();
     this.doGetReceiving();
+    this.doGetItemSI();
+    this.doGetPOSI();
+    this.doGetQTYSI();
+    this.doGetFinishSI();
   }
   doPO() {
     document.getElementById('po').style.display = 'block';
