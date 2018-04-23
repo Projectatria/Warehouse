@@ -21,6 +21,18 @@ export class DashboardtaskPage {
   public TOTALPOPREPARATION: any;
   public PORECEIVING = [];
   public TOTALPORECEIVING: any;
+  public RECALL = [];
+  public TOTALRECALL: any;
+  public RECMONTH = [];
+  public TOTALRECMONTH: any;
+  public RECDAY = [];
+  public TOTALRECDAY: any;
+  public RECFINISH = [];
+  public TOTALRECFINISH: any;
+  public RECPREPARATION = [];
+  public TOTALRECPREPARATION: any;
+  public RECEIVING = [];
+  public TOTALRECEIVING: any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -31,10 +43,18 @@ export class DashboardtaskPage {
     this.doGetPOFinish();
     this.doGetPOPreparation();
     this.doGetPOReceiving();
+
+    this.doGetREC();
+    this.doGetRECMonth();
+    this.doGetRECDay();
+    this.doGetRECFinish();
+    this.doGetRECPreparation();
+    this.doGetReceiving();
   }
 
   ionViewDidLoad() {
   }
+  /************************************************PO***********************************************************/
   doGetPO() {
     this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status!='OPEN' AND status!='CLSD'" } })
       .subscribe(val => {
@@ -79,6 +99,57 @@ export class DashboardtaskPage {
         this.TOTALPOFINISH = val['count']
       });
   }
+
+  /*************************************************************************************************************/
+
+  /**********************************************RECEIVING******************************************************/
+
+  doGetREC() {
+    this.api.get('table/receiving', { params: { limit: 30, filter: "status!='OPEN' AND status!='CLSD'" } })
+      .subscribe(val => {
+        this.RECALL = val['data'];
+        this.TOTALRECALL = val['count']
+      });
+  }
+  doGetRECPreparation() {
+    this.api.get('table/receiving', { params: { limit: 30, filter: "status='INPG' OR status='CHECKED'" } })
+      .subscribe(val => {
+        this.RECPREPARATION = val['data'];
+        this.TOTALRECPREPARATION = val['count']
+      });
+  }
+  doGetReceiving() {
+    this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
+      .subscribe(val => {
+        this.RECEIVING = val['data'];
+        this.TOTALRECEIVING = val['count']
+      });
+  }
+  doGetRECMonth() {
+    let month = moment().format('MM');
+    this.api.get('table/receiving', { params: { limit: 30, filter: "status!='OPEN' AND status!='CLSD' AND month(transfer_date)=" + month } })
+      .subscribe(val => {
+        this.RECMONTH = val['data'];
+        this.TOTALRECMONTH = val['count']
+      });
+  }
+  doGetRECDay() {
+    let day = moment().format('YYYY-MM-DD');
+    this.api.get('table/receiving', { params: { limit: 30, filter: "status!='OPEN' AND status!='CLSD' AND transfer_date=" + "'" + day + "'" } })
+      .subscribe(val => {
+        this.RECDAY = val['data'];
+        this.TOTALRECDAY = val['count']
+      });
+  }
+  doGetRECFinish() {
+    this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
+      .subscribe(val => {
+        this.RECFINISH = val['data'];
+        this.TOTALRECFINISH = val['count']
+      });
+  }
+
+  /*************************************************************************************************************/
   doRefresh() {
     this.doGetPO();
     this.doGetPOMonth();
@@ -86,6 +157,12 @@ export class DashboardtaskPage {
     this.doGetPOFinish();
     this.doGetPOPreparation();
     this.doGetPOReceiving();
+    this.doGetREC();
+    this.doGetRECMonth();
+    this.doGetRECDay();
+    this.doGetRECFinish();
+    this.doGetRECPreparation();
+    this.doGetReceiving();
   }
   doPO() {
     document.getElementById('po').style.display = 'block';

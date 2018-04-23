@@ -1,10 +1,10 @@
 <ion-header class="header-menu">
   <ion-navbar class="header-navbar">
-      <div style="text-align:right;height:0px;">
-          <button ion-button clear color="light" (click)="doRefresh()">
-            <ion-icon name="md-sync" style="font-size:30px;"></ion-icon>
-          </button>
-        </div>
+    <div style="text-align:right;height:0px;">
+      <button ion-button clear color="light" (click)="doRefresh()">
+        <ion-icon name="md-sync" style="font-size:30px;"></ion-icon>
+      </button>
+    </div>
     <button ion-button menuToggle color="light">
       <ion-icon name="menu" style="font-size:30px;"></ion-icon>
     </button>
@@ -55,7 +55,8 @@
           </div>
           <div class="body">
             <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
-              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;" *ngFor="let POREC of PORECEIVING">
+              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let POREC of PORECEIVING">
                 <ion-avatar item-start>
                   <img src="assets/imgs/noimage.jpg" alt="">
                 </ion-avatar>
@@ -95,7 +96,8 @@
             <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Daftar Purchasing Order Sedang Disiapkan</h5>
           </div>
           <ion-content style="padding-bottom:490px;">
-            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;" *ngFor="let POPRE of POPREPARATION">
+            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let POPRE of POPREPARATION">
               <ion-avatar item-start>
                 <img src="assets/imgs/noimage.jpg" alt="">
               </ion-avatar>
@@ -110,11 +112,68 @@
       </ion-card>
     </div>
     <div id="receiving" style="display: none;">
-      <ion-list>
-        <ion-item>
-          Receiving
-        </ion-item>
-      </ion-list>
+      <ion-card style="width:98%;" padding>
+        <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
+          <div class="header" padding style="background: #217481;text-align:center;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Daftar Penerimaan Selesai Diterima</h5>
+          </div>
+          <div class="body">
+            <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
+              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let REC of RECEIVING">
+                <ion-avatar item-start>
+                  <img src="assets/imgs/noimage.jpg" alt="">
+                </ion-avatar>
+                <div no-padding>
+                  <h2>No Order : {{REC.order_no}}</h2>
+                  <ion-note>{{REC.transfer_date}} | Item No : {{REC.item_no}} | Qty : {{REC.qty}}</ion-note>
+                </div>
+                <ion-note style="margin-right:50px;" item-end>Batch No : {{REC.batch_no}}</ion-note>
+              </ion-item>
+            </ion-content>
+          </div>
+        </div>
+        <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
+          <ion-row>
+            <ion-col class="dash" col-6 style="margin-right:0px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Penerimaan Siap Di Proses</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALRECALL}}</div>
+            </ion-col>
+            <ion-col class="dash" col-6 style="background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Penerimaan Bulan Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALRECMONTH}}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="dash" col-6 style="margin-right:0px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Penerimaan Hari Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALRECDAY}}</div>
+            </ion-col>
+            <ion-col class="dash" col-6 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Penerimaan Selesai Diterima</div>
+              <div style="text-align:center;font-size:50px;">{{TOTALRECFINISH}}</div>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
+          <div class="header" padding style="background: #217481;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Daftar Penerimaan Sedang Di Proses</h5>
+          </div>
+          <ion-content style="padding-bottom:490px;">
+            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let RECPRE of RECPREPARATION">
+              <ion-avatar item-start>
+                <img src="assets/imgs/noimage.jpg" alt="">
+              </ion-avatar>
+              <div no-padding>
+                <h2>No Order : {{RECPRE.order_no}}</h2>
+                <ion-note>{{RECPRE.transfer_date}} | Item No : {{RECPRE.item_no}} | Qty : {{RECPRE.qty}}</ion-note>
+              </div>
+              <ion-note style="margin-right:50px;" item-end>Batch No : {{RECPRE.batch_no}}</ion-note>
+            </ion-item>
+          </ion-content>
+        </div>
+      </ion-card>
     </div>
     <div id="stagingin" style="display: none;">
       <ion-list>
