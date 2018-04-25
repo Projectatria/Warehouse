@@ -75,7 +75,7 @@ export class PutawayPage {
   itemnolist = '';
   batchnolist = '';
   locationlist = '';
-  private token:any;
+  private token: any;
 
   constructor(
     public navCtrl: NavController,
@@ -347,13 +347,13 @@ export class PutawayPage {
       this.putawaytemp = [];
     }
   }
-  doOpenQty(barcodeno) {
-    var batchno = barcodeno.substring(0, 6);
-    var itemno = barcodeno.substring(6, 14);
+  doOpenQty() {
+    var batchno = this.myForm.value.barcodeno.substring(0, 6);
+    var itemno = this.myForm.value.barcodeno.substring(6, 14);
     this.api.get('table/receiving', { params: { limit: 30, filter: "batch_no=" + "'" + batchno + "'" + ' AND ' + "item_no=" + "'" + itemno + "'" + ' AND ' + "status='CLSD'" } })
       .subscribe(val => {
         this.receivingputawaylist = val['data'];
-        if (this.receivingputawaylist.length) {
+        if (this.receivingputawaylist.length != 0) {
           let alert = this.alertCtrl.create({
             title: 'Qty',
             inputs: [
@@ -462,7 +462,7 @@ export class PutawayPage {
     this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
       .subscribe(val => {
         this.getputawaylist = val['data'];
-        this.api.get('table/location_master', { params: { limit: 30, filter: "location_alocation=" + "'" + this.myForm.value.rackno + "'" } })
+        this.api.get('table/location_master', { params: { filter: "location_alocation=" + "'" + this.myForm.value.rackno + "'" } })
           .subscribe(val => {
             this.location = val['data'];
             if (this.getputawaylist.length == 0) {
@@ -498,7 +498,7 @@ export class PutawayPage {
                     text: 'Cancel',
                     role: 'cancel',
                     handler: () => {
-  
+
                     }
                   },
                   {
@@ -508,14 +508,13 @@ export class PutawayPage {
                         .subscribe(val => {
                           this.getputawaylist = val['data'];
                           for (let i = 0; i < this.getputawaylist.length; i++) {
-
                             this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.getputawaylist[0].receiving_no + " AND " + "location_position=" + "'" + this.myForm.value.rackno + "'" } })
                               .subscribe(val => {
                                 this.putawayfound = val['data'];
                                 if (this.putawayfound.length == 0) {
                                   const headers = new HttpHeaders()
                                     .set("Content-Type", "application/json");
-                                  this.getNextNo().subscribe(val => {
+                                  this.api.get('nextno/putaway/putaway_no').subscribe(val => {
                                     this.nextno = val['nextno'];
                                     let date = moment().format('YYYY-MM-DD');
                                     this.api.post("table/putaway",
@@ -586,8 +585,6 @@ export class PutawayPage {
                                                 buttons: ['OK']
                                               });
                                               this.myForm.reset()
-                                              this.putawayfound = [];
-                                              this.getPutawayTemp();
                                               alert.present();
                                             });
                                         })
@@ -1035,7 +1032,8 @@ export class PutawayPage {
     //     return false;
     //   }
     cordova.plugins.pm80scanner.scan(result => {
-      this.myForm.get('rackno').setValue(result);
+      var barcodeno = result.substring(0, 12);
+      this.myForm.get('rackno').setValue(barcodeno)
     });
   }
   getPutawayTemp() {
