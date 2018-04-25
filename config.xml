@@ -99,5 +99,6 @@
     <plugin name="cordova-plugin-fcm" spec="^2.1.2" />
     <allow-navigation href="http://192.168.99.212:8100" />
     <plugin name="cordova-plugin-advanced-http" spec="^1.11.1" />
+    <plugin name="cordova-plugin-pm80-scanner" spec="0.0.7" />
     <engine name="android" spec="6.3.0" />
 </widget>

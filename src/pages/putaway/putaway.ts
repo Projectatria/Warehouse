@@ -9,12 +9,15 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
 import { Storage } from '@ionic/storage';
 
+declare var cordova;
+
 @IonicPage()
 @Component({
   selector: 'page-putaway',
   templateUrl: 'putaway.html',
 })
 export class PutawayPage {
+  myForm: FormGroup;
   myFormModal: FormGroup;
   private receiving = [];
   private location_master = [];
@@ -87,6 +90,10 @@ export class PutawayPage {
     public actionSheetCtrl: ActionSheetController,
     public storage: Storage
   ) {
+    this.myForm = formBuilder.group({
+      rackno: ['', Validators.compose([Validators.required])],
+      barcodeno: [''],
+    })
     this.myFormModal = formBuilder.group({
       qty: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
@@ -323,8 +330,7 @@ export class PutawayPage {
       });
   }
   doOpenListPutaway() {
-    this.rackno = '';
-    this.barcodeno = '';
+    this.myForm.reset();
     if (document.getElementById("myListPutaway").style.display == "none" && document.getElementById("myHeader").style.display == "block") {
       document.getElementById("myListPutaway").style.display = "block";
       document.getElementById("myHeader").style.display = "none";
@@ -384,7 +390,7 @@ export class PutawayPage {
                           { headers })
                           .subscribe(val => {
                             this.getPutawayTemp();
-                            this.barcodeno = '';
+                            this.myForm.get('barcodeno').setValue('')
                             let alert = this.alertCtrl.create({
                               title: 'Sukses ',
                               subTitle: 'Update Item Sukses',
@@ -423,7 +429,7 @@ export class PutawayPage {
                             { headers })
                             .subscribe(val => {
                               this.getPutawayTemp();
-                              this.barcodeno = '';
+                              this.myForm.get('barcodeno').setValue('')
                               let alert = this.alertCtrl.create({
                                 title: 'Sukses ',
                                 subTitle: 'Add Item Sukses',
@@ -456,7 +462,7 @@ export class PutawayPage {
     this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
       .subscribe(val => {
         this.getputawaylist = val['data'];
-        this.api.get('table/location_master', { params: { limit: 30, filter: "location_alocation=" + "'" + this.rackno + "'" } })
+        this.api.get('table/location_master', { params: { limit: 30, filter: "location_alocation=" + "'" + this.myForm.value.rackno + "'" } })
           .subscribe(val => {
             this.location = val['data'];
             if (this.getputawaylist.length == 0) {
@@ -467,7 +473,7 @@ export class PutawayPage {
               });
               alert.present();
             }
-            else if (this.rackno == '') {
+            else if (this.myForm.value.rackno == '') {
               let alert = this.alertCtrl.create({
                 title: 'Error ',
                 subTitle: 'Rack Number Must Be Fill',
@@ -503,7 +509,7 @@ export class PutawayPage {
                           this.getputawaylist = val['data'];
                           for (let i = 0; i < this.getputawaylist.length; i++) {
 
-                            this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.getputawaylist[0].receiving_no + " AND " + "location_position=" + "'" + this.rackno + "'" } })
+                            this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.getputawaylist[0].receiving_no + " AND " + "location_position=" + "'" + this.myForm.value.rackno + "'" } })
                               .subscribe(val => {
                                 this.putawayfound = val['data'];
                                 if (this.putawayfound.length == 0) {
@@ -522,7 +528,7 @@ export class PutawayPage {
                                         "item_no": this.getputawaylist[0].item_no,
                                         "posting_date": date,
                                         "location_code": this.getputawaylist[0].location_code,
-                                        "location_position": this.rackno,
+                                        "location_position": this.myForm.value.rackno,
                                         "division": this.getputawaylist[0].division,
                                         "qty": this.getputawaylist[0].qty,
                                         "qty_receiving": this.getputawaylist[0].qty_receiving,
@@ -547,8 +553,7 @@ export class PutawayPage {
                                                   subTitle: 'Save Item To Rack Sukses',
                                                   buttons: ['OK']
                                                 });
-                                                this.rackno = '';
-                                                this.barcodeno = '';
+                                                this.myForm.reset();
                                                 this.putawayfound = [];
                                                 this.getPutawayTemp();
                                                 alert.present();
@@ -580,8 +585,7 @@ export class PutawayPage {
                                                 subTitle: 'Save Item To Rack Sukses',
                                                 buttons: ['OK']
                                               });
-                                              this.rackno = '';
-                                              this.barcodeno = '';
+                                              this.myForm.reset()
                                               this.putawayfound = [];
                                               this.getPutawayTemp();
                                               alert.present();
@@ -900,12 +904,13 @@ export class PutawayPage {
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
-      if (barcodeData.cancelled) {
-        this.loading = false;
-        return false;
-      }
-      var barcodeno = barcodeData.text;
+    // this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
+    //   if (barcodeData.cancelled) {
+    //     this.loading = false;
+    //     return false;
+    //   }
+    cordova.plugins.pm80scanner.scan(result => {
+      var barcodeno = result;
       var batchno = barcodeno.substring(0, 6);
       var itemno = barcodeno.substring(6, 14);
       this.api.get('table/receiving', { params: { limit: 30, filter: "batch_no=" + "'" + batchno + "'" + ' AND ' + "item_no=" + "'" + itemno + "'" + ' AND ' + "status='CLSD'" } })
@@ -950,7 +955,7 @@ export class PutawayPage {
                             { headers })
                             .subscribe(val => {
                               this.getPutawayTemp();
-                              this.barcodeno = '';
+                              this.myForm.get('barcodeno').setValue('')
                               let alert = this.alertCtrl.create({
                                 title: 'Sukses ',
                                 subTitle: 'Update Item Sukses',
@@ -989,7 +994,7 @@ export class PutawayPage {
                               { headers })
                               .subscribe(val => {
                                 this.getPutawayTemp();
-                                this.barcodeno = '';
+                                this.myForm.get('barcodeno').setValue('')
                                 let alert = this.alertCtrl.create({
                                   title: 'Sukses ',
                                   subTitle: 'Add Item Sukses',
@@ -1024,12 +1029,13 @@ export class PutawayPage {
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
-      if (barcodeData.cancelled) {
-        this.loading = false;
-        return false;
-      }
-      this.rackno = barcodeData.text;
+    // this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
+    //   if (barcodeData.cancelled) {
+    //     this.loading = false;
+    //     return false;
+    //   }
+    cordova.plugins.pm80scanner.scan(result => {
+      this.myForm.get('rackno').setValue(result);
     });
   }
   getPutawayTemp() {

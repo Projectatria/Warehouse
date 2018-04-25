@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, trigger } from '@angular/core';
 import { FabContainer, ActionSheetController, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
@@ -8,6 +8,8 @@ import { BarcodeScanner, BarcodeScannerOptions } from "@ionic-native/barcode-sca
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
 import { Storage } from '@ionic/storage';
+
+declare var cordova;
 
 @IonicPage()
 @Component({
@@ -393,18 +395,36 @@ export class MovementPage {
     });
     alert.present();
   }
+  doScan() {
+    cordova.plugins.pm80scanner.scan(result => {
+      let alert = this.alertCtrl.create({
+        subTitle: 'Sukses',
+        message: result,
+        buttons: ['OK']
+      });
+      alert.present();
+    }, error => {
+      let alert = this.alertCtrl.create({
+        subTitle: 'Sukses',
+        message: error,
+        buttons: ['OK']
+      });
+      alert.present();
+    })
+  }
   doScanBarcodeItem() {
     this.buttonText = "Loading..";
     this.loading = true;
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
-      if (barcodeData.cancelled) {
-        this.loading = false;
-        return false;
-      }
-      var barcodeno = barcodeData.text;
+    // this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
+    //   if (barcodeData.cancelled) {
+    //     this.loading = false;
+    //     return false;
+    //   }
+    cordova.plugins.pm80scanner.scan(result => {
+      var barcodeno = result;
       var batchno = barcodeno.substring(0, 6);
       var itemno = barcodeno.substring(6, 14);
       this.api.get('table/putaway', { params: { limit: 30, filter: "batch_no=" + "'" + batchno + "'" + ' AND ' + "item_no=" + "'" + itemno + "'" + ' AND ' + "status='OPEN'" } })

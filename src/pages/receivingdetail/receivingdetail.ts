@@ -9,6 +9,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
 import { Storage } from '@ionic/storage';
 
+declare var cordova;
+
 @IonicPage()
 @Component({
   selector: 'page-receivingdetail',
@@ -291,19 +293,24 @@ export class ReceivingdetailPage {
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
-      if (barcodeData.cancelled) {
-        this.loading = false;
-        return false;
-      }
-      this.data = barcodeData;
+    // this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
+    //   if (barcodeData.cancelled) {
+    //     this.loading = false;
+    //     return false;
+    //   }
+    cordova.plugins.pm80scanner.scan(result => {
+      var barcodeno = result;
+      var batchno = barcodeno.substring(0, 6);
+      var itemno = barcodeno.substring(6, 14);
       return new Promise(resolve => {
         this.api.get("table/receiving", {
           params: {
             filter:
               'order_no=' + "'" + this.orderno + "'" +
               " " + 'AND' + " " +
-              'item_no=RIGHT(' + "'" + barcodeData.text + "',8)"
+              "batch_no=" + "'" + batchno + "'" +
+              " " + 'AND' + " " +
+              "item_no=" + "'" + itemno + "'"
           }
         }).subscribe((val) => {
           let data = val['data'];
@@ -312,7 +319,7 @@ export class ReceivingdetailPage {
           }
           if (this.itemdata[0].qty_receiving < this.itemdata[0].qty) {
             let alert = this.alertCtrl.create({
-              subTitle: barcodeData.text,
+              subTitle: result,
               inputs: [
                 {
                   name: 'qty',
@@ -366,7 +373,6 @@ export class ReceivingdetailPage {
                           this.itemdata = [];
                           this.getRCV();
                           alert.present();
-                          this.doScanBarcode();
                         });
                     }
                   }
