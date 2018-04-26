@@ -81,10 +81,14 @@ export class PurchasingorderPage {
       this.height = platform.height();
       this.storage.get('userid').then((val) => {
         this.userid = val;
+        this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } })
+        .subscribe(val => {
+          this.preparation = val['data'];
+        });
         this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
         .subscribe(val => {
           this.role = val['data']
-          this.roleid = this.role[0].id_role
+          this.roleid = this.role[0].id_group
           if (this.roleid != "ADMIN") {
             this.po = "preparation"
           }

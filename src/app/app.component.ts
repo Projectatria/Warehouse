@@ -53,7 +53,13 @@ export class MyApp {
           if (data.wasTapped) {
             this.rootPage = 'PurchasingorderPage'
           } else {
-
+            let alert = this.alertCtrl.create({
+              subTitle: data.title,
+              message: data.body,
+              buttons: ['OK']
+            });
+            alert.present();
+            this.rootPage = 'PurchasingorderPage'
           };
         });
       }, (e) => {

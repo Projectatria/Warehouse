@@ -11,13 +11,21 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-segment [(ngModel)]="po">
-    <ion-segment-button *ngIf="roleid == 'ADMIN'" value="purchasingorder">
+  <ion-segment *ngIf="roleid == 'ADMIN'" [(ngModel)]="po">
+    <ion-segment-button value="purchasingorder">
       Purchasing Order
     </ion-segment-button>
-    <ion-segment-button *ngIf="roleid == 'ADMIN'" value="infopo">
+    <ion-segment-button value="infopo">
       Info PO
     </ion-segment-button>
+    <ion-segment-button value="preparation">
+      Preparation
+    </ion-segment-button>
+    <ion-segment-button value="history">
+      History
+    </ion-segment-button>
+  </ion-segment>
+  <ion-segment [(ngModel)]="po">
     <ion-segment-button value="preparation">
       Preparation
     </ion-segment-button>
