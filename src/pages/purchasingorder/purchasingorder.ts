@@ -832,8 +832,7 @@ export class PurchasingorderPage {
             "data": {
               "body": this.usertoken[0].name + ", You have new job ",
               "title": "Atria Warehouse",
-              "userid": this.usertoken[0].id_user,
-              "name": this.usertoken[0].name
+              "param": "PO"
             }
           },
           { headers })

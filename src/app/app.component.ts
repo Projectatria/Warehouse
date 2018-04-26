@@ -66,7 +66,12 @@ export class MyApp {
           .subscribe()
         this.fcm.onNotification().subscribe(data => {
           if (data.wasTapped) {
-            this.rootPage = 'PurchasingorderPage'
+            if (data.param == "PO") {
+              this.rootPage = 'PurchasingorderPage'
+            }
+            else if (data.param == "PICKING") {
+              this.rootPage = 'PickingPage'
+            }
           } else {
             let alert = this.alertCtrl.create({
               subTitle: data.title,
@@ -74,7 +79,12 @@ export class MyApp {
               buttons: ['OK']
             });
             alert.present();
-            this.rootPage = 'PurchasingorderPage'
+            if (data.param == "PO") {
+              this.rootPage = 'PurchasingorderPage'
+            }
+            else if (data.param == "PICKING") {
+              this.rootPage = 'PickingPage'
+            }
           };
         });
       }, (e) => {

@@ -144,7 +144,7 @@
                     <ion-col style="color:black">{{listpickdetail.room}}</ion-col>
                   </ion-row>
                 </ion-col>
-                  <button style="margin-top:10px;" ion-button color="greenlake" block outline>SEND</button>
+                <button style="margin-top:10px;" ion-button color="greenlake" block outline (click)="doOpenToPIC()">SEND</button>
               </ion-row>
             </ion-grid>
           </div>
@@ -183,7 +183,7 @@
                     <ion-col style="color:black">{{listpickdetail.room}}</ion-col>
                   </ion-row>
                 </ion-col>
-                <button style="margin-top:10px;" ion-button color="greenlake" block outline>SEND</button>
+                <button style="margin-top:10px;" ion-button color="greenlake" block outline (click)="doOpenToPIC()">SEND</button>
               </ion-row>
             </ion-grid>
           </div>
@@ -222,7 +222,7 @@
                     <ion-col style="color:black">{{listpickdetail.room}}</ion-col>
                   </ion-row>
                 </ion-col>
-                <button style="margin-top:10px;" ion-button color="greenlake" block outline>SEND</button>
+                <button style="margin-top:10px;" ion-button color="greenlake" block outline (click)="doOpenToPIC()">SEND</button>
               </ion-row>
             </ion-grid>
           </div>
@@ -240,4 +240,22 @@
       loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+  <div id="myModalPic" class="modal">
+    <div class="modal-content">
+      <span class="closeModal" (click)="doOffToPIC()">&times;</span>
+      <form [formGroup]="myFormModal">
+        <ion-list no-lines>
+          <ion-item class="item-rcv" style="border-bottom:1px solid;border-color:#dedede;">
+            <ion-label floating>PIC</ion-label>
+            <ion-select formControlName="pic">
+              <ion-option *ngFor="let user of users" value="{{user.id_user}}" (ionSelect)="onChange(user)">{{user.id_user}} {{user.name}} {{user.id_role}}</ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </form>
+      <ion-buttons end>
+        <button ion-button color="greenlake" (click)="doSendToPic();">Send</button>
+      </ion-buttons>
+    </div>
+  </div>
 </ion-content>

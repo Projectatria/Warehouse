@@ -19,5 +19,18 @@ page-picking {
     border-color: #dedede;
     color: #2c7b87;
     background-color: transparent;
-}
+    }
+    .closeModal {
+        color: #dedede;
+        float: right;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .closeModal:hover,
+    .closeModal:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 }
