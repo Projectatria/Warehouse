@@ -458,6 +458,100 @@ export class PutawayPage {
       });
 
   }
+  doSavelistToPutaway() {
+    this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
+      .subscribe(val => {
+        this.getputawaylist = val['data'];
+        this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.getputawaylist[0].receiving_no + " AND " + "location_position=" + "'" + this.myForm.value.rackno + "'" } })
+          .subscribe(val => {
+            this.putawayfound = val['data'];
+            if (this.putawayfound.length == 0) {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.get('nextno/putaway/putaway_no').subscribe(val => {
+                this.nextno = val['nextno'];
+                let date = moment().format('YYYY-MM-DD');
+                this.api.post("table/putaway",
+                  {
+                    "putaway_no": this.nextno,
+                    "receiving_no": this.getputawaylist[0].receiving_no,
+                    "doc_no": this.getputawaylist[0].doc_no,
+                    "order_no": this.getputawaylist[0].order_no,
+                    "batch_no": this.getputawaylist[0].batch_no,
+                    "item_no": this.getputawaylist[0].item_no,
+                    "posting_date": date,
+                    "location_code": this.getputawaylist[0].location_code,
+                    "location_position": this.myForm.value.rackno,
+                    "division": this.getputawaylist[0].division,
+                    "qty": this.getputawaylist[0].qty,
+                    "qty_receiving": this.getputawaylist[0].qty_receiving,
+                    "unit": this.getputawaylist[0].unit,
+                    "flag": '',
+                    "pic": '',
+                    "status": 'OPEN',
+                    "chronology_no": '',
+                    "uuid": UUID.UUID()
+                  },
+                  { headers })
+                  .subscribe(val => {
+                    const headers = new HttpHeaders()
+                      .set("Content-Type", "application/json");
+                    this.api.delete("table/putawaylist_temp", { params: { filter: "putawaylisttemp_no=" + "'" + this.getputawaylist[0].putawaylisttemp_no + "'" }, headers })
+                      .subscribe(val => {
+                        this.putawayfound = [];
+                        this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
+                        .subscribe(val => {
+                          this.getputawaylist = val['data'];
+                          if(this.getputawaylist.length != 0) {
+                            this.doSavelistToPutaway();
+                          }
+                          else {
+                            let alert = this.alertCtrl.create({
+                              title: 'Sukses ',
+                              subTitle: 'Save Item To Rack Sukses',
+                              buttons: ['OK']
+                            });
+                            this.myForm.reset()
+                            alert.present();
+                            this.getPutawayTemp();
+                          }
+                        });
+                      })
+                  });
+              });
+            }
+            else {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              let date = moment().format('YYYY-MM-DD');
+              this.api.put("table/putaway",
+                {
+                  "putaway_no": this.putawayfound[0].putaway_no,
+                  "qty": parseInt(this.putawayfound[0].qty) + parseInt(this.getputawaylist[0].qty)
+                },
+                { headers })
+                .subscribe(val => {
+                  const headers = new HttpHeaders()
+                    .set("Content-Type", "application/json");
+                  this.api.delete("table/putawaylist_temp", { params: { filter: "putawaylisttemp_no=" + "'" + this.getputawaylist[0].putawaylisttemp_no + "'" }, headers })
+                    .subscribe(val => {
+                      this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
+                        .subscribe(val => {
+                          this.getputawaylist = val['data'];
+                          let alert = this.alertCtrl.create({
+                            title: 'Sukses ',
+                            subTitle: 'Save Item To Rack Sukses',
+                            buttons: ['OK']
+                          });
+                          this.myForm.reset()
+                          alert.present();
+                        });
+                    })
+                });
+            }
+          });
+      });
+  }
   doSaveToPutaway() {
     this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
       .subscribe(val => {
@@ -504,95 +598,7 @@ export class PutawayPage {
                   {
                     text: 'Save',
                     handler: () => {
-                      this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
-                        .subscribe(val => {
-                          this.getputawaylist = val['data'];
-                          for (let i = 0; i < this.getputawaylist.length; i++) {
-                            this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.getputawaylist[0].receiving_no + " AND " + "location_position=" + "'" + this.myForm.value.rackno + "'" } })
-                              .subscribe(val => {
-                                this.putawayfound = val['data'];
-                                if (this.putawayfound.length == 0) {
-                                  const headers = new HttpHeaders()
-                                    .set("Content-Type", "application/json");
-                                  this.api.get('nextno/putaway/putaway_no').subscribe(val => {
-                                    this.nextno = val['nextno'];
-                                    let date = moment().format('YYYY-MM-DD');
-                                    this.api.post("table/putaway",
-                                      {
-                                        "putaway_no": this.nextno,
-                                        "receiving_no": this.getputawaylist[0].receiving_no,
-                                        "doc_no": this.getputawaylist[0].doc_no,
-                                        "order_no": this.getputawaylist[0].order_no,
-                                        "batch_no": this.getputawaylist[0].batch_no,
-                                        "item_no": this.getputawaylist[0].item_no,
-                                        "posting_date": date,
-                                        "location_code": this.getputawaylist[0].location_code,
-                                        "location_position": this.myForm.value.rackno,
-                                        "division": this.getputawaylist[0].division,
-                                        "qty": this.getputawaylist[0].qty,
-                                        "qty_receiving": this.getputawaylist[0].qty_receiving,
-                                        "unit": this.getputawaylist[0].unit,
-                                        "flag": '',
-                                        "pic": '',
-                                        "status": 'OPEN',
-                                        "chronology_no": '',
-                                        "uuid": UUID.UUID()
-                                      },
-                                      { headers })
-                                      .subscribe(val => {
-                                        const headers = new HttpHeaders()
-                                          .set("Content-Type", "application/json");
-                                        this.api.delete("table/putawaylist_temp", { params: { filter: "putawaylisttemp_no=" + "'" + this.getputawaylist[0].putawaylisttemp_no + "'" }, headers })
-                                          .subscribe(val => {
-                                            this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
-                                              .subscribe(val => {
-                                                this.getputawaylist = val['data'];
-                                                let alert = this.alertCtrl.create({
-                                                  title: 'Sukses ',
-                                                  subTitle: 'Save Item To Rack Sukses',
-                                                  buttons: ['OK']
-                                                });
-                                                this.myForm.reset();
-                                                this.putawayfound = [];
-                                                this.getPutawayTemp();
-                                                alert.present();
-                                              });
-                                          })
-                                      });
-                                  });
-                                }
-                                else {
-                                  const headers = new HttpHeaders()
-                                    .set("Content-Type", "application/json");
-                                  let date = moment().format('YYYY-MM-DD');
-                                  this.api.put("table/putaway",
-                                    {
-                                      "putaway_no": this.putawayfound[0].putaway_no,
-                                      "qty": parseInt(this.putawayfound[0].qty) + parseInt(this.getputawaylist[0].qty)
-                                    },
-                                    { headers })
-                                    .subscribe(val => {
-                                      const headers = new HttpHeaders()
-                                        .set("Content-Type", "application/json");
-                                      this.api.delete("table/putawaylist_temp", { params: { filter: "putawaylisttemp_no=" + "'" + this.getputawaylist[0].putawaylisttemp_no + "'" }, headers })
-                                        .subscribe(val => {
-                                          this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
-                                            .subscribe(val => {
-                                              this.getputawaylist = val['data'];
-                                              let alert = this.alertCtrl.create({
-                                                title: 'Sukses ',
-                                                subTitle: 'Save Item To Rack Sukses',
-                                                buttons: ['OK']
-                                              });
-                                              this.myForm.reset()
-                                              alert.present();
-                                            });
-                                        })
-                                    });
-                                }
-                              });
-                          }
-                        });
+                      this.doSavelistToPutaway();
                     }
                   }
                 ]

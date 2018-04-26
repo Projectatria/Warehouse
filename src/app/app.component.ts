@@ -29,7 +29,6 @@ export class MyApp {
     private storage: Storage) {
     platform.ready().then(() => {
       this.storage.get('token').then((val) => {
-        console.log(val);
         this.token = val;
         if (this.token == null) {
           this.rootPage = LoginPage;
@@ -68,7 +67,6 @@ export class MyApp {
           };
         });
       }, (e) => {
-        console.log(e)
       });
     });
   }
