@@ -256,7 +256,7 @@ export class QcinPage {
                           this.api.put("table/staging_in",
                             {
                               "staging_no": staging.staging_no,
-                              "qty_qc": staging.qty - data.qty
+                              "qty_qc": staging.qty_qc - data.qty
                             },
                             { headers })
                             .subscribe(val => {
@@ -293,7 +293,7 @@ export class QcinPage {
                       this.api.put("table/staging_in",
                         {
                           "staging_no": staging.staging_no,
-                          "qty_qc": staging.qty - data.qty
+                          "qty_qc": staging.qty_qc - data.qty
                         },
                         { headers })
                         .subscribe(val => {

@@ -523,7 +523,7 @@ export class DetailpoactionPage {
         },
         {
           icon: 'md-open',
-          text: 'Update',
+          text: 'Location',
           handler: () => {
             this.batch = detailpo.batch_no;
             this.item = detailpo.item_no;

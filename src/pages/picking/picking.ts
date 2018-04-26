@@ -71,7 +71,12 @@ export class PickingPage {
   itemnolist = '';
   invoicelist = '';
   roomlist = '';
-  private token:any;
+  private token: any;
+  public userid = [];
+  public role = [];
+  public rolearea = '';
+  public rolegroup = '';
+  public roleid = '';
 
   constructor(
     public navCtrl: NavController,
@@ -86,9 +91,26 @@ export class PickingPage {
     public actionSheetCtrl: ActionSheetController,
     public storage: Storage
   ) {
+    this.storage.get('userid').then((val) => {
+      this.userid = val;
+      this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
+        .subscribe(val => {
+          this.role = val['data']
+          if (this.role.length != 0) {
+            this.rolearea = this.role[0].id_area
+            this.rolegroup = this.role[0].id_group
+            this.roleid = this.role[0].id_role
+            if (this.roleid == "STAFF") {
+              this.pick = "picking"
+            }
+            else {
+              this.pick = "listpicking"
+            }
+          }
+        })
+    });
     this.getpicking();
     this.toggled = false;
-    this.pick = "picking"
     this.groupby = ""
     this.search = 'invoice_no';
   }
@@ -262,12 +284,12 @@ export class PickingPage {
     this.api.get('table/picking', { params: { limit: 30, filter: "status='OPEN'" } })
       .subscribe(val => {
         this.listpicking = val['data'];
-        this.totaldatapicking= val['count'];
+        this.totaldatapicking = val['count'];
         this.searchpicking = this.listpicking;
         refresher.complete();
       });
   }
-  
+
   doSortPICK(filter) {
     if (this.sortPICK == 'ASC') {
       this.sortPICK = 'DESC'

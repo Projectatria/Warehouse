@@ -89,7 +89,7 @@ export class PurchasingorderPage {
         .subscribe(val => {
           this.role = val['data']
           this.roleid = this.role[0].id_group
-          if (this.roleid != "ADMIN") {
+          if (this.roleid == "STAFF") {
             this.po = "preparation"
           }
           else {
@@ -764,7 +764,7 @@ export class PurchasingorderPage {
     }
   }
   getUsers() {
-    this.api.get('table/user', { params: { limit: 100 } }).subscribe(val => {
+    this.api.get('table/user_role', { params: { filter: "id_area='INBOUND' AND id_group='TL'" } }).subscribe(val => {
       this.users = val['data'];
     });
   }

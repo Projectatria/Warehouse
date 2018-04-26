@@ -17,6 +17,10 @@ import { Storage } from '@ionic/storage';
 export class MyApp {
   rootPage: any;
   private token = '';
+  public userid = [];
+  public role = [];
+  private rolearea = '';
+  private rolegroup = '';
   constructor(
     platform: Platform,
     statusBar: StatusBar,
@@ -36,6 +40,17 @@ export class MyApp {
         else {
           this.rootPage = HomePage;
         }
+      });
+      this.storage.get('userid').then((val) => {
+        this.userid = val;
+        this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
+          .subscribe(val => {
+            this.role = val['data']
+            if (this.role.length != 0) {
+              this.rolearea = this.role[0].id_area
+              this.rolegroup = this.role[0].id_group
+            }
+          })
       });
       this.fcm.getToken().then(token => {
         this.storage.set('tokennotification', token);

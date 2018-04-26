@@ -17,7 +17,7 @@ declare var cordova;
   templateUrl: 'movement.html',
 })
 export class MovementPage {
-  myFormModal: FormGroup;
+  myForm: FormGroup;
   private receiving = [];
   private putawaylist = [];
   private location = [];
@@ -62,6 +62,10 @@ export class MovementPage {
     private barcodeScanner: BarcodeScanner,
     public actionSheetCtrl: ActionSheetController,
     public storage: Storage) {
+    this.myForm = formBuilder.group({
+      rackno: ['', Validators.compose([Validators.required])],
+      barcodeno: [''],
+    })
     this.storage.get('token').then((val) => {
       this.token = val;
     });
@@ -132,7 +136,7 @@ export class MovementPage {
                             { headers })
                             .subscribe(val => {
                               this.getMovementTemp();
-                              this.barcodeno = '';
+                              this.myForm.get('barcodeno').setValue('');
                               let alert = this.alertCtrl.create({
                                 title: 'Sukses ',
                                 subTitle: 'Update Item Sukses',
@@ -159,7 +163,7 @@ export class MovementPage {
                                 "date": date,
                                 "location_code": this.putawaylist[0].location_code,
                                 "location_previous_position": this.putawaylist[0].location_position,
-                                "location_current_position": this.rackno,
+                                "location_current_position": this.myForm.value.rackno,
                                 "division": this.putawaylist[0].division,
                                 "qty": data.qty,
                                 "qty_putaway": this.putawaylist[0].qty,
@@ -174,7 +178,7 @@ export class MovementPage {
                               { headers })
                               .subscribe(val => {
                                 this.getMovementTemp();
-                                this.barcodeno = '';
+                                this.myForm.get('barcodeno').setValue('');
                                 let alert = this.alertCtrl.create({
                                   title: 'Sukses ',
                                   subTitle: 'Add Item Sukses',
@@ -207,7 +211,7 @@ export class MovementPage {
     this.api.get('table/movement_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
       .subscribe(val => {
         this.getmovementlist = val['data'];
-        this.api.get('table/location_master', { params: { limit: 30, filter: "location_alocation=" + "'" + this.rackno + "'" } })
+        this.api.get('table/location_master', { params: { limit: 30, filter: "location_alocation=" + "'" + this.myForm.value.rackno + "'" } })
           .subscribe(val => {
             this.location = val['data'];
             if (this.getmovementlist.length == 0) {
@@ -218,7 +222,7 @@ export class MovementPage {
               });
               alert.present();
             }
-            else if (this.rackno == '') {
+            else if (this.myForm.value.rackno == '') {
               let alert = this.alertCtrl.create({
                 title: 'Error ',
                 subTitle: 'Rack Number Must Be Fill',
@@ -268,7 +272,7 @@ export class MovementPage {
                                   "item_no": this.getmovementlist[0].item_no,
                                   "posting_date": date,
                                   "location_code": this.getmovementlist[0].location_code,
-                                  "location_position": this.rackno,
+                                  "location_position": this.myForm.value.rackno,
                                   "division": this.getmovementlist[0].division,
                                   "qty": this.getmovementlist[0].qty,
                                   "qty_receiving": this.getmovementlist[0].qty_receiving,
@@ -298,7 +302,7 @@ export class MovementPage {
                                         "date": date,
                                         "location_code": this.getmovementlist[0].location_code,
                                         "location_previous_position": this.getmovementlist[0].location_previous_position,
-                                        "location_current_position": this.rackno,
+                                        "location_current_position": this.myForm.value.rackno,
                                         "division": this.getmovementlist[0].division,
                                         "qty": this.getmovementlist[0].qty,
                                         "qty_putaway": this.putawaylist[0].qty_putaway,
@@ -335,8 +339,7 @@ export class MovementPage {
                                                       subTitle: 'Save Item To Rack Sukses',
                                                       buttons: ['OK']
                                                     });
-                                                    this.rackno = '';
-                                                    this.barcodeno = '';
+                                                    this.myForm.reset()
                                                     this.getMovementTemp();
                                                     alert.present();
                                                   });
@@ -468,7 +471,7 @@ export class MovementPage {
                             { headers })
                             .subscribe(val => {
                               this.getMovementTemp();
-                              this.barcodeno = '';
+                              this.myForm.get('barcodeno').setValue('');
                               let alert = this.alertCtrl.create({
                                 title: 'Sukses ',
                                 subTitle: 'Update Item Sukses',
@@ -495,7 +498,7 @@ export class MovementPage {
                                 "date": date,
                                 "location_code": this.putawaylist[0].location_code,
                                 "location_previous_position": this.putawaylist[0].location_position,
-                                "location_current_position": this.rackno,
+                                "location_current_position": this.myForm.value.rackno,
                                 "division": this.putawaylist[0].division,
                                 "qty": data.qty,
                                 "qty_putaway": this.putawaylist[0].qty,
@@ -510,7 +513,7 @@ export class MovementPage {
                               { headers })
                               .subscribe(val => {
                                 this.getMovementTemp();
-                                this.barcodeno = '';
+                                this.myForm.get('barcodeno').setValue('');
                                 let alert = this.alertCtrl.create({
                                   title: 'Sukses ',
                                   subTitle: 'Add Item Sukses',
@@ -545,12 +548,14 @@ export class MovementPage {
     this.option = {
       prompt: "Please scan your code"
     }
-    this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
-      if (barcodeData.cancelled) {
-        this.loading = false;
-        return false;
-      }
-      this.rackno = barcodeData.text;
+    // this.barcodeScanner.scan({ "orientation": 'landscape' }).then((barcodeData) => {
+    //   if (barcodeData.cancelled) {
+    //     this.loading = false;
+    //     return false;
+    //   }
+    cordova.plugins.pm80scanner.scan(result => {
+      var barcodeno = result.substring(0, 12);
+      this.myForm.get('rackno').setValue(barcodeno)
     });
   }
   getMovementTemp() {

@@ -13,6 +13,9 @@ export class HomePage {
   private token = '';
   private userid = '';
   private name: any;
+  public role = [];
+  public rolearea = '';
+  public rolegroup = '';
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -26,11 +29,19 @@ export class HomePage {
     this.storage.get('token').then((val) => {
       this.token = val;
     });
-    this.storage.get('userid').then((val) => {
-      this.userid = val;
-    });
     this.storage.get('name').then((val) => {
       this.name = val;
+    });
+    this.storage.get('userid').then((val) => {
+      this.userid = val;
+      this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
+        .subscribe(val => {
+          this.role = val['data']
+          if (this.role.length != 0) {
+            this.rolearea = this.role[0].id_area
+            this.rolegroup = this.role[0].id_group
+          }
+        })
     });
   }
   ionViewCanEnter() {
@@ -64,5 +75,5 @@ export class HomePage {
   }
   doProfile() {
     this.navCtrl.push('UseraccountPage');
-  } 
+  }
 }

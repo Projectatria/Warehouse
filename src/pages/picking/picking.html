@@ -11,9 +11,20 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-segment [(ngModel)]="pick">
-    <ion-segment-button value="picking">
+  <ion-segment *ngIf="roleid != 'STAFF'" [(ngModel)]="pick">
+    <ion-segment-button value="listpicking">
       List Picking
+    </ion-segment-button>
+    <ion-segment-button value="picking">
+      Picking
+    </ion-segment-button>
+    <ion-segment-button value="history">
+      History
+    </ion-segment-button>
+  </ion-segment>
+  <ion-segment *ngIf="roleid == 'STAFF'" [(ngModel)]="pick">
+    <ion-segment-button value="picking">
+      Picking
     </ion-segment-button>
     <ion-segment-button value="history">
       History
@@ -21,7 +32,7 @@
   </ion-segment>
 
   <div [ngSwitch]="pick">
-    <ion-list class="content-list-menu" *ngSwitchCase="'picking'">
+    <ion-list class="content-list-menu" *ngSwitchCase="'listpicking'">
       <ion-refresher (ionRefresh)="doRefreshpicking($event)">
         <ion-refresher-content>
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
@@ -133,6 +144,7 @@
                     <ion-col style="color:black">{{listpickdetail.room}}</ion-col>
                   </ion-row>
                 </ion-col>
+                  <button style="margin-top:10px;" ion-button color="greenlake" block outline>SEND</button>
               </ion-row>
             </ion-grid>
           </div>
@@ -171,6 +183,7 @@
                     <ion-col style="color:black">{{listpickdetail.room}}</ion-col>
                   </ion-row>
                 </ion-col>
+                <button style="margin-top:10px;" ion-button color="greenlake" block outline>SEND</button>
               </ion-row>
             </ion-grid>
           </div>
@@ -209,6 +222,7 @@
                     <ion-col style="color:black">{{listpickdetail.room}}</ion-col>
                   </ion-row>
                 </ion-col>
+                <button style="margin-top:10px;" ion-button color="greenlake" block outline>SEND</button>
               </ion-row>
             </ion-grid>
           </div>
