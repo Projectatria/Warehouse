@@ -613,7 +613,9 @@ export class ReceivingdetailPage {
                         "batch_no": cek.batch_no,
                         "item_no": cek.item_no,
                         "data_entry": date,
-                        "qty": parseInt(cek.qty) / 10,
+                        "qty": cek.qty,
+                        "qty_qc": parseInt(cek.qty) / 10,
+                        "qty_putaway": cek.qty,
                         "unit": cek.unit,
                         "staging": cek.staging,
                         "uuid": UUID.UUID()
@@ -638,6 +640,8 @@ export class ReceivingdetailPage {
                         "item_no": cek.item_no,
                         "data_entry": date,
                         "qty": cek.qty,
+                        "qty_qc": cek.qty,
+                        "qty_putaway": cek.qty,
                         "unit": cek.unit,
                         "staging": cek.staging,
                         "uuid": UUID.UUID()

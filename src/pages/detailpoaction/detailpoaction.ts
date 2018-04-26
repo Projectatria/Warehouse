@@ -372,7 +372,6 @@ export class DetailpoactionPage {
             {
               text: 'Posting',
               handler: () => {
-                this.doSendNotification();
                 const headers = new HttpHeaders()
                   .set("Content-Type", "application/json");
                 if ((this.purchasing_order[0].total_item - this.purchasing_order[0].total_item_post) == 1) {

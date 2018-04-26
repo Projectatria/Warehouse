@@ -446,6 +446,7 @@ export class PurchasingorderPage {
               { headers })
               .subscribe(
                 (val) => {
+                  this.doSendNotificationPic(info)
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
@@ -772,9 +773,6 @@ export class PurchasingorderPage {
       { headers })
       .subscribe(
         (val) => {
-          if (this.myFormModal.value.location == '') {
-            this.doSendNotificationPic();
-          }
           document.getElementById("myModalPic").style.display = "none";
           this.myFormModal.reset()
           let alert = this.alertCtrl.create({
@@ -790,8 +788,8 @@ export class PurchasingorderPage {
         () => {
         });
   }
-  doSendNotificationPic() {
-    this.api.get("table/user", { params: { filter: "id_user=" + "'" + this.userpic + "'" } })
+  doSendNotificationPic(info) {
+    this.api.get("table/user", { params: { filter: "id_user=" + "'" + info.pic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
         console.log(this.usertoken)
@@ -803,7 +801,7 @@ export class PurchasingorderPage {
           {
             "to": this.usertoken[0].token,
             "notification": {
-              "body": "You have new notifications",
+              "body": this.usertoken[0].name + ", You have new job ",
               "title": "Atria Warehouse",
               "content_available": true,
               "priority": 2,
@@ -813,7 +811,7 @@ export class PurchasingorderPage {
               "icon": "atria"
             },
             "data": {
-              "body": "You have new notifications",
+              "body": this.usertoken[0].name + ", You have new job ",
               "title": "Atria Warehouse",
               "key_1": "Data for key one",
               "key_2": "Hellowww"

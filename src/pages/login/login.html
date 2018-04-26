@@ -7,45 +7,27 @@
     </ion-navbar>
   </ion-header>
   <ion-content style="background:#f3f6f8;">
-    <ion-segment [(ngModel)]="login">
-      <ion-segment-button value="signin" style="color:#2e4453;">
-        Sign In
-      </ion-segment-button>
-      <ion-segment-button value="abou" style="color:#2e4453;">
-        About
-      </ion-segment-button>
-    </ion-segment>
-    <div [ngSwitch]="login">
-      <div *ngSwitchCase="'signin'">
-        <form [formGroup]="myForm">
-          <div style="margin:auto;margin-top:10px;max-width:900px;padding-left:5px;padding-right:5px;padding-top:5px;">
-            <div>
-              <ion-item style="background:#f3f6f8;color:#2e4453;padding-right:10px;">
-                <ion-label style="color:#000;font-size:100%;font-family:inherit;font-style:inherit;font-weight:inherit;vertical-align:baseline;padding-bottom:5px;padding-left:3px;"
-                  stacked>User ID</ion-label>
-                <ion-input formControlName="userid" style="color:#ffffff;border:1px solid;background-color:#ffffff;color:#000;border-color:#dedede;padding-left:10px;height:40px;font-size:18px;"
-                  type="text"></ion-input>
-              </ion-item>
-              <ion-item style="background:#f3f6f8;color:#2e4453;padding-right:10px;">
-                <ion-label style="color:#000;font-size:100%;font-family:inherit;font-style:inherit;font-weight:inherit;vertical-align:baseline;padding-bottom:5px;padding-left:3px;"
-                  stacked>Password</ion-label>
-                <ion-input formControlName="password" style="color:#ffffff;border:1px solid;background-color:#ffffff;color:#000;border-color:#dedede;padding-left:10px;height:40px;font-size:18px;"
-                  type="password"></ion-input>
-              </ion-item>
-              <ion-buttons padding style="text-align:center;">
-                <button style="height:50px;" *ngIf="login == 'signin'" ion-button color="greenlake" block [disabled]="!myForm.valid" (click)="doLogin()">SIGN IN</button>
-              </ion-buttons>
-            </div>
-          </div>
-        </form>
+    <form [formGroup]="myForm">
+      <div class="imgcontainer">
+        <img src="https://www.w3schools.com/howto/img_avatar2.png" alt="Avatar" class="avatar">
       </div>
-    </div>
+
+      <div class="container">
+        <label for="uname">
+          <b>User ID</b>
+        </label>
+        <input type="text" placeholder="Enter Username" formControlName="userid" required>
+
+        <label for="psw">
+          <b>Password</b>
+        </label>
+        <input type="password" placeholder="Enter Password" formControlName="password" required>
+
+        <button type="submit" [disabled]="!myForm.valid" (click)="doLogin()">Login</button>
+      </div>
+    </form>
   </ion-content>
-  <!-- <ion-footer style="background:#217481;border-top:1px solid;border-color:#ffffff;">
-    <ion-buttons style="text-align:center;">
-      <button *ngIf="login == 'signin'" ion-button color="greenlake" block [disabled]="!myForm.valid" (click)="doLogin()">SIGN IN</button>
-    </ion-buttons>
-  </ion-footer> -->
+
   <ion-footer style="background:#ffffff;border-top:1px solid;border-color:#ffffff;">
     <ion-toolbar style="background:#ffffff">
       <div style="text-align:center;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size:15px;color:#8cc258">

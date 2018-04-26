@@ -545,6 +545,7 @@ export class PutawayPage {
                           });
                           this.myForm.reset()
                           alert.present();
+                          this.getPutawayTemp();
                         });
                     })
                 });
