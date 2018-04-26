@@ -51,19 +51,9 @@ export class MyApp {
           .subscribe()
         this.fcm.onNotification().subscribe(data => {
           if (data.wasTapped) {
-            let alert = this.alertCtrl.create({
-              subTitle: data.title,
-              message: data.body,
-              buttons: ['OK']
-            });
-            alert.present();
+            this.rootPage = 'PurchasingorderPage'
           } else {
-            let alert = this.alertCtrl.create({
-              subTitle: data.title,
-              message: data.body,
-              buttons: ['OK']
-            });
-            alert.present();
+
           };
         });
       }, (e) => {

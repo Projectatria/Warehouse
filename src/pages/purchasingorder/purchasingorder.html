@@ -12,10 +12,10 @@
 </ion-header>
 <ion-content class="content-menu" no-padding>
   <ion-segment [(ngModel)]="po">
-    <ion-segment-button value="purchasingorder">
+    <ion-segment-button *ngIf="roleid == 'ADMIN'" value="purchasingorder">
       Purchasing Order
     </ion-segment-button>
-    <ion-segment-button value="infopo">
+    <ion-segment-button *ngIf="roleid == 'ADMIN'" value="infopo">
       Info PO
     </ion-segment-button>
     <ion-segment-button value="preparation">

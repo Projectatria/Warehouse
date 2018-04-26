@@ -13,7 +13,12 @@ import { HttpHeaders } from "@angular/common/http";
 export class UseraccountPage {
   private token: any;
   private users = [];
+  private role = [];
+  private roleiddetail = []
   private userid = '';
+  private name = '';
+  private roleid = '';
+  private rolenamedetail = '';
 
   constructor(
     public navCtrl: NavController,
@@ -25,6 +30,19 @@ export class UseraccountPage {
     public storage: Storage) {
     this.storage.get('userid').then((val) => {
       this.userid = val;
+      this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
+        .subscribe(val => {
+          this.role = val['data'];
+          this.roleid = this.role[0].id_role;
+          this.api.get('table/role', { params: { filter: "id_role=" + "'" + this.roleid + "'" } })
+          .subscribe(val => {
+            this.roleiddetail = val['data'];
+            this.rolenamedetail = this.roleiddetail[0].name;
+          });
+        });
+    });
+    this.storage.get('name').then((val) => {
+      this.name = val;
     });
   }
   ionViewCanEnter() {

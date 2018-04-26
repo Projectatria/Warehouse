@@ -36,7 +36,7 @@ export class PurchasingorderPage {
   totaldatapreparation: any;
   public toggled: boolean = false;
   orderno = '';
-  po: string = "purchasingorder";
+  po: string;
   private width: number;
   private height: number;
   private datearrival = '';
@@ -47,6 +47,9 @@ export class PurchasingorderPage {
   private token: any;
   private userpic = '';
   private poid = '';
+  public userid:any;
+  public role = [];
+  public roleid = '';
 
   constructor(
     public navCtrl: NavController,
@@ -73,10 +76,23 @@ export class PurchasingorderPage {
     this.getInfoPO();
     this.getPrepare();
     this.toggled = false;
-    this.po = "purchasingorder"
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
+      this.storage.get('userid').then((val) => {
+        this.userid = val;
+        this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
+        .subscribe(val => {
+          this.role = val['data']
+          this.roleid = this.role[0].id_role
+          if (this.roleid != "ADMIN") {
+            this.po = "preparation"
+          }
+          else {
+            this.po = "purchasingorder"
+          }
+        })
+      });
     });
     this.sortPO = ''
     this.sortInfoPO = ''
@@ -153,7 +169,7 @@ export class PurchasingorderPage {
       }
       else {
         this.halamanpreparation++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "status='INP2'" } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -345,7 +361,7 @@ export class PurchasingorderPage {
   }
 
   doRefreshPrepare(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'"  } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
       this.searchpreparation = this.preparation;
@@ -695,7 +711,7 @@ export class PurchasingorderPage {
     else {
       this.sortPrepare = 'ASC'
     }
-    this.api.get("table/purchasing_order", { params: { filter: "status='INP2'", sort: filter + " " + this.sortPrepare + " " } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" , sort: filter + " " + this.sortPrepare + " " } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
       this.filter = filter
@@ -731,13 +747,13 @@ export class PurchasingorderPage {
   }
   selectdatePrepare(datearrivalPrepare) {
     if (datearrivalPrepare == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" } }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'"  } }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
       });
     }
     else {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "transfer_date=" + "'" + datearrivalPrepare + "'" } }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'"  + " AND " + "transfer_date=" + "'" + datearrivalPrepare + "'" } }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
       });
@@ -792,7 +808,6 @@ export class PurchasingorderPage {
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + info.pic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
-        console.log(this.usertoken)
         const headers = new HttpHeaders({
           "Content-Type": "application/json",
           "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
@@ -813,8 +828,8 @@ export class PurchasingorderPage {
             "data": {
               "body": this.usertoken[0].name + ", You have new job ",
               "title": "Atria Warehouse",
-              "key_1": "Data for key one",
-              "key_2": "Hellowww"
+              "userid": this.usertoken[0].id_user,
+              "name": this.usertoken[0].name
             }
           },
           { headers })
