@@ -514,7 +514,7 @@ export class QcinPage {
               "no": this.uuid,
               "parent": this.uuidqcresult,
               "table_name": "Qc_in_result",
-              "img_src": 'http://101.255.60.202/webapi/img/' + this.uuid,
+              "img_src": 'http://101.255.60.202/webapi5/img/' + this.uuid,
               "file_name": this.uuid,
               "description": "",
               "latitude": "",

@@ -11,7 +11,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content-menu" no-padding>
-  <ion-segment *ngIf="roleid != 'STAFF'" [(ngModel)]="po">
+  <ion-segment *ngIf="roleid == 'ADMIN'" [(ngModel)]="po">
     <ion-segment-button value="purchasingorder">
       Purchasing Order
     </ion-segment-button>
@@ -25,7 +25,7 @@
       History
     </ion-segment-button>
   </ion-segment>
-  <ion-segment *ngIf="roleid == 'STAFF'" [(ngModel)]="po">
+  <ion-segment *ngIf="roleid != 'ADMIN'" [(ngModel)]="po">
     <ion-segment-button value="preparation">
       Preparation
     </ion-segment-button>

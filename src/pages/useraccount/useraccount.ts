@@ -19,6 +19,7 @@ export class UseraccountPage {
   private name = '';
   private roleid = '';
   private rolenamedetail = '';
+  private rolegroup = '';
 
   constructor(
     public navCtrl: NavController,
@@ -34,6 +35,7 @@ export class UseraccountPage {
         .subscribe(val => {
           this.role = val['data'];
           this.roleid = this.role[0].id_role;
+          this.rolegroup = this.role[0].id_group;
           this.api.get('table/role', { params: { filter: "id_role=" + "'" + this.roleid + "'" } })
           .subscribe(val => {
             this.roleiddetail = val['data'];
@@ -82,5 +84,7 @@ export class UseraccountPage {
   doDashboard() {
     this.navCtrl.push('DashboardtaskPage');
   }
-
+  doTask() {
+    this.navCtrl.push('TaskPage');
+  }
 }

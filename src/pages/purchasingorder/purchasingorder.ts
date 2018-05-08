@@ -89,7 +89,7 @@ export class PurchasingorderPage {
         .subscribe(val => {
           this.role = val['data']
           this.roleid = this.role[0].id_group
-          if (this.roleid == "STAFF") {
+          if (this.roleid != "ADMIN") {
             this.po = "preparation"
           }
           else {
