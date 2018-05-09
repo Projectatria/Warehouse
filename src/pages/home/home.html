@@ -15,84 +15,43 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="content">
-  <ion-segment [(ngModel)]="atria">
-    <ion-segment-button value="warehouse" style="color:#ffffff;">
-      Warehouse
-    </ion-segment-button>
-  </ion-segment>
-
-  <div [ngSwitch]="atria">
-    <ion-list *ngSwitchCase="'warehouse'" style="border-top:1px solid;border-bottom:1px solid;border-color:#dedede;">
-      <img src="assets/imgs/warehouseicon.png" style="width:100%;" />
-      <ion-grid>
-        <ion-row>
-          <ion-col *ngIf="rolearea == 'INBOUND' && rolegroup != 'STAFF'" class="col" col-12 col-md-6 c col-xl-3>
-            <ion-item class="item-list" no-lines (click)="doPreparationPO()">
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/popo.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Preparation PO</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-6 c col-xl-3>
-            <ion-item class="item-list" no-lines (click)="doReceiving()">
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/receiving2.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Receiving</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'OUTBOUND'" class="col" col-12 col-md-6 c col-xl-3>
-            <ion-item class="item-list" no-lines (click)="doQcIn()">
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/qc2.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Quality Control</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-6 col-xl-3>
-            <ion-item class="item-list" no-lines (click)="doPutaway()">
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/putaway3.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Put Away</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-6 col-xl-3>
-            <ion-item class="item-list" no-lines (click)="doMovement()">
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/movement.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Movement</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-6 col-xl-3>
-            <ion-item class="item-list" no-lines>
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/to2.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Transfer Order</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-6 col-xl-3>
-            <ion-item class="item-list" no-lines (click)="doPicking()">
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/picking.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Picking</button>
-            </ion-item>
-          </ion-col>
-          <ion-col *ngIf="rolearea == 'INVENTORY'" class="col" col-12 col-md-6 col-xl-3>
-            <ion-item class="item-list" no-lines>
-              <ion-thumbnail item-start>
-                <img src="assets/imgs/return.png">
-              </ion-thumbnail>
-              <button ion-button clear color="light">Return</button>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-list>
-  </div>
-
+  <!-- <div style="background:#dedede;color:#217481;text-align:center;font-weight: bold;font-size:15px;" padding>
+    Purchasing Order
+  </div> -->
+  <ion-grid>
+    <ion-row>
+      <ion-col padding *ngIf="rolearea == 'INBOUND' && rolegroup != 'STAFF'" class="col" col-4 col-xl-12 (click)="doPreparationPO()">
+        <i class="fas fa-box imgfa"></i>
+        <h4 class="textfa">Purchasing Order</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-4 (click)="doReceiving()">
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">Receiving</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-8 (click)="doPutaway()">
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">Putaway</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-8 col-md-12 col-xl-8 (click)="doMovement()">
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">Movement</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-4>
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">Transfer Order</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-12 col-xl-12 (click)="doPicking()">
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">Picking</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'OUTBOUND'" class="col" col-8 col-12 col-xl-3 (click)="doQcIn()">
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">QC In</h4>
+      </ion-col>
+      <ion-col padding *ngIf="rolearea == 'INVENTORY'" class="col" col-4 col-md-12 col-xl-12>
+        <i class="fas fa-clipboard-list imgfa"></i>
+        <h4 class="textfa">Return</h4>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

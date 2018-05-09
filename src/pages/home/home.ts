@@ -16,6 +16,8 @@ export class HomePage {
   public role = [];
   public rolearea = '';
   public rolegroup = '';
+  public width:any;
+  public height:any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -25,6 +27,10 @@ export class HomePage {
     public alert: AlertController,
     private push: Push,
     public storage: Storage) {
+    platform.ready().then(() => {
+      this.width = platform.width();
+      this.height = platform.height();
+    });
     this.atria = "warehouse";
     this.storage.get('token').then((val) => {
       this.token = val;
