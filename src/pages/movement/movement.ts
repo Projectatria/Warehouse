@@ -1,5 +1,5 @@
 import { Component, trigger } from '@angular/core';
-import { FabContainer, ActionSheetController, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { LoadingController, FabContainer, ActionSheetController, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { HttpHeaders } from "@angular/common/http";
@@ -49,6 +49,7 @@ export class MovementPage {
   rcvlist = '';
   totaldataputaway: any;
   private token: any;
+  public loader: any;
 
   constructor(
     public navCtrl: NavController,
@@ -61,7 +62,13 @@ export class MovementPage {
     public modalCtrl: ModalController,
     private barcodeScanner: BarcodeScanner,
     public actionSheetCtrl: ActionSheetController,
-    public storage: Storage) {
+    public storage: Storage,
+    public loadingCtrl: LoadingController) {
+    this.loader = this.loadingCtrl.create({
+      // cssClass: 'transparent',
+      content: 'Loading Content...'
+    });
+    this.loader.present();
     this.myForm = formBuilder.group({
       rackno: ['', Validators.compose([Validators.required])],
       barcodeno: [''],
@@ -69,6 +76,9 @@ export class MovementPage {
     this.storage.get('token').then((val) => {
       this.token = val;
     });
+  }
+  ngAfterViewInit() {
+    this.loader.dismiss();
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

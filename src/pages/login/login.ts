@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, App, ViewController, Platform, NavController, NavParams } from 'ionic-angular';
+import { Events, AlertController, App, ViewController, Platform, NavController, NavParams } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiProvider } from '../../providers/api/api';
@@ -19,6 +19,9 @@ export class LoginPage {
   private token: any;
   private user = [];
   private tokennotification = '';
+  public role = [];
+  public rolearea = '';
+  public rolegroup = '';
 
   constructor(
     public platform: Platform,
@@ -29,7 +32,8 @@ export class LoginPage {
     public api: ApiProvider,
     public viewCtrl: ViewController,
     public appCtrl: App,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController,
+    public events: Events) {
     this.myForm = fb.group({
       userid: ['', Validators.compose([Validators.required])],
       password: ['', Validators.compose([Validators.required])]
@@ -70,10 +74,20 @@ export class LoginPage {
                   "token": this.tokennotification
                 },
                 { headers })
-                .subscribe()
+                .subscribe(val => {
+                  this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.myForm.value.userid + "'" } })
+                    .subscribe(val => {
+                      this.role = val['data']
+                      if (this.role.length != 0) {
+                        this.rolearea = this.role[0].id_area
+                        this.rolegroup = this.role[0].id_group
+                        this.appCtrl.getRootNav().setRoot(HomePage);
+                        this.events.publish('user:login', this.role, Date.now());
+                        this.myForm.reset();
+                      }
+                    })
+                })
             });
-            this.navCtrl.setRoot(HomePage)
-            this.myForm.reset();
           });
       }, (e) => {
         let alert = this.alertCtrl.create({

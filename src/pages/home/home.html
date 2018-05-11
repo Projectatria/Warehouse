@@ -14,43 +14,43 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content class="content">
+<ion-content padding class="content">
   <!-- <div style="background:#dedede;color:#217481;text-align:center;font-weight: bold;font-size:15px;" padding>
     Purchasing Order
   </div> -->
   <ion-grid>
     <ion-row>
-      <ion-col padding *ngIf="rolearea == 'INBOUND' && rolegroup != 'STAFF'" class="col" col-4 col-xl-12 (click)="doPreparationPO()">
+      <ion-col padding *ngIf="rolearea == 'INBOUND' && rolegroup != 'STAFF'" class="col" col-4 col-xl-3 (click)="doPreparationPO()">
         <i class="fas fa-box imgfa"></i>
-        <h4 class="textfa">Purchasing Order</h4>
+        <h5 class="textfa">Purchasing Order</h5>
       </ion-col>
-      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-4 (click)="doReceiving()">
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-3 (click)="doReceiving()">
         <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">Receiving</h4>
+        <h5 class="textfa">Receiving</h5>
       </ion-col>
-      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-8 (click)="doPutaway()">
-        <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">Putaway</h4>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-3 (click)="doPutaway()">
+        <i class="fas fa-pallet imgfa"></i>
+        <h5 class="textfa">Putaway</h5>
       </ion-col>
-      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-8 col-md-12 col-xl-8 (click)="doMovement()">
-        <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">Movement</h4>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-8 col-md-12 col-xl-3 (click)="doMovement()">
+        <i class="fas fa-people-carry imgfa"></i>
+        <h5 class="textfa">Movement</h5>
       </ion-col>
       <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-4 col-md-12 col-xl-4>
-        <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">Transfer Order</h4>
+        <i class="fas fa-exchange-alt imgfa"></i>
+        <h5 class="textfa">Transfer Order</h5>
       </ion-col>
-      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-12 col-xl-12 (click)="doPicking()">
-        <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">Picking</h4>
+      <ion-col padding *ngIf="rolearea == 'INBOUND'" class="col" col-12 col-md-12 col-xl-8 (click)="doPicking()">
+        <i class="fas fa-dolly imgfa"></i>
+        <h5 class="textfa">Picking</h5>
       </ion-col>
       <ion-col padding *ngIf="rolearea == 'OUTBOUND'" class="col" col-8 col-12 col-xl-3 (click)="doQcIn()">
-        <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">QC In</h4>
+        <i class="fas fa-calendar-check imgfa"></i>
+        <h5 class="textfa">QC In</h5>
       </ion-col>
       <ion-col padding *ngIf="rolearea == 'INVENTORY'" class="col" col-4 col-md-12 col-xl-12>
-        <i class="fas fa-clipboard-list imgfa"></i>
-        <h4 class="textfa">Return</h4>
+        <i class="fas fa-retweet imgfa"></i>
+        <h5 class="textfa">Return</h5>
       </ion-col>
     </ion-row>
   </ion-grid>

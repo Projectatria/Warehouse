@@ -34,14 +34,24 @@ page-login {
     
     .imgcontainer {
         text-align: center;
-        margin: 24px 0 12px 0;
     }
     
     img.avatar {
-        width: 10%;
-        border-radius: 50%;
+        width: 100%
     }
     
+    .container-row {
+        background: transparent;
+        width:50%;
+        margin:auto;
+    }
+    .container-login {
+        text-align:left;
+        color:#fff;
+        font-size:20px;
+        padding-top:8px;
+        margin-left:3%;
+    }
     .container {
         padding: 16px;
     }
@@ -61,8 +71,23 @@ page-login {
            width: 100%;
         }
         img.avatar {
-            width: 40%;
+            width:30%;
             border-radius: 50%;
+        }
+        .container-row {
+            background: transparent;
+            width:80%;
+            margin:auto;
+        }
+        .container {
+            padding: 16px;
+        }
+        .container-login {
+            text-align:center;
+            color:#fff;
+            font-size:20px;
+            padding-top:10px;
+            margin-left:0%;
         }
     }
 }

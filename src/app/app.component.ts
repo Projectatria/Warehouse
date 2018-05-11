@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuController, Platform, AlertController } from 'ionic-angular';
+import { Events, MenuController, Platform, AlertController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LoginPage } from '../pages/login/login';
@@ -30,8 +30,13 @@ export class MyApp {
     public push: Push,
     private fcm: FCM,
     public api: ApiProvider,
-    private storage: Storage) {
+    private storage: Storage,
+    public events: Events) {
     platform.ready().then(() => {
+      events.subscribe('user:login', (role, time) => {
+        this.rolearea = role[0].id_area;
+        this.rolegroup = role[0].id_group;
+      });
       this.storage.get('token').then((val) => {
         this.token = val;
         if (this.token == null) {
@@ -43,9 +48,11 @@ export class MyApp {
       });
       this.storage.get('userid').then((val) => {
         this.userid = val;
+        console.log(this.userid)
         this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
           .subscribe(val => {
             this.role = val['data']
+            console.log(this.role)
             if (this.role.length != 0) {
               this.rolearea = this.role[0].id_area
               this.rolegroup = this.role[0].id_group

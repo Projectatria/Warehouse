@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuController, AlertController, Platform, NavController, NavParams } from 'ionic-angular';
+import { LoadingController, MenuController, AlertController, Platform, NavController, NavParams } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
 import { Storage } from '@ionic/storage';
@@ -16,8 +16,9 @@ export class HomePage {
   public role = [];
   public rolearea = '';
   public rolegroup = '';
-  public width:any;
-  public height:any;
+  public width: any;
+  public height: any;
+  public loader: any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -26,7 +27,13 @@ export class HomePage {
     public platform: Platform,
     public alert: AlertController,
     private push: Push,
-    public storage: Storage) {
+    public storage: Storage,
+    public loadingCtrl: LoadingController) {
+    this.loader = this.loadingCtrl.create({
+      // cssClass: 'transparent',
+      content: 'Loading Content...'
+    });
+    this.loader.present();
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
@@ -49,6 +56,9 @@ export class HomePage {
           }
         })
     });
+  }  
+  ngAfterViewInit() {
+    this.loader.dismiss();
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

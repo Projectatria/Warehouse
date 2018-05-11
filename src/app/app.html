@@ -15,7 +15,7 @@
       <ion-item class="side-header-list">
         <ion-list class="side-list">
           <button class="btn-side-menu" ion-item (click)="doHome()" menuClose>
-            <ion-icon name="md-home" style="font-size:20px;"> Home</ion-icon>
+            <i class="fas fa-home"> Home</i>
           </button>
         </ion-list>
         <ion-card-header class="side-header-list">
@@ -24,16 +24,20 @@
         <ion-list class="side-list">
           <button *ngIf="rolearea == 'INBOUND' && rolegroup !='STAFF'" class="btn-side-menu" ion-item (click)="open('PurchasingorderPage')"
             menuClose>
-            <ion-icon name="md-archive" style="font-size:20px;"> Purchasing Order</ion-icon>
+            <i class="fas fa-box imgfa"></i>
+            Purchasing Order
           </button>
           <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('ReceivingPage')" menuClose>
-            <ion-icon name="md-clipboard" style="font-size:20px;"> Receiving</ion-icon>
+            <i class="fas fa-clipboard-list imgfa"></i>
+            &nbsp;Receiving
           </button>
           <button *ngIf="rolearea == 'OUTBOUND'" class="btn-side-menu" ion-item (click)="open('QcinPage')" menuClose>
-            <ion-icon name="md-checkbox-outline" style="font-size:20px;"> Quality Control</ion-icon>
+            <i class="fas fa-calendar-check imgfa"></i>
+            QC In
           </button>
           <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('PutawayPage')" menuClose>
-            <ion-icon name="md-cube" style="font-size:20px;"> Put Away</ion-icon>
+            <i class="fas fa-pallet imgfa"></i>
+            Putaway
           </button>
         </ion-list>
       </ion-item>
@@ -43,16 +47,20 @@
         </ion-card-header>
         <ion-list class="side-list">
           <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('MovementPage')" menuClose>
-            <ion-icon name="md-git-compare" style="font-size:20px;"> Movement</ion-icon>
+            <i class="fas fa-people-carry imgfa"></i>
+            Movement
           </button>
           <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('TransferorderPage')" menuClose>
-            <ion-icon name="md-git-merge" style="font-size:20px;"> Transfer Order</ion-icon>
+            <i class="fas fa-exchange-alt imgfa"></i>
+            Transfer Order
           </button>
           <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('PickingPage')" menuClose>
-            <ion-icon name="md-paper" style="font-size:20px;"> Picking</ion-icon>
+            <i class="fas fa-dolly imgfa"></i>
+            Picking
           </button>
           <button *ngIf="rolearea == 'OUTBOUND'" class="btn-side-menu" ion-item (click)="open('QcoutPage')" menuClose>
-            <ion-icon name="md-checkbox-outline" style="font-size:20px;"> Quality Control</ion-icon>
+            <i class="fas fa-calendar-check imgfa"></i>
+            QC Out
           </button>
         </ion-list>
       </ion-item>

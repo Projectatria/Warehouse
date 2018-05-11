@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { LoadingController, ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FileChooser } from "@ionic-native/file-chooser";
@@ -50,6 +50,7 @@ export class PurchasingorderPage {
   public userid:any;
   public role = [];
   public roleid = '';
+  public loader: any;
 
   constructor(
     public navCtrl: NavController,
@@ -65,9 +66,15 @@ export class PurchasingorderPage {
     public filePath: FilePath,
     private platform: Platform,
     public actionSheetCtrl: ActionSheetController,
+    public loadingCtrl: LoadingController,
     public storage: Storage,
     private http: HttpClient
   ) {
+    this.loader = this.loadingCtrl.create({
+      // cssClass: 'transparent',
+      content: 'Loading Content...'
+    });
+    this.loader.present();
     this.myFormModal = formBuilder.group({
       pic: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
@@ -101,6 +108,9 @@ export class PurchasingorderPage {
     this.sortPO = ''
     this.sortInfoPO = ''
     this.sortPrepare = ''
+  }
+  ngAfterViewInit() {
+    this.loader.dismiss();
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

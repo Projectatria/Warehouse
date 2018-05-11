@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { LoadingController, ViewController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -25,6 +25,7 @@ export class ReceivingPage {
   private width: number;
   private height: number;
   private token:any;
+  public loader: any;
 
   constructor(
     public navCtrl: NavController,
@@ -37,9 +38,15 @@ export class ReceivingPage {
     public modalCtrl: ModalController,
     public platform: Platform,
     public viewCtrl: ViewController,
-    public storage: Storage
+    public storage: Storage,
+    public loadingCtrl: LoadingController
 
   ) {
+    this.loader = this.loadingCtrl.create({
+      // cssClass: 'transparent',
+      content: 'Loading Content...'
+    });
+    this.loader.present();
     this.getPO();
     this.toggled = false;
     this.rcv = "receiving"
@@ -47,6 +54,9 @@ export class ReceivingPage {
       this.width = platform.width();
       this.height = platform.height();
     });
+  }
+  ngAfterViewInit() {
+    this.loader.dismiss();
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
