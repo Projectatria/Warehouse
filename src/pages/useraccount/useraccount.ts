@@ -62,6 +62,7 @@ export class UseraccountPage {
 
   }
   doLogout() {
+    console.log(this.userid)
     this.api.get('table/user', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
       .subscribe(val => {
         this.users = val['data'];

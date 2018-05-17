@@ -19,7 +19,7 @@
             Login
           </div>
           <div class="container">
-            <input type="text" placeholder="Enter Username" formControlName="userid" required>
+            <input type="text" placeholder="Enter User ID" formControlName="userid" required>
             <input type="password" placeholder="Enter Password" formControlName="password" required>
             <button type="submit" [disabled]="!myForm.valid" (click)="doLogin()">Login</button>
           </div>

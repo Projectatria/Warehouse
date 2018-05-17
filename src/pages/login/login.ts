@@ -20,6 +20,7 @@ export class LoginPage {
   private user = [];
   private tokennotification = '';
   public role = [];
+  public preparation = [];
   public rolearea = '';
   public rolegroup = '';
 
@@ -81,7 +82,22 @@ export class LoginPage {
                       if (this.role.length != 0) {
                         this.rolearea = this.role[0].id_area
                         this.rolegroup = this.role[0].id_group
-                        this.appCtrl.getRootNav().setRoot(HomePage);
+                        this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.myForm.value.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.myForm.value.userid + "'" + " OR " + "pic_barcode=" + "'" + this.myForm.value.userid + "')" } })
+                          .subscribe(val => {
+                            this.preparation = val['data'];
+                            if (this.preparation.length == 0) {
+                              this.appCtrl.getRootNav().setRoot(HomePage);
+                            }
+                            else {
+                              let alert = this.alertCtrl.create({
+                                subTitle: 'Notification',
+                                message: 'Anda mempunyai pekerjaan yang belum diselesaikan',
+                                buttons: ['OK']
+                              });
+                              alert.present();
+                              this.appCtrl.getRootNav().setRoot('TaskPage');
+                            }
+                          });
                         this.events.publish('user:login', this.role, Date.now());
                         this.myForm.reset();
                       }

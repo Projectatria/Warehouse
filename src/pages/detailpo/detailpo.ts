@@ -22,9 +22,7 @@ export class DetailpoPage {
   docno = ''
   batchno = '';
   locationcode = '';
-  transferdate = '';
-  poid = '';
-  totalitem: any;
+  expectedreceiptdate = '';
   detailpo: string = "detailpoitem";
   private token:any;
 
@@ -42,13 +40,10 @@ export class DetailpoPage {
     this.getPOD();
     this.toggled = false;
     this.detailpo = "detailpoitem"
-    this.docno = navParams.get('docno');
     this.orderno = navParams.get('orderno');
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
-    this.transferdate = navParams.get('transferdate');
-    this.totalitem = navParams.get('totalitem');
-    this.poid = navParams.get('poid');
+    this.expectedreceiptdate = navParams.get('expectedreceiptdate');
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
@@ -171,7 +166,7 @@ export class DetailpoPage {
                     .subscribe();
                   this.api.put("table/purchasing_order",
                     {
-                      "po_id": this.poid,
+                      "order_no": this.orderno,
                       "total_item": this.totaldata - 1
                     },
                     { headers })

@@ -11,22 +11,33 @@
 <ion-content padding>
   <ion-list>
     <div style="font-weight: bold;font-size:15px;border-bottom:1px solid;border-color:#dedede;text-align:center;">PO</div>
-    <ion-item class="content-data-item" *ngFor="let prepare of preparation">
-      <div no-padding (click)="viewDetailPrepare(prepare)">
-        <h2>No Order : {{prepare.order_no}}</h2>
-        <ion-note>{{prepare.transfer_date}} | Items : {{prepare.total_item}}</ion-note>
-      </div>
-    </ion-item>
+    <ion-row>
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;">Order No</ion-col>
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;">Expected Receipt Date</ion-col>
+    </ion-row>
+    <ion-row item-start no-padding *ngFor="let prepare of preparation" (click)="viewDetailPrepare(prepare)">
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;">
+        {{prepare.order_no}}
+      </ion-col>
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;">
+        {{prepare.expected_receipt_date}}
+      </ion-col>
+    </ion-row>
   </ion-list>
   <ion-list>
     <div style="font-weight: bold;font-size:15px;border-bottom:1px solid;border-color:#dedede;text-align:center;">RECEIVING</div>
-    <ion-item class="content-data-item" *ngFor="let rcv of receiving" (click)="viewDetail(rcv)">
-      <div no-padding>
-        <h2>PO No : {{rcv.order_no}}</h2>
-        <ion-note>items : {{rcv.total_item}}</ion-note>
-        <ion-note>Receiving Date : {{rcv.transfer_date}}</ion-note>
-      </div>
-    </ion-item>
+    <ion-row>
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;">Order No</ion-col>
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;">Expected Receipt Date</ion-col>
+    </ion-row>
+    <ion-row item-start no-padding *ngFor="let rcv of receiving" (click)="viewDetail(rcv)">
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;">
+        {{rcv.order_no}}
+      </ion-col>
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;">
+        {{rcv.expected_receipt_date}}
+      </ion-col>
+    </ion-row>
   </ion-list>
   <ion-list>
     <div style="font-weight: bold;font-size:15px;border-bottom:1px solid;border-color:#dedede;text-align:center;">QC IN</div>
@@ -68,8 +79,16 @@
   </ion-list>
   <ion-list>
     <div style="font-weight: bold;font-size:15px;border-bottom:1px solid;border-color:#dedede;text-align:center;">PICKING</div>
+    <ion-row>
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;">Picking Note</ion-col>
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;">Transfer Date</ion-col>
+    </ion-row>
   </ion-list>
   <ion-list>
     <div style="font-weight: bold;font-size:15px;border-bottom:1px solid;border-color:#dedede;text-align:center;">QC OUT</div>
+    <ion-row>
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;">QC Note</ion-col>
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;">Transfer Date</ion-col>
+    </ion-row>
   </ion-list>
 </ion-content>

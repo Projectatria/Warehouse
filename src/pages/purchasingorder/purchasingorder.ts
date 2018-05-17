@@ -17,11 +17,14 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 })
 export class PurchasingorderPage {
   myFormModal: FormGroup;
+  myFormModalPrepare: FormGroup;
   private users = [];
   private purchasing_order = [];
   private infopo = [];
   private preparation = [];
   private usertoken = [];
+  private userlokasitoken = [];
+  private userbarcodetoken = [];
   searchpo: any;
   searchpoaction: any;
   searchinfopo: any;
@@ -47,7 +50,7 @@ export class PurchasingorderPage {
   private token: any;
   private userpic = '';
   private poid = '';
-  public userid:any;
+  public userid: any;
   public role = [];
   public roleid = '';
   public loader: any;
@@ -79,6 +82,10 @@ export class PurchasingorderPage {
       pic: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
     })
+    this.myFormModalPrepare = formBuilder.group({
+      piclokasi: ['', Validators.compose([Validators.required])],
+      picbarcode: ['', Validators.compose([Validators.required])],
+    })
     this.getPO();
     this.getInfoPO();
     this.getPrepare();
@@ -88,21 +95,22 @@ export class PurchasingorderPage {
       this.height = platform.height();
       this.storage.get('userid').then((val) => {
         this.userid = val;
-        this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } })
-        .subscribe(val => {
-          this.preparation = val['data'];
-        });
+        console.log(this.userid)
+        this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
+          .subscribe(val => {
+            this.preparation = val['data'];
+          });
         this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
-        .subscribe(val => {
-          this.role = val['data']
-          this.roleid = this.role[0].id_group
-          if (this.roleid != "ADMIN") {
-            this.po = "preparation"
-          }
-          else {
-            this.po = "purchasingorder"
-          }
-        })
+          .subscribe(val => {
+            this.role = val['data']
+            this.roleid = this.role[0].id_group
+            if (this.roleid != "ADMIN") {
+              this.po = "preparation"
+            }
+            else {
+              this.po = "purchasingorder"
+            }
+          })
       });
     });
     this.sortPO = ''
@@ -183,7 +191,7 @@ export class PurchasingorderPage {
       }
       else {
         this.halamanpreparation++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -246,36 +254,31 @@ export class PurchasingorderPage {
   viewDetail(po) {
     this.navCtrl.push('DetailpoPage', {
       orderno: po.order_no,
-      docno: po.doc_no,
       batchno: po.batch_no,
       locationcode: po.location_code,
-      transferdate: po.transfer_date,
-      totalitem: po.total_item,
-      poid: po.po_id
+      expectedreceiptdate: po.expected_receipt_date
     });
   }
   viewDetailInfoPO(info) {
     this.navCtrl.push('DetailpoactionPage', {
-      poid: info.po_id,
       orderno: info.order_no,
-      docno: info.doc_no,
       batchno: info.batch_no,
       locationcode: info.location_code,
-      transferdate: info.transfer_date,
+      expectedreceiptdate: info.expected_receipt_date,
       status: info.status
     });
   }
 
   viewDetailPrepare(prepare) {
     this.navCtrl.push('DetailpoactionPage', {
-      poid: prepare.po_id,
       orderno: prepare.order_no,
-      docno: prepare.doc_no,
       batchno: prepare.batch_no,
       locationcode: prepare.location_code,
-      transferdate: prepare.transfer_date,
+      expectedreceiptdate: prepare.expected_receipt_date,
       status: prepare.status,
-      totalpost: prepare.total_item_post
+      pic: prepare.pic,
+      piclokasi: prepare.pic_lokasi,
+      picbarcode: prepare.pic_barcode
     });
   }
   doAddPO() {
@@ -308,11 +311,9 @@ export class PurchasingorderPage {
   doUpdatePO(po) {
     let locationModal = this.modalCtrl.create('PurchasingorderupdatePage',
       {
-        poid: po.po_id,
-        docno: po.doc_no,
         orderno: po.order_no,
         vendorno: po.vendor_no,
-        transferdate: po.transfer_date,
+        expectedreceiptdate: po.expected_receipt_date,
         locationcode: po.location_code,
         description: po.posting_desc
       },
@@ -336,7 +337,7 @@ export class PurchasingorderPage {
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
 
-            this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
+            this.api.delete("table/purchasing_order", { params: { filter: 'order_no=' + "'" + po.order_no + "'" }, headers })
               .subscribe(
                 (val) => {
                   this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
@@ -375,7 +376,7 @@ export class PurchasingorderPage {
   }
 
   doRefreshPrepare(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'"  } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
       this.searchpreparation = this.preparation;
@@ -417,10 +418,8 @@ export class PurchasingorderPage {
             let date = moment().format('YYYY-MM-DD');
             this.api.put("table/purchasing_order",
               {
-                "po_id": po.po_id,
-                "posting_date": date,
-                "status": 'INP1',
-                "user_id": ''
+                "order_no": po.order_no,
+                "status": 'INP1'
               },
               { headers })
               .subscribe(
@@ -470,7 +469,7 @@ export class PurchasingorderPage {
 
             this.api.put("table/purchasing_order",
               {
-                "po_id": info.po_id,
+                "order_no": info.order_no,
                 "status": 'INP2'
               },
               { headers })
@@ -519,7 +518,7 @@ export class PurchasingorderPage {
 
             this.api.put("table/purchasing_order",
               {
-                "po_id": prepare.po_id,
+                "order_no": prepare.order_no,
                 "status": 'INPG'
               },
               { headers })
@@ -577,9 +576,8 @@ export class PurchasingorderPage {
 
                     this.api.put("table/purchasing_order",
                       {
-                        "po_id": po.po_id,
-                        "status": 'INP1',
-                        "user_id": ''
+                        "order_no": po.order_no,
+                        "status": 'INP1'
                       },
                       { headers })
                       .subscribe(
@@ -616,11 +614,9 @@ export class PurchasingorderPage {
           handler: () => {
             let locationModal = this.modalCtrl.create('PurchasingorderupdatePage',
               {
-                poid: po.po_id,
-                docno: po.doc_no,
                 orderno: po.order_no,
                 vendorno: po.vendor_no,
-                transferdate: po.transfer_date,
+                expectedreceiptdate: po.expected_receipt_date,
                 locationcode: po.location_code,
                 description: po.posting_desc
               },
@@ -649,7 +645,7 @@ export class PurchasingorderPage {
                     const headers = new HttpHeaders()
                       .set("Content-Type", "application/json");
 
-                    this.api.delete("table/purchasing_order", { params: { filter: 'po_id=' + "'" + po.po_id + "'" }, headers })
+                    this.api.delete("table/purchasing_order", { params: { filter: 'order_no=' + "'" + po.order_no + "'" }, headers })
                       .subscribe(
                         (val) => {
                           this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
@@ -725,7 +721,7 @@ export class PurchasingorderPage {
     else {
       this.sortPrepare = 'ASC'
     }
-    this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" , sort: filter + " " + this.sortPrepare + " " } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'", sort: filter + " " + this.sortPrepare + " " } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
       this.filter = filter
@@ -761,13 +757,13 @@ export class PurchasingorderPage {
   }
   selectdatePrepare(datearrivalPrepare) {
     if (datearrivalPrepare == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'"  } }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
       });
     }
     else {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'"  + " AND " + "transfer_date=" + "'" + datearrivalPrepare + "'" } }).subscribe(val => {
+      this.api.get("table/purchasing_order", { params: { filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" + " AND " + "transfer_date=" + "'" + datearrivalPrepare + "'" } }).subscribe(val => {
         this.preparation = val['data'];
         this.totaldatapreparation = val['count'];
       });
@@ -778,15 +774,31 @@ export class PurchasingorderPage {
       this.users = val['data'];
     });
   }
+  getUsersStaff() {
+    this.api.get('table/user_role', { params: { filter: "id_area='INBOUND' AND id_group='STAFF'" } }).subscribe(val => {
+      this.users = val['data'];
+    });
+  }
   doOpenToPIC(info) {
-    this.getUsers();
+    this.getUsersStaff();
     this.myFormModal.get('pic').setValue(info.pic);
     document.getElementById("myModalPic").style.display = "block";
-    this.poid = info.po_id;
+    this.orderno = info.order_no;
+  }
+  doOpenToPICPrepare(prepare) {
+    this.getUsersStaff();
+    this.myFormModalPrepare.get('piclokasi').setValue(prepare.pic_lokasi);
+    this.myFormModalPrepare.get('picbarcode').setValue(prepare.pic_barcode);
+    document.getElementById("myModalPicPrepare").style.display = "block";
+    this.orderno = prepare.order_no;
   }
   doOffToPIC() {
     document.getElementById("myModalPic").style.display = "none";
     this.myFormModal.reset()
+  }
+  doOffToPICPrepare() {
+    document.getElementById("myModalPicPrepare").style.display = "none";
+    this.myFormModalPrepare.reset()
   }
   onChange(user) {
     this.userpic = user.id_user;
@@ -797,7 +809,7 @@ export class PurchasingorderPage {
 
     this.api.put("table/purchasing_order",
       {
-        "po_id": this.poid,
+        "order_no": this.orderno,
         "pic": this.myFormModal.value.pic
       },
       { headers })
@@ -817,6 +829,107 @@ export class PurchasingorderPage {
         },
         () => {
         });
+  }
+  doSendToPicPrepare() {
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+    console.log(this.orderno)
+    this.api.put("table/purchasing_order",
+      {
+        "order_no": this.orderno,
+        "pic_lokasi": this.myFormModalPrepare.value.piclokasi,
+        "pic_barcode": this.myFormModalPrepare.value.picbarcode
+      },
+      { headers })
+      .subscribe(
+        (val) => {
+          document.getElementById("myModalPicPrepare").style.display = "none";
+          this.myFormModalPrepare.reset()
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.getInfoPO();
+        },
+        response => {
+        },
+        () => {
+        });
+  }
+  doSendPrepare(prepare) {
+    console.log(prepare.pic_lokasi)
+    this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_lokasi + "'" } })
+      .subscribe(val => {
+        this.userlokasitoken = val['data'];
+        console.log(this.userlokasitoken)
+        const headers = new HttpHeaders({
+          "Content-Type": "application/json",
+          "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+        })
+        this.http.post("https://fcm.googleapis.com/fcm/send",
+          {
+            "to": this.userlokasitoken[0].token,
+            "notification": {
+              "body": this.userlokasitoken[0].name + ", Mohon dipersiapkan lokasi untuk kedatangan PO " + prepare.order_no,
+              "title": "Atria Warehouse",
+              "content_available": true,
+              "priority": 2,
+              "sound": "default",
+              "click_action": "FCM_PLUGIN_ACTIVITY",
+              "color": "#FFFFFF",
+              "icon": "atria"
+            },
+            "data": {
+              "body": this.userlokasitoken[0].name + ", Mohon dipersiapkan lokasi untuk kedatangan PO " + prepare.order_no,
+              "title": "Atria Warehouse",
+              "param": "PO"
+            }
+          },
+          { headers })
+          .subscribe(data => {
+            this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_barcode + "'" } })
+              .subscribe(val => {
+                this.userbarcodetoken = val['data'];
+                console.log(this.userbarcodetoken)
+                const headers = new HttpHeaders({
+                  "Content-Type": "application/json",
+                  "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+                })
+                this.http.post("https://fcm.googleapis.com/fcm/send",
+                  {
+                    "to": this.userbarcodetoken[0].token,
+                    "notification": {
+                      "body": this.userbarcodetoken[0].name + ", Mohon dipersiapkan barcode untuk kedatangan PO " + prepare.order_no,
+                      "title": "Atria Warehouse",
+                      "content_available": true,
+                      "priority": 2,
+                      "sound": "default",
+                      "click_action": "FCM_PLUGIN_ACTIVITY",
+                      "color": "#FFFFFF",
+                      "icon": "atria"
+                    },
+                    "data": {
+                      "body": this.userbarcodetoken[0].name + ", Mohon dipersiapkan barcode untuk kedatangan PO " + prepare.order_no,
+                      "title": "Atria Warehouse",
+                      "param": "PO"
+                    }
+                  },
+                  { headers })
+                  .subscribe(data => {
+                    let alert = this.alertCtrl.create({
+                      title: 'Sukses',
+                      subTitle: 'Pekerjaan Sukses di kirim',
+                      buttons: ['OK']
+                    });
+                    alert.present();
+                  }, (e) => {
+                  });
+              });
+          }, (e) => {
+          });
+      });
   }
   doSendNotificationPic(info) {
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + info.pic + "'" } })

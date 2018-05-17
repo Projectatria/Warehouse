@@ -92,4 +92,7 @@ export class HomePage {
   doProfile() {
     this.navCtrl.push('UseraccountPage');
   }
+  doTransferOrder() {
+    this.navCtrl.push('FilteringPage');
+  }
 }

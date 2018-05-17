@@ -29,11 +29,11 @@ export class DetailpoactionPage {
   totaldata: any;
   totaldatalocation: any;
   public toggled: boolean = false;
-  docno = '';
+  code = '';
   orderno = '';
   batchno = '';
   locationcode = '';
-  transferdate = '';
+  expectedreceiptdate = '';
   receivingno = '';
   status = '';
   totalpost = '';
@@ -52,6 +52,9 @@ export class DetailpoactionPage {
   private userid = '';
   private usertoken = [];
   private userpic = '';
+  private pic = '';
+  private piclokasi = '';
+  private picbarcode = '';
 
   constructor(
     public navCtrl: NavController,
@@ -73,20 +76,20 @@ export class DetailpoactionPage {
       this.height = platform.height();
     });
     this.myFormModal = formBuilder.group({
-      pic: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
     })
     this.getPOD();
     this.toggled = false;
     this.detailpo = "detailpoitem";
-    this.poid = navParams.get('poid');
-    this.docno = navParams.get('docno');
     this.orderno = navParams.get('orderno');
     this.batchno = navParams.get('batchno');
     this.status = navParams.get('status');
     this.totalpost = navParams.get('totalpost')
     this.locationcode = navParams.get('locationcode');
-    this.transferdate = navParams.get('transferdate');
+    this.pic = navParams.get('pic');
+    this.piclokasi = navParams.get('piclokasi');
+    this.picbarcode = navParams.get('picbarcode');
+    this.expectedreceiptdate = navParams.get('expectedreceiptdate');
     this.storage.get('userid').then((val) => {
       this.userid = val;
     });
@@ -103,7 +106,7 @@ export class DetailpoactionPage {
     });
   }
   getPOD() {
-    this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
+    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
     })
@@ -116,7 +119,7 @@ export class DetailpoactionPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } })
+        this.api.get('table/purchasing_order_detail', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -162,7 +165,7 @@ export class DetailpoactionPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
+    this.api.get("table/purchasing_order_detail", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
@@ -201,7 +204,7 @@ export class DetailpoactionPage {
   doOpenToTL(detailpo) {
     this.batch = detailpo.batch_no;
     this.item = detailpo.item_no;
-    this.position = detailpo.position;
+    this.position = detailpo.location;
     this.qty = detailpo.qty;
     return new Promise(resolve => {
       this.getLocations(detailpo).subscribe(val => {
@@ -211,17 +214,14 @@ export class DetailpoactionPage {
           this.totaldatalocation = val['count'];
         }
         if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
-          this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
           this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
           document.getElementById("myModal").style.display = "block";
-          this.receivingno = detailpo.receiving_no;
+          this.receivingno = detailpo.code;
         }
         else {
-          this.getUsers();
-          this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
           this.myFormModal.get('location').setValue(detailpo.position);
           document.getElementById("myModal").style.display = "block";
-          this.receivingno = detailpo.receiving_no;
+          this.receivingno = detailpo.code;
         }
         resolve();
       });
@@ -251,12 +251,11 @@ export class DetailpoactionPage {
   doSendToTL() {
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
-
-    this.api.put("table/receiving",
+    console.log(this.receivingno)
+    this.api.put("table/purchasing_order_detail",
       {
-        "receiving_no": this.receivingno,
-        "receiving_pic": this.myFormModal.value.pic,
-        "position": this.myFormModal.value.location
+        "code": this.receivingno,
+        "location": this.myFormModal.value.location
       },
       { headers })
       .subscribe(
@@ -352,7 +351,7 @@ export class DetailpoactionPage {
       this.location_master = this.searchloc;
     }
   }
-  doPostingRCV(detailpo) {
+  /*doPostingRCV(detailpo) {
     return new Promise(resolve => {
       this.api.get("table/purchasing_order", { params: { filter: 'po_id=' + "'" + this.poid + "'" } }).subscribe(val => {
         let data = val['data'];
@@ -390,13 +389,6 @@ export class DetailpoactionPage {
                   },
                   { headers })
                   .subscribe();
-                this.api.put("table/purchasing_order_detail",
-                  {
-                    "po_detail_no": detailpo.receiving_no,
-                    "status": 'CLSD'
-                  },
-                  { headers })
-                  .subscribe();
                 this.api.put("table/receiving",
                   {
                     "receiving_no": detailpo.receiving_no,
@@ -412,7 +404,7 @@ export class DetailpoactionPage {
                       });
                       alert.present();
                       this.purchasing_order = [];
-                      this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
+                      this.api.get("table/purchasing_order_detail", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
                         this.purchasing_order_detail = val['data'];
                         this.totaldata = val['count'];
                         this.searchpodetail = this.purchasing_order_detail;
@@ -431,8 +423,67 @@ export class DetailpoactionPage {
         resolve();
       });
     });
+  }*/
+  doPostingRCV(detailpo) {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Posting',
+      message: 'Do you want to posting Item No ' + detailpo.item_no + ' ?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Posting',
+          handler: () => {
+            if (this.userid == this.piclokasi) {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.put("table/purchasing_order_Detail",
+                {
+                  "code": detailpo.code,
+                  "status_location": 'OK',
+                  "pic_location": this.userid
+                },
+                { headers })
+                .subscribe(val => {
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Save Sukses',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.getPOD();
+                });
+            }
+            else if (this.userid == this.picbarcode) {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.put("table/purchasing_order_Detail",
+                {
+                  "code": detailpo.code,
+                  "status_barcode": 'OK',
+                  "pic_barcode": this.userid
+                },
+                { headers })
+                .subscribe(val => {
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Save Sukses',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.getPOD();
+                });
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
   }
-
   doOpenOptions(detailpo) {
     let actionSheet = this.actionSheetCtrl.create({
       title: 'Options',
@@ -441,84 +492,7 @@ export class DetailpoactionPage {
           icon: 'md-checkmark-circle-outline',
           text: 'Posting',
           handler: () => {
-            return new Promise(resolve => {
-              this.api.get("table/purchasing_order", { params: { filter: 'po_id=' + "'" + this.poid + "'" } }).subscribe(val => {
-                let data = val['data'];
-                for (let i = 0; i < data.length; i++) {
-                  this.purchasing_order.push(data[i]);
-                }
-                let alert = this.alertCtrl.create({
-                  title: 'Confirm Posting',
-                  message: 'Do you want to posting Item No ' + detailpo.item_no + ' ?',
-                  buttons: [
-                    {
-                      text: 'Cancel',
-                      role: 'cancel',
-                      handler: () => {
-                      }
-                    },
-                    {
-                      text: 'Posting',
-                      handler: () => {
-                        const headers = new HttpHeaders()
-                          .set("Content-Type", "application/json");
-                        if ((this.purchasing_order[0].total_item - this.purchasing_order[0].total_item_post) == 1) {
-                          this.api.put("table/purchasing_order",
-                            {
-                              "po_id": this.poid,
-                              "status": 'INPG'
-                            },
-                            { headers })
-                            .subscribe();
-                        }
-                        this.api.put("table/purchasing_order",
-                          {
-                            "po_id": this.poid,
-                            "total_item_post": ((this.purchasing_order[0]).total_item_post) + 1
-                          },
-                          { headers })
-                          .subscribe();
-                        this.api.put("table/purchasing_order_detail",
-                          {
-                            "po_detail_no": detailpo.receiving_no,
-                            "status": 'CLSD'
-                          },
-                          { headers })
-                          .subscribe();
-                        this.api.put("table/receiving",
-                          {
-                            "receiving_no": detailpo.receiving_no,
-                            "status": 'INPG'
-                          },
-                          { headers })
-                          .subscribe(
-                            (val) => {
-                              let alert = this.alertCtrl.create({
-                                title: 'Sukses',
-                                subTitle: 'Posting Sukses',
-                                buttons: ['OK']
-                              });
-                              alert.present();
-                              this.purchasing_order = [];
-                              this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + " AND status='OPEN'" } }).subscribe(val => {
-                                this.purchasing_order_detail = val['data'];
-                                this.totaldata = val['count'];
-                                this.searchpodetail = this.purchasing_order_detail;
-                              });
 
-                            },
-                            response => {
-                            },
-                            () => {
-                            });
-                      }
-                    }
-                  ]
-                });
-                alert.present();
-                resolve();
-              });
-            });
           }
         },
         {
@@ -527,7 +501,7 @@ export class DetailpoactionPage {
           handler: () => {
             this.batch = detailpo.batch_no;
             this.item = detailpo.item_no;
-            this.position = detailpo.position;
+            this.position = detailpo.location;
             this.qty = detailpo.qty;
             return new Promise(resolve => {
               this.getLocations(detailpo).subscribe(val => {
@@ -537,17 +511,14 @@ export class DetailpoactionPage {
                   this.totaldatalocation = val['count'];
                 }
                 if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
-                  this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
                   this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
                   document.getElementById("myModal").style.display = "block";
-                  this.receivingno = detailpo.receiving_no;
+                  this.receivingno = detailpo.code;
                 }
                 else {
-                  this.getUsers();
-                  this.myFormModal.get('pic').setValue(detailpo.receiving_pic);
                   this.myFormModal.get('location').setValue(detailpo.position);
                   document.getElementById("myModal").style.display = "block";
-                  this.receivingno = detailpo.receiving_no;
+                  this.receivingno = detailpo.code;
                 }
                 resolve();
               });
@@ -585,37 +556,37 @@ export class DetailpoactionPage {
   }
   doSendNotification() {
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + this.userpic + "'" } })
-    .subscribe(val => {
-      this.usertoken = val['data'];
-      const headers = new HttpHeaders({
-        "Content-Type": "application/json",
-        "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
-      })
-      this.http.post("https://fcm.googleapis.com/fcm/send",
-        {
-          "to": this.usertoken[0].token,
-          "notification": {
-            "body": "You have new notifications",
-            "title": "Atria Warehouse",
-            "content_available": true,
-            "priority": 2,
-            "sound": "default",
-            "click_action": "FCM_PLUGIN_ACTIVITY",
-            "color": "#FFFFFF",
-            "icon": "atria"
+      .subscribe(val => {
+        this.usertoken = val['data'];
+        const headers = new HttpHeaders({
+          "Content-Type": "application/json",
+          "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+        })
+        this.http.post("https://fcm.googleapis.com/fcm/send",
+          {
+            "to": this.usertoken[0].token,
+            "notification": {
+              "body": "You have new notifications",
+              "title": "Atria Warehouse",
+              "content_available": true,
+              "priority": 2,
+              "sound": "default",
+              "click_action": "FCM_PLUGIN_ACTIVITY",
+              "color": "#FFFFFF",
+              "icon": "atria"
+            },
+            "data": {
+              "body": "You have new notifications",
+              "title": "Atria Warehouse",
+              "key_1": "Data for key one",
+              "key_2": "Hellowww"
+            }
           },
-          "data": {
-            "body": "You have new notifications",
-            "title": "Atria Warehouse",
-            "key_1": "Data for key one",
-            "key_2": "Hellowww"
-          }
-        },
-        { headers })
-        .subscribe(data => {
-        }, (e) => {
-        });
-    });
+          { headers })
+          .subscribe(data => {
+          }, (e) => {
+          });
+      });
 
   }
 

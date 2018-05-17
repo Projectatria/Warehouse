@@ -27,7 +27,7 @@ export class TaskPage {
     public api: ApiProvider) {
     this.storage.get('userid').then((val) => {
       this.userid = val;
-      this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } })
+      this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
         .subscribe(val => {
           this.preparation = val['data'];
         });
@@ -47,7 +47,7 @@ export class TaskPage {
     });
 }
 getPrepare() {
-  this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } })
+  this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
     .subscribe(val => {
       this.preparation = val['data'];
     });
@@ -61,7 +61,10 @@ viewDetailPrepare(prepare) {
     locationcode: prepare.location_code,
     transferdate: prepare.transfer_date,
     status: prepare.status,
-    totalpost: prepare.total_item_post
+    totalpost: prepare.total_item_post,
+    pic: prepare.pic,
+    piclokasi: prepare.pic_lokasi,
+    picbarcode: prepare.pic_barcode
   });
 }
 getReceiving() {
