@@ -47,7 +47,16 @@ export class MyApp {
         else {
           this.storage.get('userid').then((val) => {
             this.userid = val;
-            this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
+            this.api.get('table/purchasing_order', {
+              params: {
+                limit: 30, filter: "(status='INP2'" + " AND " +
+                  "((pic=" + "'" + this.userid + "')" +
+                  " OR " +
+                  "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+                  " OR " +
+                  "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+              }
+            })
               .subscribe(val => {
                 this.preparation = val['data'];
                 if (this.preparation.length == 0) {

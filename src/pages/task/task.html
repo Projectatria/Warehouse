@@ -9,6 +9,11 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>
+      pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-list>
     <div style="font-weight: bold;font-size:15px;border-bottom:1px solid;border-color:#dedede;text-align:center;">PO</div>
     <ion-row>

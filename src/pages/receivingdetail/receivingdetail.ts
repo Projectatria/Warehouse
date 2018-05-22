@@ -42,7 +42,7 @@ export class ReceivingdetailPage {
   orderno = '';
   batchno = '';
   locationcode = '';
-  transferdate = '';
+  expectedreceiptdate = '';
   poid = '';
   qty = '1';
   checked = '';
@@ -83,11 +83,10 @@ export class ReceivingdetailPage {
     this.barcode = false;
     this.detailrcv = "detailreceiving";
     this.poid = navParams.get('poid');
-    this.docno = navParams.get('docno');
     this.orderno = navParams.get('orderno');
     this.batchno = navParams.get('batchno');
     this.locationcode = navParams.get('locationcode');
-    this.transferdate = navParams.get('transferdate');
+    this.expectedreceiptdate = navParams.get('expectedreceiptdate');
     this.getRCVChecked();
   }
   ionViewCanEnter() {
@@ -116,7 +115,7 @@ export class ReceivingdetailPage {
   }
   getRCV() {
     return new Promise(resolve => {
-      this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
+      this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'OPEN'" } }).subscribe(val => {
         this.receiving = val['data'];
         this.totaldata = val['count'];
         resolve();
@@ -131,7 +130,7 @@ export class ReceivingdetailPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } })
+        this.api.get('table/receiving', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'OPEN'" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -177,7 +176,7 @@ export class ReceivingdetailPage {
   }
 
   doRefresh(refresher) {
-    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
+    this.api.get("table/receiving", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'OPEN'" } }).subscribe(val => {
       this.receiving = val['data'];
       this.totaldata = val['count'];
       this.searchrcv = this.receiving;
@@ -217,7 +216,7 @@ export class ReceivingdetailPage {
                   });
                   this.api.put("table/purchasing_order",
                     {
-                      "po_id": this.poid,
+                      "order_no": this.orderno,
                       "total_item_post": + 1
                     },
                     { headers })
@@ -225,7 +224,7 @@ export class ReceivingdetailPage {
                   alert.present();
                   let uuid = UUID.UUID();
                   this.uuid = uuid;
-                  this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'INPG'" } }).subscribe(val => {
+                  this.api.get("table/receiving", { params: { filter: 'order_no=' + "'" + this.orderno + "'" + ' AND ' + "status= 'OPEN'" } }).subscribe(val => {
                     this.receiving = val['data'];
                     this.totaldata = val['count'];
                     this.searchrcv = this.receiving;
@@ -659,7 +658,7 @@ export class ReceivingdetailPage {
 
               this.api.put("table/purchasing_order",
                 {
-                  "po_id": this.poid,
+                  "order_no": this.orderno,
                   "status": 'CLSD'
                 },
                 { headers })

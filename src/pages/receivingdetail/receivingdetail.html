@@ -49,10 +49,6 @@
         </ion-avatar>
         <div no-padding>
           <h2>No Item : {{detailrcv.item_no}}</h2>
-          <ion-note>PIC : {{detailrcv.receiving_pic}}</ion-note>
-          <br/>
-          <ion-note>Location : {{detailrcv.position}}</ion-note>
-          <br/>
           <ion-note>Qty : {{detailrcv.qty}} | Qty Receiving: {{detailrcv.qty_receiving}}</ion-note>
           <br/>
         </div>
@@ -78,7 +74,7 @@
                 Receiving Date
               </div>
               <div item-end>
-                {{cek.receiving_date}}
+                {{cek.expected_receipt_date}}
               </div>
             </ion-item>
             <ion-item>
@@ -87,14 +83,6 @@
               </div>
               <div item-end>
                 {{cek.batch_no}}
-              </div>
-            </ion-item>
-            <ion-item>
-              <div>
-                Doc No
-              </div>
-              <div item-end>
-                {{cek.doc_no}}
               </div>
             </ion-item>
             <ion-item>

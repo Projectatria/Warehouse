@@ -116,12 +116,9 @@ export class ReceivingPage {
   viewDetail(po) {
     this.navCtrl.push('ReceivingdetailPage', {
       orderno: po.order_no,
-      docno: po.doc_no,
       batchno: po.batch_no,
       locationcode: po.location_code,
-      transferdate: po.transfer_date,
-      totalitem: po.total_item,
-      poid: po.po_id
+      expectedreceiptdate: po.expected_receipt_date
     });
   }
 

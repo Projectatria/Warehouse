@@ -146,7 +146,10 @@
             <br>
             <ion-note>{{info.expected_receipt_date}}</ion-note>
           </div>
-          <button item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
+          <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
+            <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
+          </button>
+          <button *ngIf="info.status == 'INP1'" [disabled]="!info.pic" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
             <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
           </button>
         </ion-item>
@@ -204,7 +207,7 @@
               <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
                 <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
               </button>
-              <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
+              <button *ngIf="info.status == 'INP1'" [disabled]="!info.pic" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
                 <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
               </button>
             </ion-col>
@@ -240,10 +243,12 @@
             <br>
             <ion-note>Status Barcode: {{prepare.staus_barcode}}</ion-note>
           </div>
-          <button [disabled]="prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK'" *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doOpenToPICPrepare(prepare)">
+          <button [disabled]="prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK'" *ngIf="prepare.pic == userid"
+            item-end ion-button clear color="greenlake" (click)="doOpenToPICPrepare(prepare)">
             <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
           </button>
-          <button [disabled]="prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK'" *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
+          <button [disabled]="((prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK') || (!prepare.pic_lokasi && !prepare.pic_barcode))" *ngIf="prepare.pic == userid"
+            item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
             <ion-icon name="md-send" style="font-size:30px;"></ion-icon>
           </button>
         </ion-item>
@@ -300,7 +305,7 @@
               <button *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doOpenToPICPrepare(prepare)">
                 <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
               </button>
-              <button *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
+              <button [disabled]="((prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK') || (!prepare.pic_lokasi && !prepare.pic_barcode))" *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
                 <ion-icon name="md-send" style="font-size:30px;"></ion-icon>
               </button>
             </ion-col>

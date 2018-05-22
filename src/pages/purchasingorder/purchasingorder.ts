@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoadingController, ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { Events, LoadingController, ActionSheetController, Platform, ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FileChooser } from "@ionic-native/file-chooser";
@@ -73,7 +73,8 @@ export class PurchasingorderPage {
     public actionSheetCtrl: ActionSheetController,
     public loadingCtrl: LoadingController,
     public storage: Storage,
-    private http: HttpClient
+    private http: HttpClient,
+    public events: Events
   ) {
     this.loader = this.loadingCtrl.create({
       // cssClass: 'transparent',
@@ -825,8 +826,6 @@ export class PurchasingorderPage {
     this.userpic = user.id_user;
   }
   doSendToPic() {
-    console.log(this.orderno)
-    console.log(this.myFormModal.value.pic)
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
 
