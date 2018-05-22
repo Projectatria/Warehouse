@@ -235,11 +235,15 @@
           <div no-padding (click)="viewDetailPrepare(prepare)">
             <h2>No Order : {{prepare.order_no}}</h2>
             <ion-note>{{prepare.expected_receipt_date}}</ion-note>
+            <br>
+            <ion-note>Status Location: {{prepare.status_location}}</ion-note>
+            <br>
+            <ion-note>Status Barcode: {{prepare.staus_barcode}}</ion-note>
           </div>
-          <button *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doOpenToPICPrepare(prepare)">
+          <button [disabled]="prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK'" *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doOpenToPICPrepare(prepare)">
             <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
           </button>
-          <button *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
+          <button [disabled]="prepare.status_send_pic_lokasi == 'OK' && prepare.status_send_pic_barcode == 'OK'" *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
             <ion-icon name="md-send" style="font-size:30px;"></ion-icon>
           </button>
         </ion-item>
@@ -292,6 +296,14 @@
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.status}}
             </ion-col>
+            <ion-col padding class="col-content" col-xl-2>
+              <button *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doOpenToPICPrepare(prepare)">
+                <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
+              </button>
+              <button *ngIf="prepare.pic == userid" item-end ion-button clear color="greenlake" (click)="doSendPrepare(prepare)">
+                <ion-icon name="md-send" style="font-size:30px;"></ion-icon>
+              </button>
+            </ion-col>
           </ion-row>
         </ion-grid>
       </div>
@@ -334,13 +346,13 @@
         <ion-list no-lines>
           <ion-item class="item-rcv" style="border-bottom:1px solid;border-color:#dedede;">
             <ion-label floating>PIC LOKASI</ion-label>
-            <ion-select formControlName="piclokasi">
+            <ion-select [disabled]="statussendlocation == 'OK'" formControlName="piclokasi">
               <ion-option *ngFor="let user of users" value="{{user.id_user}}" (ionSelect)="onChange(user)">{{user.id_user}} {{user.name}}</ion-option>
             </ion-select>
           </ion-item>
           <ion-item class="item-rcv" style="border-bottom:1px solid;border-color:#dedede;">
             <ion-label floating>PIC BARCODE</ion-label>
-            <ion-select formControlName="picbarcode">
+            <ion-select [disabled]="statussendbarcode == 'OK'" formControlName="picbarcode">
               <ion-option *ngFor="let user of users" value="{{user.id_user}}" (ionSelect)="onChange(user)">{{user.id_user}} {{user.name}}</ion-option>
             </ion-select>
           </ion-item>

@@ -54,6 +54,8 @@ export class PurchasingorderPage {
   public role = [];
   public roleid = '';
   public loader: any;
+  public statussendlocation = '';
+  public statussendbarcode = '';
 
   constructor(
     public navCtrl: NavController,
@@ -96,7 +98,14 @@ export class PurchasingorderPage {
       this.storage.get('userid').then((val) => {
         this.userid = val;
         console.log(this.userid)
-        this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
+        this.api.get('table/purchasing_order', 
+        { params: { limit: 30, filter: 
+          "(status='INP2'" + " AND " + 
+          "((pic=" + "'" + this.userid + "')" + 
+          " OR " + 
+          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
+          " OR " + 
+          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } })
           .subscribe(val => {
             this.preparation = val['data'];
           });
@@ -191,7 +200,12 @@ export class PurchasingorderPage {
       }
       else {
         this.halamanpreparation++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
+        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "(status='INP2'" + " AND " + 
+        "((pic=" + "'" + this.userid + "')" + 
+        " OR " + 
+        "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
+        " OR " + 
+        "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -376,7 +390,12 @@ export class PurchasingorderPage {
   }
 
   doRefreshPrepare(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "pic=" + "'" + this.userid + "'" } }).subscribe(val => {
+    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "(status='INP2'" + " AND " + 
+    "((pic=" + "'" + this.userid + "')" + 
+    " OR " + 
+    "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
+    " OR " + 
+    "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
       this.searchpreparation = this.preparation;
@@ -780,7 +799,7 @@ export class PurchasingorderPage {
     });
   }
   doOpenToPIC(info) {
-    this.getUsersStaff();
+    this.getUsers();
     this.myFormModal.get('pic').setValue(info.pic);
     document.getElementById("myModalPic").style.display = "block";
     this.orderno = info.order_no;
@@ -791,6 +810,8 @@ export class PurchasingorderPage {
     this.myFormModalPrepare.get('picbarcode').setValue(prepare.pic_barcode);
     document.getElementById("myModalPicPrepare").style.display = "block";
     this.orderno = prepare.order_no;
+    this.statussendlocation = prepare.status_send_pic_lokasi;
+    this.statussendbarcode = prepare.status_send_pic_barcode;
   }
   doOffToPIC() {
     document.getElementById("myModalPic").style.display = "none";
@@ -804,6 +825,8 @@ export class PurchasingorderPage {
     this.userpic = user.id_user;
   }
   doSendToPic() {
+    console.log(this.orderno)
+    console.log(this.myFormModal.value.pic)
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
 
@@ -823,7 +846,11 @@ export class PurchasingorderPage {
             buttons: ['OK']
           });
           alert.present();
-          this.getInfoPO();
+          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP1'" } }).subscribe(val => {
+            this.infopo = val['data'];
+            this.totaldatainfopo = val['count'];
+            this.searchinfopo = this.infopo;
+          });
         },
         response => {
         },
@@ -851,7 +878,11 @@ export class PurchasingorderPage {
             buttons: ['OK']
           });
           alert.present();
-          this.getInfoPO();
+          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } }).subscribe(val => {
+            this.preparation = val['data'];
+            this.totaldatapreparation = val['count'];
+            this.searchpreparation = this.preparation;
+          });
         },
         response => {
         },
@@ -859,82 +890,138 @@ export class PurchasingorderPage {
         });
   }
   doSendPrepare(prepare) {
-    console.log(prepare.pic_lokasi)
-    this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_lokasi + "'" } })
-      .subscribe(val => {
-        this.userlokasitoken = val['data'];
-        console.log(this.userlokasitoken)
-        const headers = new HttpHeaders({
-          "Content-Type": "application/json",
-          "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
-        })
-        this.http.post("https://fcm.googleapis.com/fcm/send",
-          {
-            "to": this.userlokasitoken[0].token,
-            "notification": {
-              "body": this.userlokasitoken[0].name + ", Mohon dipersiapkan lokasi untuk kedatangan PO " + prepare.order_no,
-              "title": "Atria Warehouse",
-              "content_available": true,
-              "priority": 2,
-              "sound": "default",
-              "click_action": "FCM_PLUGIN_ACTIVITY",
-              "color": "#FFFFFF",
-              "icon": "atria"
+    if (prepare.pic_lokasi != '' && prepare.status_send_pic_lokasi !='OK') {
+      this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_lokasi + "'" } })
+        .subscribe(val => {
+          this.userlokasitoken = val['data'];
+          const headers = new HttpHeaders({
+            "Content-Type": "application/json",
+            "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+          })
+          this.http.post("https://fcm.googleapis.com/fcm/send",
+            {
+              "to": this.userlokasitoken[0].token,
+              "notification": {
+                "body": this.userlokasitoken[0].name + ", Mohon dipersiapkan lokasi untuk kedatangan PO " + prepare.order_no,
+                "title": "Atria Warehouse",
+                "content_available": true,
+                "priority": 2,
+                "sound": "default",
+                "click_action": "FCM_PLUGIN_ACTIVITY",
+                "color": "#FFFFFF",
+                "icon": "atria"
+              },
+              "data": {
+                "body": this.userlokasitoken[0].name + ", Mohon dipersiapkan lokasi untuk kedatangan PO " + prepare.order_no,
+                "title": "Atria Warehouse",
+                "param": "PO"
+              }
             },
-            "data": {
-              "body": this.userlokasitoken[0].name + ", Mohon dipersiapkan lokasi untuk kedatangan PO " + prepare.order_no,
-              "title": "Atria Warehouse",
-              "param": "PO"
-            }
-          },
-          { headers })
-          .subscribe(data => {
-            this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_barcode + "'" } })
-              .subscribe(val => {
-                this.userbarcodetoken = val['data'];
-                console.log(this.userbarcodetoken)
-                const headers = new HttpHeaders({
-                  "Content-Type": "application/json",
-                  "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
-                })
-                this.http.post("https://fcm.googleapis.com/fcm/send",
-                  {
-                    "to": this.userbarcodetoken[0].token,
-                    "notification": {
-                      "body": this.userbarcodetoken[0].name + ", Mohon dipersiapkan barcode untuk kedatangan PO " + prepare.order_no,
-                      "title": "Atria Warehouse",
-                      "content_available": true,
-                      "priority": 2,
-                      "sound": "default",
-                      "click_action": "FCM_PLUGIN_ACTIVITY",
-                      "color": "#FFFFFF",
-                      "icon": "atria"
-                    },
-                    "data": {
-                      "body": this.userbarcodetoken[0].name + ", Mohon dipersiapkan barcode untuk kedatangan PO " + prepare.order_no,
-                      "title": "Atria Warehouse",
-                      "param": "PO"
-                    }
-                  },
-                  { headers })
-                  .subscribe(data => {
-                    let alert = this.alertCtrl.create({
-                      title: 'Sukses',
-                      subTitle: 'Pekerjaan Sukses di kirim',
-                      buttons: ['OK']
-                    });
-                    alert.present();
-                  }, (e) => {
+            { headers })
+            .subscribe(data => {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.put("table/purchasing_order",
+                {
+                  "order_no": prepare.order_no,
+                  "status_send_pic_lokasi": 'OK'
+                },
+                { headers })
+                .subscribe(val => {
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Pekerjaan Persiapan Lokasi Sukses di kirim',
+                    buttons: ['OK']
                   });
-              });
-          }, (e) => {
-          });
+                  alert.present();
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } }).subscribe(val => {
+                    this.preparation = val['data'];
+                    this.totaldatapreparation = val['count'];
+                    this.searchpreparation = this.preparation;
+                  });
+                })
+            }, (e) => {
+            });
+        });
+    }
+    else {
+      let alert = this.alertCtrl.create({
+        title: 'Error',
+        subTitle: 'User location dan user barcode belum diisi!',
+        buttons: ['OK']
       });
+      alert.present();
+    }
+    if (prepare.pic_barcode != '' && prepare.status_send_pic_barcode !='OK') {
+      this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_barcode + "'" } })
+        .subscribe(val => {
+          this.userbarcodetoken = val['data'];
+          console.log(this.userbarcodetoken)
+          const headers = new HttpHeaders({
+            "Content-Type": "application/json",
+            "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
+          })
+          this.http.post("https://fcm.googleapis.com/fcm/send",
+            {
+              "to": this.userbarcodetoken[0].token,
+              "notification": {
+                "body": this.userbarcodetoken[0].name + ", Mohon dipersiapkan barcode untuk kedatangan PO " + prepare.order_no,
+                "title": "Atria Warehouse",
+                "content_available": true,
+                "priority": 2,
+                "sound": "default",
+                "click_action": "FCM_PLUGIN_ACTIVITY",
+                "color": "#FFFFFF",
+                "icon": "atria"
+              },
+              "data": {
+                "body": this.userbarcodetoken[0].name + ", Mohon dipersiapkan barcode untuk kedatangan PO " + prepare.order_no,
+                "title": "Atria Warehouse",
+                "param": "PO"
+              }
+            },
+            { headers })
+            .subscribe(data => {
+              const headers = new HttpHeaders()
+                .set("Content-Type", "application/json");
+              this.api.put("table/purchasing_order",
+                {
+                  "order_no": prepare.order_no,
+                  "status_send_pic_barcode": 'OK'
+                },
+                { headers })
+                .subscribe(val => {
+                  let alert = this.alertCtrl.create({
+                    title: 'Sukses',
+                    subTitle: 'Pekerjaan Persiapan Barcode Sukses di kirim',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } }).subscribe(val => {
+                    this.preparation = val['data'];
+                    this.totaldatapreparation = val['count'];
+                    this.searchpreparation = this.preparation;
+                  });
+                })
+            }, (e) => {
+            });
+        });
+    }
+    else {
+      let alert = this.alertCtrl.create({
+        title: 'Error',
+        subTitle: 'User location dan user barcode belum diisi!',
+        buttons: ['OK']
+      });
+      alert.present();
+    }
   }
   doSendNotificationPic(info) {
+    console.log(info)
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + info.pic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
+        console.log(this.usertoken)
         const headers = new HttpHeaders({
           "Content-Type": "application/json",
           "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"

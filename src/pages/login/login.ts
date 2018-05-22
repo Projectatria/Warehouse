@@ -63,7 +63,10 @@ export class LoginPage {
           .subscribe(val => {
             this.user = val['data'];
             this.storage.set('token', this.token);
-            this.storage.set('userid', this.myForm.value.userid);
+            var sometext = this.user[0].id_user;
+            var upperid = sometext.toUpperCase();
+            console.log(upperid)
+            this.storage.set('userid', upperid);
             this.storage.set('name', this.user[0].name);
             this.storage.get('tokennotification').then((val) => {
               this.tokennotification = val;

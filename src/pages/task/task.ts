@@ -27,7 +27,12 @@ export class TaskPage {
     public api: ApiProvider) {
     this.storage.get('userid').then((val) => {
       this.userid = val;
-      this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
+      this.api.get('table/purchasing_order', { params: { limit: 30, filter: "(status='INP2'" + " AND " + 
+      "((pic=" + "'" + this.userid + "')" + 
+      " OR " + 
+      "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
+      " OR " + 
+      "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } })
         .subscribe(val => {
           this.preparation = val['data'];
         });
@@ -47,25 +52,35 @@ export class TaskPage {
     });
 }
 getPrepare() {
-  this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INP2'" + " AND " + "(pic=" + "'" + this.userid + "'" + " OR " + "pic_lokasi=" + "'" + this.userid + "'" + " OR " + "pic_barcode=" + "'" + this.userid + "')" } })
+  this.api.get('table/purchasing_order', { params: { limit: 30, filter: "(status='INP2'" + " AND " + 
+  "((pic=" + "'" + this.userid + "')" + 
+  " OR " + 
+  "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
+  " OR " + 
+  "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } })
     .subscribe(val => {
       this.preparation = val['data'];
     });
 }
 viewDetailPrepare(prepare) {
-  this.navCtrl.push('DetailpoactionPage', {
-    poid: prepare.po_id,
-    orderno: prepare.order_no,
-    docno: prepare.doc_no,
-    batchno: prepare.batch_no,
-    locationcode: prepare.location_code,
-    transferdate: prepare.transfer_date,
-    status: prepare.status,
-    totalpost: prepare.total_item_post,
-    pic: prepare.pic,
-    piclokasi: prepare.pic_lokasi,
-    picbarcode: prepare.pic_barcode
-  });
+  if(this.userid == prepare.pic) {
+    this.navCtrl.push('PurchasingorderPage')
+  }
+  else {
+    this.navCtrl.push('DetailpoactionPage', {
+      poid: prepare.po_id,
+      orderno: prepare.order_no,
+      docno: prepare.doc_no,
+      batchno: prepare.batch_no,
+      locationcode: prepare.location_code,
+      transferdate: prepare.transfer_date,
+      status: prepare.status,
+      totalpost: prepare.total_item_post,
+      pic: prepare.pic,
+      piclokasi: prepare.pic_lokasi,
+      picbarcode: prepare.pic_barcode
+    });
+  }
 }
 getReceiving() {
   this.api.get('table/purchasing_order', { params: { limit: 30, filter: "status='INPG'" + " AND " + "pic=" + "'" + this.userid + "'" } })
