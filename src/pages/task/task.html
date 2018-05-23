@@ -20,12 +20,12 @@
       <ion-col col-4 style="border:1px solid;border-color:#dedede;">Order No</ion-col>
       <ion-col col-8 style="border:1px solid;border-color:#dedede;">Expected Receipt Date</ion-col>
     </ion-row>
-    <ion-row item-start no-padding *ngFor="let prepare of preparation" (click)="viewDetailPrepare(prepare)">
-      <ion-col col-4 style="border:1px solid;border-color:#dedede;">
+    <ion-row class="rowhover" item-start no-padding *ngFor="let prepare of preparation" (click)="viewDetailPrepare(prepare)">
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;background:transparent;">
         {{prepare.order_no}}
       </ion-col>
-      <ion-col col-8 style="border:1px solid;border-color:#dedede;">
-        {{prepare.expected_receipt_date}}
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;background:transparent;">
+        {{prepare.expected_receipt_date | date: "dd MMMM yyyy"}}
       </ion-col>
     </ion-row>
   </ion-list>
@@ -35,12 +35,12 @@
       <ion-col col-4 style="border:1px solid;border-color:#dedede;">Order No</ion-col>
       <ion-col col-8 style="border:1px solid;border-color:#dedede;">Expected Receipt Date</ion-col>
     </ion-row>
-    <ion-row item-start no-padding *ngFor="let rcv of receiving" (click)="viewDetail(rcv)">
-      <ion-col col-4 style="border:1px solid;border-color:#dedede;">
+    <ion-row class="rowhover" item-start no-padding *ngFor="let rcv of receiving" (click)="viewDetail(rcv)">
+      <ion-col col-4 style="border:1px solid;border-color:#dedede;background:transparent;">
         {{rcv.order_no}}
       </ion-col>
-      <ion-col col-8 style="border:1px solid;border-color:#dedede;">
-        {{rcv.expected_receipt_date}}
+      <ion-col col-8 style="border:1px solid;border-color:#dedede;background:transparent;">
+        {{rcv.expected_receipt_date | date: "dd MMMM yyyy"}}
       </ion-col>
     </ion-row>
   </ion-list>

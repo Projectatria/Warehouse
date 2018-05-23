@@ -101,7 +101,6 @@ export class PurchasingorderPage {
       this.height = platform.height();
       this.storage.get('userid').then((val) => {
         this.userid = val;
-        console.log(this.userid)
         this.api.get('table/purchasing_order',
           {
             params: {
@@ -109,9 +108,9 @@ export class PurchasingorderPage {
                 "(status='INP2'" + " AND " +
                 "((pic=" + "'" + this.userid + "')" +
                 " OR " +
-                "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+                "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
                 " OR " +
-                "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+                "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
             }
           })
           .subscribe(val => {
@@ -125,7 +124,7 @@ export class PurchasingorderPage {
               this.po = "preparation"
             }
             else {
-              this.po = "purchasingorder"
+              this.po = "infopo"
             }
           })
       });
@@ -190,10 +189,17 @@ export class PurchasingorderPage {
               this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
                 .subscribe(val => {
                   this.porelease = val['data'];
-                  if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+                  if (this.porelease.length == 0) {
                     this.infopo.push(data[i]);
                     this.totaldatainfopo = val['count'];
                     this.searchinfopo = this.infopo;
+                  }
+                  else if (this.porelease.length) {
+                    if (this.porelease[0].batch_no == '') {
+                      this.infopo.push(data[i]);
+                      this.totaldatainfopo = val['count'];
+                      this.searchinfopo = this.infopo;
+                    }
                   }
                 });
             }
@@ -219,9 +225,9 @@ export class PurchasingorderPage {
             limit: 30, offset: offsetprepare, filter: "(status='INP2'" + " AND " +
               "((pic=" + "'" + this.userid + "')" +
               " OR " +
-              "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+              "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
               " OR " +
-              "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+              "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
           }
         })
           .subscribe(val => {
@@ -407,10 +413,17 @@ export class PurchasingorderPage {
           this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
             .subscribe(val => {
               this.porelease = val['data'];
-              if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+              if (this.porelease.length == 0) {
                 this.infopo.push(data[i]);
                 this.totaldatainfopo = val['count'];
                 this.searchinfopo = this.infopo;
+              }
+              else if (this.porelease.length) {
+                if (this.porelease[0].batch_no == '') {
+                  this.infopo.push(data[i]);
+                  this.totaldatainfopo = val['count'];
+                  this.searchinfopo = this.infopo;
+                }
               }
             });
         }
@@ -424,9 +437,9 @@ export class PurchasingorderPage {
         limit: 30, filter: "(status='INP2'" + " AND " +
           "((pic=" + "'" + this.userid + "')" +
           " OR " +
-          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
           " OR " +
-          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
       }
     }).subscribe(val => {
       this.preparation = val['data'];
@@ -527,14 +540,7 @@ export class PurchasingorderPage {
                 "vendor_status": info["Gen_ Bus_ Posting Group"],
                 "expected_receipt_date": info["Order Date"],
                 "location_code": info["Location Code"],
-                "pic_lokasi": "NULL",
-                "status_send_pic_lokasi": "NULL",
-                "pic_barcode": "NULL",
-                "status_send_pic_barcode": "NULL",
                 "status": 'INP2',
-                "status_location": "NULL",
-                "status_barcode": "NULL",
-                "position": "NULL",
                 "total_item_post": 0
               },
               { headers })
@@ -553,19 +559,24 @@ export class PurchasingorderPage {
                             this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
                               .subscribe(val => {
                                 this.porelease = val['data'];
-                                if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+                                if (this.porelease.length == 0) {
                                   this.infopo.push(data[i]);
                                   this.totaldatainfopo = val['count'];
                                   this.searchinfopo = this.infopo;
                                 }
+                                else if (this.porelease.length) {
+                                  if (this.porelease[0].batch_no == '') {
+                                    this.infopo.push(data[i]);
+                                    this.totaldatainfopo = val['count'];
+                                    this.searchinfopo = this.infopo;
+                                  }
+                                }
                               });
                           }
                         });
-                        console.log(info.No_)
                       this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Line", filter: "[Document No_]=" + "'" + info.No_ + "'" } })
                         .subscribe(val => {
                           let data = val['data'];
-                          console.log(data)
                           for (let i = 0; i < data.length; i++) {
                             const headers = new HttpHeaders()
                               .set("Content-Type", "application/json");
@@ -574,7 +585,6 @@ export class PurchasingorderPage {
                             let batch = moment(data[i]["Expected Receipt Date"]).format('YYMMDD');
                             let code = data[i]["Document No_"] + data[i].No_
                             let qty = parseInt(data[i].Quantity)
-                            console.log(code)
                             this.api.post("table/purchasing_order_detail",
                               {
                                 "code": code,
@@ -591,12 +601,7 @@ export class PurchasingorderPage {
                                 "division": data[i].Division,
                                 "item_category_code": data[i]["Item Category Code"],
                                 "product_group_code": data[i]["Product Group Code"],
-                                "location": "NULL",
                                 "status": 'OPEN',
-                                "status_location": "NULL",
-                                "status_barcode": "NULL",
-                                "pic_location": "NULL",
-                                "pic_barcode": "NULL",
                                 "uuid": this.uuid
                               },
                               { headers })
@@ -962,10 +967,17 @@ export class PurchasingorderPage {
                 this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
                   .subscribe(val => {
                     this.porelease = val['data'];
-                    if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+                    if (this.porelease.length == 0) {
                       this.infopo.push(data[i]);
                       this.totaldatainfopo = val['count'];
                       this.searchinfopo = this.infopo;
+                    }
+                    else if (this.porelease.length) {
+                      if (this.porelease[0].batch_no == '') {
+                        this.infopo.push(data[i]);
+                        this.totaldatainfopo = val['count'];
+                        this.searchinfopo = this.infopo;
+                      }
                     }
                   });
               }
@@ -979,7 +991,6 @@ export class PurchasingorderPage {
   doSendToPicPrepare() {
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
-    console.log(this.orderno)
     this.api.put("table/purchasing_order",
       {
         "order_no": this.orderno,
@@ -1075,7 +1086,6 @@ export class PurchasingorderPage {
       this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_barcode + "'" } })
         .subscribe(val => {
           this.userbarcodetoken = val['data'];
-          console.log(this.userbarcodetoken)
           const headers = new HttpHeaders({
             "Content-Type": "application/json",
             "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
@@ -1136,11 +1146,9 @@ export class PurchasingorderPage {
     }
   }
   doSendNotificationPic(pic) {
-    console.log(pic)
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + pic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
-        console.log(this.usertoken)
         const headers = new HttpHeaders({
           "Content-Type": "application/json",
           "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
@@ -1175,8 +1183,12 @@ export class PurchasingorderPage {
     this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + info.No_ + "'" } })
       .subscribe(val => {
         this.porelease = val['data'];
-        if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
-          this.myFormModal.get('pic').setValue(this.porelease[0].pic);
+        if (this.porelease.length == 0) {
+        }
+        else if (this.porelease.length != 0) {
+          if (this.porelease[0].batch_no == '') {
+            this.myFormModal.get('pic').setValue(this.porelease[0].pic);
+          }
         }
       });
   }

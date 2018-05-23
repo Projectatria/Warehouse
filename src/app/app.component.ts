@@ -22,6 +22,7 @@ export class MyApp {
   private rolearea = '';
   private rolegroup = '';
   public preparation = [];
+  public receiving = [];
   constructor(
     platform: Platform,
     statusBar: StatusBar,
@@ -52,14 +53,35 @@ export class MyApp {
                 limit: 30, filter: "(status='INP2'" + " AND " +
                   "((pic=" + "'" + this.userid + "')" +
                   " OR " +
-                  "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+                  "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
                   " OR " +
-                  "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+                  "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
               }
             })
               .subscribe(val => {
                 this.preparation = val['data'];
                 if (this.preparation.length == 0) {
+                  this.appCtrl.getRootNav().setRoot(HomePage);
+                }
+                else {
+                  let alert = this.alertCtrl.create({
+                    subTitle: 'Notification',
+                    message: 'Anda mempunyai pekerjaan yang belum diselesaikan',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                  this.appCtrl.getRootNav().setRoot('TaskPage');
+                }
+              });
+            this.api.get('table/purchasing_order', {
+              params: {
+                limit: 30, filter: "status='INPG'" + " AND " +
+                  "pic=" + "'" + this.userid + "'"
+              }
+            })
+              .subscribe(val => {
+                this.receiving = val['data'];
+                if (this.receiving.length == 0) {
                   this.appCtrl.getRootNav().setRoot(HomePage);
                 }
                 else {

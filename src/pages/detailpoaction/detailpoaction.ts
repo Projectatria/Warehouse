@@ -540,6 +540,7 @@ export class DetailpoactionPage {
                 });
             }
             else if (this.userid == this.picbarcode) {
+              console.log('barcode')
               const headers = new HttpHeaders()
                 .set("Content-Type", "application/json");
               this.api.put("table/purchasing_order_detail",

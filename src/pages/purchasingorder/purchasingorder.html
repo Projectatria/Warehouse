@@ -12,9 +12,9 @@
 </ion-header>
 <ion-content class="content-menu" no-padding>
   <ion-segment *ngIf="roleid == 'ADMIN'" [(ngModel)]="po">
-    <ion-segment-button value="purchasingorder">
+    <!--<ion-segment-button value="purchasingorder">
       Purchasing Order
-    </ion-segment-button>
+    </ion-segment-button>-->
     <ion-segment-button value="infopo">
       PO Release
     </ion-segment-button>
@@ -36,7 +36,7 @@
 
   <div [ngSwitch]="po">
 
-    <ion-list class="content-list-menu" *ngSwitchCase="'purchasingorder'">
+    <!--<ion-list class="content-list-menu" *ngSwitchCase="'purchasingorder'">
       <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content>
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
@@ -124,7 +124,7 @@
           loadingSpinner="bubbles" loadingText="Loading more data...">
         </ion-infinite-scroll-content>
       </ion-infinite-scroll>
-    </ion-list>
+    </ion-list>-->
 
     <ion-list class="content-list-menu" *ngSwitchCase="'infopo'">
       <ion-refresher (ionRefresh)="doRefreshInfoPO($event)">
@@ -133,17 +133,17 @@
         </ion-refresher-content>
       </ion-refresher>
       <div *ngIf="width < 900" class="android-content">
-        <div>
+        <!-- <div>
           <ion-item no-lines class="toolbar-scroll">Showing {{totaldatainfopo}} entries</ion-item>
-        </div>
+        </div> -->
         <ion-item class="content-data-item" *ngFor="let info of infopo">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailInfoPO(info)">
             <h2>PO No : {{info.No_}}</h2>
-            <br>
-            <ion-note>{{info["Order Date"]}}</ion-note>
+            <p>{{info["Gen_ Bus_ Posting Group"]}}</p>
+            <ion-note>{{info["Order Date"] | date:"dd MMMM yyyy"}}</ion-note>
           </div>
           <button *ngIf="info.Status == 1" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
             <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
@@ -227,16 +227,16 @@
         </ion-refresher-content>
       </ion-refresher>
       <div *ngIf="width < 900" class="android-content">
-        <div>
+        <!-- <div>
           <ion-item no-lines class="toolbar-scroll">Showing {{totaldatapreparation}} entries</ion-item>
-        </div>
+        </div> -->
         <ion-item class="content-data-item" *ngFor="let prepare of preparation">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailPrepare(prepare)">
             <h2>No Order : {{prepare.order_no}}</h2>
-            <ion-note>{{prepare.expected_receipt_date}}</ion-note>
+            <ion-note>{{prepare.expected_receipt_date | date: "dd MMMM yyyy"}}</ion-note>
             <br>
             <ion-note>Status Location: {{prepare.status_location}}</ion-note>
             <br>
@@ -295,7 +295,7 @@
               {{prepare.vendor_no}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
-              {{prepare.expected_receipt_date}}
+              {{prepare.expected_receipt_date | date: "dd MMMM yyyy"}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailPrepare(prepare)">
               {{prepare.status}}

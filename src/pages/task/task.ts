@@ -32,9 +32,9 @@ export class TaskPage {
           limit: 30, filter: "(status='INP2'" + " AND " +
             "((pic=" + "'" + this.userid + "')" +
             " OR " +
-            "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+            "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
             " OR " +
-            "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+            "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
         }
       })
         .subscribe(val => {
@@ -61,9 +61,9 @@ export class TaskPage {
         limit: 30, filter: "(status='INP2'" + " AND " +
           "((pic=" + "'" + this.userid + "')" +
           " OR " +
-          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
           " OR " +
-          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
       }
     })
       .subscribe(val => {
@@ -135,9 +135,9 @@ export class TaskPage {
           limit: 30, filter: "(status='INP2'" + " AND " +
             "((pic=" + "'" + this.userid + "')" +
             " OR " +
-            "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+            "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location ='')" +
             " OR " +
-            "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+            "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode ='')))"
         }
       })
         .subscribe(val => {

@@ -37,7 +37,7 @@
         </ion-avatar>
         <div no-padding>
           <h2>PO No : {{po.order_no}}</h2>
-          <ion-note >Expected Receiving Date : {{po.expected_receipt_date}}</ion-note>
+          <ion-note >Expected Receiving Date : {{po.expected_receipt_date | date: "dd MMMM yyyy"}}</ion-note>
         </div>
       </ion-item>
       <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
