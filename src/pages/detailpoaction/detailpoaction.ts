@@ -241,7 +241,7 @@ export class DetailpoactionPage {
     return this.api.get('table/location_master', {
       params: {
         filter:
-          'location_code=' + "'" + detailpo.location_code + "'" +
+          'location_code=' + "'" + detailpo.location + "'" +
           ' ' + 'AND' + ' ' +
           'division=' + "'" + detailpo.division + "'" +
           ' ' + 'AND' + ' ' +
@@ -465,7 +465,7 @@ export class DetailpoactionPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + detailpo.order_no + "'" + " AND code=" + "'" + detailpo.code + "'"} }).subscribe(val => {
+                  this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + detailpo.order_no + "'" + " AND code=" + "'" + detailpo.code + "'" } }).subscribe(val => {
                     this.podetail = val['data'];
                     if (this.podetail[0].status_location == 'OK' && this.podetail[0].status_barcode == 'OK') {
                       this.getNextNoRCV().subscribe(val => {
@@ -556,7 +556,7 @@ export class DetailpoactionPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + detailpo.order_no + "'" + " AND code=" + "'" + detailpo.code + "'"} }).subscribe(val => {
+                  this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + detailpo.order_no + "'" + " AND code=" + "'" + detailpo.code + "'" } }).subscribe(val => {
                     this.podetail = val['data'];
                     if (this.podetail[0].status_location == 'OK' && this.podetail[0].status_barcode == 'OK') {
                       this.getNextNoRCV().subscribe(val => {

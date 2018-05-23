@@ -16,7 +16,7 @@
       Purchasing Order
     </ion-segment-button>
     <ion-segment-button value="infopo">
-      Info PO
+      PO Release
     </ion-segment-button>
     <ion-segment-button value="preparation">
       Preparation
@@ -46,13 +46,13 @@
         <div>
           <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
         </div>
-        <ion-item class="content-data-item" *ngFor="let po of purchasing_order">
+        <ion-item class="content-data-item" *ngFor="let po of ponav">
           <ion-avatar item-start>
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetail(po)">
-            <h2>No Order : {{po.order_no}}</h2>
-            <ion-note>{{po.expected_receipt_date}}</ion-note>
+            <h2>No Order : {{po.No_}}</h2>
+            <ion-note>{{po["Order Date"] | date:"dd MMMM yyyy"}}</ion-note>
           </div>
           <button item-end ion-button clear color="greenlake" (click)="doOpenOptions(po)">
             <ion-icon name="md-more" style="font-size:30px;"></ion-icon>
@@ -91,19 +91,19 @@
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let po of purchasing_order">
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
-              {{po.order_no}}
+              {{po.No_}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
-              {{po.batch_no}}
+              {{po["Order Date"] | date:"ddMMyy"}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
-              {{po.vendor_status}}
+              {{po["Gen_ Bus_ Posting Group"]}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
-              {{po.vendor_no}}
+              {{po["Buy-from Vendor No_"]}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetail(po)">
-              {{po.expected_receipt_date}}
+              {{po["Order Date"] | date:"dd MMMM yyyy"}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2>
               <button ion-button clear color="greenlake" (click)="doUpdatePO(po)">
@@ -141,15 +141,14 @@
             <img src="assets/imgs/noimage.jpg" alt="">
           </ion-avatar>
           <div no-padding (click)="viewDetailInfoPO(info)">
-            <h2>PO No : {{info.order_no}}</h2>
-            <ion-note>PIC : {{info.pic}}</ion-note>
+            <h2>PO No : {{info.No_}}</h2>
             <br>
-            <ion-note>{{info.expected_receipt_date}}</ion-note>
+            <ion-note>{{info["Order Date"]}}</ion-note>
           </div>
-          <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
+          <button *ngIf="info.Status == 1" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
             <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
           </button>
-          <button *ngIf="info.status == 'INP1'" [disabled]="!info.pic" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
+          <button *ngIf="info.Status == 1" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
             <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
           </button>
         </ion-item>
@@ -189,25 +188,25 @@
           </ion-row>
           <ion-row class="row-content-list" *ngFor="let info of infopo">
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
-              {{info.order_no}}
+              {{info.No_}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
-              {{info.batch_no}}
+              {{info["Order Date"] | date: "ddMMyy"}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
-              {{info.vendor_no}}
+              {{info["Buy-from Vendor No_"]}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
-              {{info.expected_receipt_date}}
+              {{info["Order Date"] | date:"dd MMMM yyyy"}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2 (click)="viewDetailInfoPO(info)">
-              {{info.status}}
+              {{info.Status}}
             </ion-col>
             <ion-col padding class="col-content" col-xl-2>
-              <button *ngIf="info.status == 'INP1'" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
+              <button *ngIf="info.Status == 1" item-end ion-button clear color="greenlake" (click)="doOpenToPIC(info)">
                 <ion-icon name="md-open" style="font-size:30px;"></ion-icon>
               </button>
-              <button *ngIf="info.status == 'INP1'" [disabled]="!info.pic" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
+              <button *ngIf="info.Status == 1" item-end ion-button clear color="greenlake" (click)="doPostingInfoPO(info)">
                 <ion-icon name="md-checkmark-circle-outline" style="font-size:30px;"></ion-icon>
               </button>
             </ion-col>
@@ -369,7 +368,7 @@
     </div>
   </div>
 </ion-content>
-<div [ngSwitch]="po">
+<!--<div [ngSwitch]="po">
   <ion-fab *ngSwitchCase="'purchasingorder'" class="fixed-div" bottom right>
     <button ion-fab color="greenlake">
       <ion-icon name="md-apps"></ion-icon>
@@ -386,4 +385,4 @@
       </button>
     </ion-fab-list>
   </ion-fab>
-</div>
+</div>-->

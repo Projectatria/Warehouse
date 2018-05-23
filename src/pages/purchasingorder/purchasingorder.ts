@@ -9,6 +9,7 @@ import moment from 'moment';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { UUID } from 'angular2-uuid';
 
 @IonicPage()
 @Component({
@@ -56,6 +57,8 @@ export class PurchasingorderPage {
   public loader: any;
   public statussendlocation = '';
   public statussendbarcode = '';
+  public uuid = '';
+  public porelease = [];
 
   constructor(
     public navCtrl: NavController,
@@ -99,14 +102,18 @@ export class PurchasingorderPage {
       this.storage.get('userid').then((val) => {
         this.userid = val;
         console.log(this.userid)
-        this.api.get('table/purchasing_order', 
-        { params: { limit: 30, filter: 
-          "(status='INP2'" + " AND " + 
-          "((pic=" + "'" + this.userid + "')" + 
-          " OR " + 
-          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
-          " OR " + 
-          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } })
+        this.api.get('table/purchasing_order',
+          {
+            params: {
+              limit: 30, filter:
+                "(status='INP2'" + " AND " +
+                "((pic=" + "'" + this.userid + "')" +
+                " OR " +
+                "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+                " OR " +
+                "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+            }
+          })
           .subscribe(val => {
             this.preparation = val['data'];
           });
@@ -151,7 +158,7 @@ export class PurchasingorderPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offset, filter: "status='OPEN'" } })
+        this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", offset: offset, sort: "[Order Date]" + " DESC " } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -176,13 +183,19 @@ export class PurchasingorderPage {
       }
       else {
         this.halamaninfopo++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetinfopo, filter: "status='INP1'" } })
+        this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", offset: offsetinfopo, sort: "[Order Date]" + " DESC " } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
-              this.infopo.push(data[i]);
-              this.totaldatainfopo = val['count'];
-              this.searchinfopo = this.infopo;
+              this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
+                .subscribe(val => {
+                  this.porelease = val['data'];
+                  if (this.porelease.length == 0) {
+                    this.infopo.push(data[i]);
+                    this.totaldatainfopo = val['count'];
+                    this.searchinfopo = this.infopo;
+                  }
+                });
             }
             if (data.length == 0) {
               this.halamaninfopo = -1
@@ -201,12 +214,16 @@ export class PurchasingorderPage {
       }
       else {
         this.halamanpreparation++;
-        this.api.get('table/purchasing_order', { params: { limit: 30, offset: offsetprepare, filter: "(status='INP2'" + " AND " + 
-        "((pic=" + "'" + this.userid + "')" + 
-        " OR " + 
-        "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
-        " OR " + 
-        "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } })
+        this.api.get('table/purchasing_order', {
+          params: {
+            limit: 30, offset: offsetprepare, filter: "(status='INP2'" + " AND " +
+              "((pic=" + "'" + this.userid + "')" +
+              " OR " +
+              "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+              " OR " +
+              "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+          }
+        })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -230,7 +247,7 @@ export class PurchasingorderPage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.purchasing_order = this.searchpo.filter(po => {
-        return po.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+        return po["No_"].toLowerCase().indexOf(val.toLowerCase()) > -1;
       })
     } else {
       this.purchasing_order = this.searchpo;
@@ -243,7 +260,7 @@ export class PurchasingorderPage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.infopo = this.searchinfopo.filter(infopo => {
-        return infopo.order_no.toLowerCase().indexOf(val.toLowerCase()) > -1;
+        return infopo.No_.toLowerCase().indexOf(val.toLowerCase()) > -1;
       })
     } else {
       this.infopo = this.searchinfopo;
@@ -268,19 +285,19 @@ export class PurchasingorderPage {
   };
   viewDetail(po) {
     this.navCtrl.push('DetailpoPage', {
-      orderno: po.order_no,
-      batchno: po.batch_no,
-      locationcode: po.location_code,
-      expectedreceiptdate: po.expected_receipt_date
+      orderno: po.No_,
+      batchno: po["Order Date"],
+      locationcode: po["Location Code"],
+      expectedreceiptdate: po["Order Date"]
     });
   }
   viewDetailInfoPO(info) {
-    this.navCtrl.push('DetailpoactionPage', {
-      orderno: info.order_no,
-      batchno: info.batch_no,
-      locationcode: info.location_code,
-      expectedreceiptdate: info.expected_receipt_date,
-      status: info.status
+    this.navCtrl.push('DetailpoPage', {
+      orderno: info.No_,
+      batchno: info["Order Date"],
+      locationcode: info["Location Code"],
+      expectedreceiptdate: info["Order Date"],
+      status: info.Status
     });
   }
 
@@ -355,11 +372,12 @@ export class PurchasingorderPage {
             this.api.delete("table/purchasing_order", { params: { filter: 'order_no=' + "'" + po.order_no + "'" }, headers })
               .subscribe(
                 (val) => {
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
-                    this.purchasing_order = val['data'];
-                    this.totaldata = val['count'];
-                    this.searchpo = this.purchasing_order;
-                  });
+                  this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } })
+                    .subscribe(val => {
+                      this.purchasing_order = val['data'];
+                      this.totaldata = val['count'];
+                      this.searchpo = this.purchasing_order;
+                    });
                 },
                 response => {
 
@@ -374,7 +392,7 @@ export class PurchasingorderPage {
     alert.present();
   }
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       this.searchpo = this.purchasing_order;
@@ -382,21 +400,26 @@ export class PurchasingorderPage {
     });
   }
   doRefreshInfoPO(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP1'" } }).subscribe(val => {
-      this.infopo = val['data'];
-      this.totaldatainfopo = val['count'];
-      this.searchinfopo = this.infopo;
-      refresher.complete();
-    });
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } })
+      .subscribe(val => {
+        this.infopo = val['data'];
+        this.totaldatainfopo = val['count'];
+        this.searchinfopo = this.infopo;
+        refresher.complete();
+      });
   }
 
   doRefreshPrepare(refresher) {
-    this.api.get("table/purchasing_order", { params: { limit: 30, filter: "(status='INP2'" + " AND " + 
-    "((pic=" + "'" + this.userid + "')" + 
-    " OR " + 
-    "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" + 
-    " OR " + 
-    "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))" } }).subscribe(val => {
+    this.api.get("table/purchasing_order", {
+      params: {
+        limit: 30, filter: "(status='INP2'" + " AND " +
+          "((pic=" + "'" + this.userid + "')" +
+          " OR " +
+          "(pic_lokasi=" + "'" + this.userid + "'" + " AND status_location IS NULL)" +
+          " OR " +
+          "(pic_barcode=" + "'" + this.userid + "'" + " AND status_barcode IS NULL)))"
+      }
+    }).subscribe(val => {
       this.preparation = val['data'];
       this.totaldatapreparation = val['count'];
       this.searchpreparation = this.preparation;
@@ -450,7 +473,7 @@ export class PurchasingorderPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
+                  this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
                     this.purchasing_order = val['data'];
                     this.totaldata = val['count'];
                     this.searchpo = this.purchasing_order;
@@ -472,7 +495,7 @@ export class PurchasingorderPage {
   doPostingInfoPO(info) {
     let alert = this.alertCtrl.create({
       title: 'Confirm Posting',
-      message: 'Do you want to posting Order No ' + info.order_no + ' ?',
+      message: 'Do you want to posting Order No ' + info.No_ + ' ?',
       buttons: [
         {
           text: 'Cancel',
@@ -486,23 +509,41 @@ export class PurchasingorderPage {
           handler: () => {
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
-
+            let batch = moment(info["Order Date"]).format('YYMMDD');
             this.api.put("table/purchasing_order",
               {
-                "order_no": info.order_no,
-                "status": 'INP2'
+                "order_no": info.No_,
+                "batch_no": batch,
+                "vendor_no": info["Buy-from Vendor No_"],
+                "vendor_status": info["Gen_ Bus_ Posting Group"],
+                "expected_receipt_date": info["Order Date"],
+                "location_code": info["Location Code"],
+                "pic_lokasi": 'NULL',
+                "status_send_pic_lokasi": 'NULL',
+                "pic_barcode": 'NULL',
+                "status_send_pic_barcode": 'NULL',
+                "status": 'INP2',
+                "status_location": 'NULL',
+                "status_barcode": 'NULL',
+                "position": 'NULL',
+                "total_item_post": 0
               },
               { headers })
               .subscribe(
                 (val) => {
-                  this.doSendNotificationPic(info)
+                  this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + info.No_ + "'" } })
+                    .subscribe(val => {
+                      this.porelease = val['data'];
+                      let pic = this.porelease[0].pic;
+                      this.doSendNotificationPic(pic)
+                    });
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
                     subTitle: 'Posting Sukses',
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP1'" } }).subscribe(val => {
+                  this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
                     this.infopo = val['data'];
                     this.totaldatainfopo = val['count'];
                     this.searchinfopo = this.infopo;
@@ -550,7 +591,7 @@ export class PurchasingorderPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP1'" } }).subscribe(val => {
+                  this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
                     this.infopo = val['data'];
                     this.totaldatainfopo = val['count'];
                     this.searchinfopo = this.infopo;
@@ -608,7 +649,7 @@ export class PurchasingorderPage {
                             buttons: ['OK']
                           });
                           alert.present();
-                          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
+                          this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
                             this.purchasing_order = val['data'];
                             this.totaldata = val['count'];
                             this.searchpo = this.purchasing_order;
@@ -668,7 +709,7 @@ export class PurchasingorderPage {
                     this.api.delete("table/purchasing_order", { params: { filter: 'order_no=' + "'" + po.order_no + "'" }, headers })
                       .subscribe(
                         (val) => {
-                          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
+                          this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
                             this.purchasing_order = val['data'];
                             this.totaldata = val['count'];
                             this.searchpo = this.purchasing_order;
@@ -715,7 +756,7 @@ export class PurchasingorderPage {
     else {
       this.sortPO = 'ASC'
     }
-    this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'", sort: filter + " " + this.sortPO + " " } }).subscribe(val => {
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: filter + " " + this.sortPO + " " } }).subscribe(val => {
       this.purchasing_order = val['data'];
       this.totaldata = val['count'];
       this.filter = filter
@@ -728,7 +769,7 @@ export class PurchasingorderPage {
     else {
       this.sortInfoPO = 'ASC'
     }
-    this.api.get("table/purchasing_order", { params: { filter: "status='INP1'", sort: filter + " " + this.sortInfoPO + " " } }).subscribe(val => {
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: filter + " " + this.sortInfoPO + " " } }).subscribe(val => {
       this.infopo = val['data'];
       this.totaldatainfopo = val['count'];
       this.filter = filter
@@ -749,13 +790,13 @@ export class PurchasingorderPage {
   }
   selectdatePO(datearrivalPO) {
     if (datearrivalPO == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'" } }).subscribe(val => {
+      this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
         this.purchasing_order = val['data'];
         this.totaldata = val['count'];
       });
     }
     else {
-      this.api.get("table/purchasing_order", { params: { filter: "status='OPEN'" + " AND " + "transfer_date=" + "'" + datearrivalPO + "'" } }).subscribe(val => {
+      this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=0 AND [Document Type]=1" + " AND " + "[Order Date]" + "'" + datearrivalPO + "'" } }).subscribe(val => {
         this.purchasing_order = val['data'];
         this.totaldata = val['count'];
       });
@@ -763,13 +804,13 @@ export class PurchasingorderPage {
   }
   selectdateInfoPO(datearrivalInfoPO) {
     if (datearrivalInfoPO == '') {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" } }).subscribe(val => {
+      this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
       });
     }
     else {
-      this.api.get("table/purchasing_order", { params: { filter: "status='INP1'" + " AND " + "transfer_date=" + "'" + datearrivalInfoPO + "'" } }).subscribe(val => {
+      this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1" + " AND " + "[Order Date]=" + "'" + datearrivalInfoPO + "'" } }).subscribe(val => {
         this.infopo = val['data'];
         this.totaldatainfopo = val['count'];
       });
@@ -801,9 +842,9 @@ export class PurchasingorderPage {
   }
   doOpenToPIC(info) {
     this.getUsers();
-    this.myFormModal.get('pic').setValue(info.pic);
+    this.getInfoPORelease(info);
     document.getElementById("myModalPic").style.display = "block";
-    this.orderno = info.order_no;
+    this.orderno = info.No_;
   }
   doOpenToPICPrepare(prepare) {
     this.getUsersStaff();
@@ -828,11 +869,13 @@ export class PurchasingorderPage {
   doSendToPic() {
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
-
-    this.api.put("table/purchasing_order",
+    let uuid = UUID.UUID();
+    this.uuid = uuid;
+    this.api.post("table/purchasing_order",
       {
         "order_no": this.orderno,
-        "pic": this.myFormModal.value.pic
+        "pic": this.myFormModal.value.pic,
+        "uuid": this.uuid
       },
       { headers })
       .subscribe(
@@ -845,7 +888,11 @@ export class PurchasingorderPage {
             buttons: ['OK']
           });
           alert.present();
-          this.api.get("table/purchasing_order", { params: { limit: 30, filter: "status='INP1'" } }).subscribe(val => {
+          this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + this.orderno + "'" } })
+            .subscribe(val => {
+              this.porelease = val['data'];
+            });
+          this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
             this.infopo = val['data'];
             this.totaldatainfopo = val['count'];
             this.searchinfopo = this.infopo;
@@ -889,7 +936,7 @@ export class PurchasingorderPage {
         });
   }
   doSendPrepare(prepare) {
-    if (prepare.pic_lokasi != '' && prepare.status_send_pic_lokasi !='OK') {
+    if (prepare.pic_lokasi != '' && prepare.status_send_pic_lokasi != 'OK') {
       this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_lokasi + "'" } })
         .subscribe(val => {
           this.userlokasitoken = val['data'];
@@ -951,7 +998,7 @@ export class PurchasingorderPage {
       });
       alert.present();
     }
-    if (prepare.pic_barcode != '' && prepare.status_send_pic_barcode !='OK') {
+    if (prepare.pic_barcode != '' && prepare.status_send_pic_barcode != 'OK') {
       this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_barcode + "'" } })
         .subscribe(val => {
           this.userbarcodetoken = val['data'];
@@ -1015,9 +1062,9 @@ export class PurchasingorderPage {
       alert.present();
     }
   }
-  doSendNotificationPic(info) {
-    console.log(info)
-    this.api.get("table/user", { params: { filter: "id_user=" + "'" + info.pic + "'" } })
+  doSendNotificationPic(pic) {
+    console.log(pic)
+    this.api.get("table/user", { params: { filter: "id_user=" + "'" + pic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
         console.log(this.usertoken)
@@ -1050,6 +1097,15 @@ export class PurchasingorderPage {
           });
       });
 
+  }
+  getInfoPORelease(info) {
+    this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + info.No_ + "'" } })
+      .subscribe(val => {
+        this.porelease = val['data'];
+        if (this.porelease.length != 0) {
+          this.myFormModal.get('pic').setValue(this.porelease[0].pic);
+        }
+      });
   }
 
 }

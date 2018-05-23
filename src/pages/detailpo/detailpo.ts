@@ -57,7 +57,7 @@ export class DetailpoPage {
     });
   }
   getPOD() {
-    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Line", filter: "[Document No_]=" + "'" + this.orderno + "'"} }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
     })
@@ -70,7 +70,7 @@ export class DetailpoPage {
       }
       else {
         this.halaman++;
-        this.api.get('table/purchasing_order_detail', { params: { limit: 30, offset: offset, filter: 'order_no=' + "'" + this.orderno + "'" } })
+        this.api.get("tablenav", { params: { limit: 30, offset: offset, table: "CSB_LIVE$Purchase Line", filter: "[Document No_]=" + "'" + this.orderno + "'"} })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -171,7 +171,7 @@ export class DetailpoPage {
                     },
                     { headers })
                     .subscribe();
-                  this.api.get("table/purchasing_order_detail", { params: { limit: 30, filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+                    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Line", filter: "[Document No_]=" + "'" + this.orderno + "'"} }).subscribe(val => {
                     this.purchasing_order_detail = val['data'];
                     this.totaldata = val['count'];
                     this.searchpodetail = this.purchasing_order_detail;
@@ -188,7 +188,7 @@ export class DetailpoPage {
     alert.present();
   }
   doRefresh(refresher) {
-    this.api.get("table/purchasing_order_detail", { params: { filter: 'order_no=' + "'" + this.orderno + "'" } }).subscribe(val => {
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Line", filter: "[Document No_]=" + "'" + this.orderno + "'"} }).subscribe(val => {
       this.purchasing_order_detail = val['data'];
       this.totaldata = val['count'];
       this.searchpodetail = this.purchasing_order_detail;
