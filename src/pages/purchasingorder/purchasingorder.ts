@@ -190,7 +190,7 @@ export class PurchasingorderPage {
               this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
                 .subscribe(val => {
                   this.porelease = val['data'];
-                  if (this.porelease.length == 0) {
+                  if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
                     this.infopo.push(data[i]);
                     this.totaldatainfopo = val['count'];
                     this.searchinfopo = this.infopo;
@@ -402,9 +402,18 @@ export class PurchasingorderPage {
   doRefreshInfoPO(refresher) {
     this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } })
       .subscribe(val => {
-        this.infopo = val['data'];
-        this.totaldatainfopo = val['count'];
-        this.searchinfopo = this.infopo;
+        let data = val['data'];
+        for (let i = 0; i < data.length; i++) {
+          this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
+            .subscribe(val => {
+              this.porelease = val['data'];
+              if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+                this.infopo.push(data[i]);
+                this.totaldatainfopo = val['count'];
+                this.searchinfopo = this.infopo;
+              }
+            });
+        }
         refresher.complete();
       });
   }
@@ -518,14 +527,14 @@ export class PurchasingorderPage {
                 "vendor_status": info["Gen_ Bus_ Posting Group"],
                 "expected_receipt_date": info["Order Date"],
                 "location_code": info["Location Code"],
-                "pic_lokasi": 'NULL',
-                "status_send_pic_lokasi": 'NULL',
-                "pic_barcode": 'NULL',
-                "status_send_pic_barcode": 'NULL',
+                "pic_lokasi": "NULL",
+                "status_send_pic_lokasi": "NULL",
+                "pic_barcode": "NULL",
+                "status_send_pic_barcode": "NULL",
                 "status": 'INP2',
-                "status_location": 'NULL',
-                "status_barcode": 'NULL',
-                "position": 'NULL',
+                "status_location": "NULL",
+                "status_barcode": "NULL",
+                "position": "NULL",
                 "total_item_post": 0
               },
               { headers })
@@ -536,6 +545,66 @@ export class PurchasingorderPage {
                       this.porelease = val['data'];
                       let pic = this.porelease[0].pic;
                       this.doSendNotificationPic(pic)
+                      this.infopo = [];
+                      this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } })
+                        .subscribe(val => {
+                          let data = val['data'];
+                          for (let i = 0; i < data.length; i++) {
+                            this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
+                              .subscribe(val => {
+                                this.porelease = val['data'];
+                                if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+                                  this.infopo.push(data[i]);
+                                  this.totaldatainfopo = val['count'];
+                                  this.searchinfopo = this.infopo;
+                                }
+                              });
+                          }
+                        });
+                        console.log(info.No_)
+                      this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Line", filter: "[Document No_]=" + "'" + info.No_ + "'" } })
+                        .subscribe(val => {
+                          let data = val['data'];
+                          console.log(data)
+                          for (let i = 0; i < data.length; i++) {
+                            const headers = new HttpHeaders()
+                              .set("Content-Type", "application/json");
+                            let uuid = UUID.UUID();
+                            this.uuid = uuid;
+                            let batch = moment(data[i]["Expected Receipt Date"]).format('YYMMDD');
+                            let code = data[i]["Document No_"] + data[i].No_
+                            let qty = parseInt(data[i].Quantity)
+                            console.log(code)
+                            this.api.post("table/purchasing_order_detail",
+                              {
+                                "code": code,
+                                "order_no": data[i]["Document No_"],
+                                "batch_no": batch,
+                                "item_no": data[i].No_,
+                                "location_code": data[i]["Location Code"],
+                                "expected_receipt_date": data[i]["Expected Receipt Date"],
+                                "description": data[i].Description,
+                                "unit": data[i]["Unit of Measure"],
+                                "qty": qty,
+                                "vendor_no": data[i]["Buy-from Vendor No_"],
+                                "vendor_status": data[i]["Gen_ Bus_ Posting Group"],
+                                "division": data[i].Division,
+                                "item_category_code": data[i]["Item Category Code"],
+                                "product_group_code": data[i]["Product Group Code"],
+                                "location": "NULL",
+                                "status": 'OPEN',
+                                "status_location": "NULL",
+                                "status_barcode": "NULL",
+                                "pic_location": "NULL",
+                                "pic_barcode": "NULL",
+                                "uuid": this.uuid
+                              },
+                              { headers })
+                              .subscribe(
+                                (val) => {
+                                });
+                          }
+                        });
                     });
                   let alert = this.alertCtrl.create({
                     title: 'Sukses',
@@ -543,12 +612,6 @@ export class PurchasingorderPage {
                     buttons: ['OK']
                   });
                   alert.present();
-                  this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
-                    this.infopo = val['data'];
-                    this.totaldatainfopo = val['count'];
-                    this.searchinfopo = this.infopo;
-                  });
-
                 },
                 response => {
                 },
@@ -892,11 +955,21 @@ export class PurchasingorderPage {
             .subscribe(val => {
               this.porelease = val['data'];
             });
-          this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } }).subscribe(val => {
-            this.infopo = val['data'];
-            this.totaldatainfopo = val['count'];
-            this.searchinfopo = this.infopo;
-          });
+          this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } })
+            .subscribe(val => {
+              let data = val['data'];
+              for (let i = 0; i < data.length; i++) {
+                this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + data[i].No_ + "'" } })
+                  .subscribe(val => {
+                    this.porelease = val['data'];
+                    if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
+                      this.infopo.push(data[i]);
+                      this.totaldatainfopo = val['count'];
+                      this.searchinfopo = this.infopo;
+                    }
+                  });
+              }
+            });
         },
         response => {
         },
@@ -1102,7 +1175,7 @@ export class PurchasingorderPage {
     this.api.get("table/purchasing_order", { params: { filter: "order_no=" + "'" + info.No_ + "'" } })
       .subscribe(val => {
         this.porelease = val['data'];
-        if (this.porelease.length != 0) {
+        if (this.porelease.length == 0 || (this.porelease && this.porelease[0].batch_no == '')) {
           this.myFormModal.get('pic').setValue(this.porelease[0].pic);
         }
       });
