@@ -73,7 +73,7 @@ export class MyApp {
                   this.appCtrl.getRootNav().setRoot('TaskPage');
                 }
               });
-            this.api.get('table/purchasing_order', {
+            /*this.api.get('table/purchasing_order', {
               params: {
                 limit: 30, filter: "status='INPG'" + " AND " +
                   "pic=" + "'" + this.userid + "'"
@@ -93,7 +93,7 @@ export class MyApp {
                   alert.present();
                   this.appCtrl.getRootNav().setRoot('TaskPage');
                 }
-              });
+              });*/
           });
         }
       });

@@ -191,7 +191,7 @@ export class DetailpoactionPage {
         itemno: detailpo.item_no,
         qty: detailpo.qty,
         receivingpic: detailpo.receiving_pic,
-        locationplan: detailpo.position,
+        locationplan: detailpo.location,
         status: detailpo.status
       },
       { cssClass: "modal-fullscreen" });
@@ -216,32 +216,27 @@ export class DetailpoactionPage {
     this.item = detailpo.item_no;
     this.position = detailpo.location;
     this.qty = detailpo.qty;
-    return new Promise(resolve => {
-      this.getLocations(detailpo).subscribe(val => {
-        let data = val['data'];
-        for (let i = 0; i < data.length; i++) {
-          this.locations.push(data[i]);
-          this.totaldatalocation = val['count'];
-        }
-        if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
-          this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
-          document.getElementById("myModal").style.display = "block";
-          this.receivingno = detailpo.code;
-        }
-        else {
-          this.myFormModal.get('location').setValue(detailpo.position);
-          document.getElementById("myModal").style.display = "block";
-          this.receivingno = detailpo.code;
-        }
-        resolve();
-      });
+    this.getLocations(detailpo).subscribe(val => {
+      this.locations = val['data'];
+      console.log(this.locations)
+      if (detailpo.location == '' && this.status == 'INP2' && this.locations.length) {
+        this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
+        document.getElementById("myModal").style.display = "block";
+        this.receivingno = detailpo.code;
+      }
+      else {
+        this.myFormModal.get('location').setValue(detailpo.location);
+        document.getElementById("myModal").style.display = "block";
+        this.receivingno = detailpo.code;
+      }
     });
   }
   getLocations(detailpo) {
+    console.log(detailpo.location_code, detailpo.division)
     return this.api.get('table/location_master', {
       params: {
         filter:
-          'location_code=' + "'" + detailpo.location + "'" +
+          'location_code=' + "'" + detailpo.location_code + "'" +
           ' ' + 'AND' + ' ' +
           'division=' + "'" + detailpo.division + "'" +
           ' ' + 'AND' + ' ' +
@@ -481,7 +476,7 @@ export class DetailpoactionPage {
                             "order_no": detailpo.order_no,
                             "batch_no": detailpo.batch_no,
                             "item_no": detailpo.item_no,
-                            "location_code": detailpo.location_code,
+                            "location_code": '81003',
                             "expected_receipt_date": detailpo.expected_receipt_date,
                             "description": detailpo.description,
                             "unit": detailpo.unit,
@@ -663,13 +658,13 @@ export class DetailpoactionPage {
                   this.locations.push(data[i]);
                   this.totaldatalocation = val['count'];
                 }
-                if (detailpo.position == '' && this.status == 'INP2' && this.locations.length) {
+                if (detailpo.location == '' && this.status == 'INP2' && this.locations.length) {
                   this.myFormModal.get('location').setValue(this.locations[0].location_alocation);
                   document.getElementById("myModal").style.display = "block";
                   this.receivingno = detailpo.code;
                 }
                 else {
-                  this.myFormModal.get('location').setValue(detailpo.position);
+                  this.myFormModal.get('location').setValue(detailpo.location);
                   document.getElementById("myModal").style.display = "block";
                   this.receivingno = detailpo.code;
                 }

@@ -550,6 +550,7 @@ export class PurchasingorderPage {
                     .subscribe(val => {
                       this.porelease = val['data'];
                       let pic = this.porelease[0].pic;
+                      console.log(pic)
                       this.doSendNotificationPic(pic)
                       this.infopo = [];
                       this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Purchase Header", filter: "Status=1 AND [Document Type]=1", sort: "[Order Date]" + " DESC " } })
@@ -1074,14 +1075,6 @@ export class PurchasingorderPage {
             });
         });
     }
-    else {
-      let alert = this.alertCtrl.create({
-        title: 'Error',
-        subTitle: 'User location dan user barcode belum diisi!',
-        buttons: ['OK']
-      });
-      alert.present();
-    }
     if (prepare.pic_barcode != '' && prepare.status_send_pic_barcode != 'OK') {
       this.api.get("table/user", { params: { filter: "id_user=" + "'" + prepare.pic_barcode + "'" } })
         .subscribe(val => {
@@ -1136,19 +1129,13 @@ export class PurchasingorderPage {
             });
         });
     }
-    else {
-      let alert = this.alertCtrl.create({
-        title: 'Error',
-        subTitle: 'User location dan user barcode belum diisi!',
-        buttons: ['OK']
-      });
-      alert.present();
-    }
   }
   doSendNotificationPic(pic) {
+    console.log(pic)
     this.api.get("table/user", { params: { filter: "id_user=" + "'" + pic + "'" } })
       .subscribe(val => {
         this.usertoken = val['data'];
+        console.log(this.usertoken)
         const headers = new HttpHeaders({
           "Content-Type": "application/json",
           "Authorization": "key=AAAAtsHtkUc:APA91bF8isugU-XkNTVVYVC-eQQJxn1UI4wBqUcbuXNvh2yUAS3CfDCxDB8himPNr4wJx8f5KPezZpY_jpTr8_WegNEiJ1McJAriwYJZ5iOv0Q1X6CXnDn_xZeGbWX-V6DnPk7XImX5L"
