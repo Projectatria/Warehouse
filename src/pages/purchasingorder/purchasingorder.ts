@@ -539,7 +539,7 @@ export class PurchasingorderPage {
                 "vendor_no": info["Buy-from Vendor No_"],
                 "vendor_status": info["Gen_ Bus_ Posting Group"],
                 "expected_receipt_date": info["Order Date"],
-                "location_code": info["Location Code"],
+                "location_code": '81003',
                 "status": 'INP2',
                 "total_item_post": 0
               },
@@ -592,7 +592,7 @@ export class PurchasingorderPage {
                                 "order_no": data[i]["Document No_"],
                                 "batch_no": batch,
                                 "item_no": data[i].No_,
-                                "location_code": data[i]["Location Code"],
+                                "location_code": '81003',
                                 "expected_receipt_date": data[i]["Expected Receipt Date"],
                                 "description": data[i].Description,
                                 "unit": data[i]["Unit of Measure"],

@@ -94,7 +94,8 @@ export class MovementPage {
   }
   ionViewDidLoad() {
   }
-  doOpenQty(barcodeno) {
+  doOpenQty() {
+    let barcodeno = this.myForm.value.barcodeno
     var batchno = barcodeno.substring(0, 6);
     var itemno = barcodeno.substring(6, 14);
     this.api.get('table/putaway', { params: { limit: 30, filter: "batch_no=" + "'" + batchno + "'" + ' AND ' + "item_no=" + "'" + itemno + "'" + ' AND ' + "status='OPEN'" } })

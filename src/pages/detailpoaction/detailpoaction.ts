@@ -443,7 +443,7 @@ export class DetailpoactionPage {
         {
           text: 'Posting',
           handler: () => {
-            if (this.userid == this.piclokasi) {
+            if (this.userid == this.piclokasi && detailpo.status_location == '') {
               const headers = new HttpHeaders()
                 .set("Content-Type", "application/json");
               this.api.put("table/purchasing_order_detail",
@@ -534,7 +534,7 @@ export class DetailpoactionPage {
                   this.getPOD();
                 });
             }
-            else if (this.userid == this.picbarcode) {
+            else if (this.userid == this.picbarcode && detailpo.status_barcode == '') {
               console.log('barcode')
               const headers = new HttpHeaders()
                 .set("Content-Type", "application/json");
@@ -640,7 +640,7 @@ export class DetailpoactionPage {
           icon: 'md-checkmark-circle-outline',
           text: 'Posting',
           handler: () => {
-
+            this.doPostingRCV(detailpo);
           }
         },
         {

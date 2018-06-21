@@ -174,7 +174,7 @@ export class ReceivingdetailupdatePage {
         headers: {}
       }
 
-      let url = "http://10.10.10.7/webapi5/api/Upload";
+      let url = "http://10.10.10.7/serverapi/api/Upload";
       fileTransfer.upload(this.imageURI, url, options)
         .then((data) => {
           loader.dismiss();

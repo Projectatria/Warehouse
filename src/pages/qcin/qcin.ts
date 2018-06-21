@@ -260,7 +260,7 @@ export class QcinPage {
                             },
                             { headers })
                             .subscribe(val => {
-                              this.api.get('table/staging_in', { params: {filter: "qty_qc!=0" } })
+                              this.api.get('table/staging_in', { params: { filter: "qty_qc!=0" } })
                                 .subscribe(val => {
                                   this.staging_in = val['data'];
                                   this.totaldata = val['count'];
@@ -297,7 +297,7 @@ export class QcinPage {
                         },
                         { headers })
                         .subscribe(val => {
-                          this.api.get('table/staging_in', { params: {filter: "qty_qc!=0" } })
+                          this.api.get('table/staging_in', { params: { filter: "qty_qc!=0" } })
                             .subscribe(val => {
                               this.staging_in = val['data'];
                               this.totaldata = val['count'];
@@ -330,7 +330,7 @@ export class QcinPage {
   }
   getQCResult(myqc) {
     return new Promise(resolve => {
-      this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + myqc.qc_no + "'" } }).subscribe(val => {
+      this.api.get("table/qc_in_result", { params: { limit: 1000, filter: 'qc_no=' + "'" + myqc.qc_no + "'" } }).subscribe(val => {
         this.qcresult = val['data'];
         this.totaldataqcresult = val['count'];
         resolve();
@@ -338,105 +338,129 @@ export class QcinPage {
     });
   }
   doChecked() {
-    cordova.plugins.pm80scanner.scan(result => {
-      var barcodeno = result;
-      var batchno = barcodeno.substring(0, 6);
-      var itemno = barcodeno.substring(6, 14);
-      this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "batch_no=" + "'" + batchno + "'" + " AND " + "item_no=" + "'" + itemno + "'" + " AND " + "status='OPEN'" } })
-        .subscribe(val => {
-          this.qcinbarcode = val['data'];
-          if (this.qcinbarcode.length == 0) {
-            let alert = this.alertCtrl.create({
-              title: 'Error',
-              subTitle: 'Data Not Found In My QC',
-              buttons: ['OK']
-            });
-            alert.present();
+    /*cordova.plugins.pm80scanner.scan(result => {*/
+    let alert = this.alertCtrl.create({
+      title: 'Input Barcode Number',
+      inputs: [
+        {
+          name: 'barcodeno',
+          placeholder: 'Barcode Number'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
           }
-          else {
-            this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcinbarcode[0].qc_no + "'" } }).subscribe(val => {
-              this.qcresult = val['data'];
-              this.totaldataqcresult = val['count'];
-              if (this.qcinbarcode.length == 0) {
-                let alert = this.alertCtrl.create({
-                  title: 'Error',
-                  subTitle: 'Data Not Found In My QC',
-                  buttons: ['OK']
-                });
-                alert.present();
-              }
-              else if (this.totaldataqcresult == this.qcinbarcode[0].qty) {
-                let alert = this.alertCtrl.create({
-                  title: 'Error',
-                  subTitle: 'Data Already Create',
-                  buttons: ['OK']
-                });
-                alert.present();
-              }
-              else {
-                let alert = this.alertCtrl.create({
-                  title: 'Confirm Start',
-                  message: 'Do you want to QC Now?',
-                  buttons: [
-                    {
-                      text: 'Cancel',
-                      role: 'cancel',
-                      handler: () => {
-                      }
-                    },
-                    {
-                      text: 'Start',
-                      handler: () => {
-                        this.getNextNoQCResult().subscribe(val => {
-                          let time = moment().format('HH:mm:ss');
-                          let date = moment().format('YYYY-MM-DD');
-                          let uuid = UUID.UUID();
-                          this.nextnoqcresult = val['nextno'];
-                          const headers = new HttpHeaders()
-                            .set("Content-Type", "application/json");
-                          this.api.post("table/qc_in_result",
-                            {
-                              "qc_result_no": this.nextnoqcresult,
-                              "qc_no": this.qcinbarcode[0].qc_no,
-                              "batch_no": this.qcinbarcode[0].batch_no,
-                              "item_no": this.qcinbarcode[0].item_no,
-                              "date_start": date,
-                              "date_finish": date,
-                              "time_start": time,
-                              "time_finish": time,
-                              "qc_pic": 'AJI',
-                              "qty_receiving": 25,
-                              "unit": this.qcinbarcode[0].unit,
-                              "qc_status": "OPEN",
-                              "qc_description": "",
-                              "uuid": uuid
-                            },
-                            { headers })
-                            .subscribe(val => {
-                              document.getElementById("myQCChecking").style.display = "block";
-                              document.getElementById("myBTNChecking").style.display = "block";
-                              document.getElementById("myHeader").style.display = "none";
-                              this.button = true;
-                              this.uuidqcresult = uuid;
-                              this.qcnoresult = this.nextnoqcresult;
-                              this.qcno = this.qcinbarcode[0].qc_no
-                              this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + this.uuidqcresult + "'" } }).subscribe(val => {
-                                this.photos = val['data'];
-                                this.totalphoto = val['count'];
-                              });
-                            })
-                        });
-                      }
+        },
+        {
+          text: 'OK',
+          handler: data => {
+            var barcodeno = data.barcodeno;
+            var batchno = barcodeno.substring(0, 6);
+            var itemno = barcodeno.substring(6, 14);
+            this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "batch_no=" + "'" + batchno + "'" + " AND " + "item_no=" + "'" + itemno + "'" + " AND " + "status='OPEN'" } })
+              .subscribe(val => {
+                this.qcinbarcode = val['data'];
+                if (this.qcinbarcode.length == 0) {
+                  let alert = this.alertCtrl.create({
+                    title: 'Error',
+                    subTitle: 'Data Not Found In My QC',
+                    buttons: ['OK']
+                  });
+                  alert.present();
+                }
+                else {
+                  this.api.get("table/qc_in_result", { params: { filter: 'qc_no=' + "'" + this.qcinbarcode[0].qc_no + "'" } }).subscribe(val => {
+                    this.qcresult = val['data'];
+                    this.totaldataqcresult = val['count'];
+                    if (this.qcinbarcode.length == 0) {
+                      let alert = this.alertCtrl.create({
+                        title: 'Error',
+                        subTitle: 'Data Not Found In My QC',
+                        buttons: ['OK']
+                      });
+                      alert.present();
                     }
-                  ]
-                });
-                alert.present();
-              }
-            });
-          }
+                    else if (this.totaldataqcresult == this.qcinbarcode[0].qty) {
+                      let alert = this.alertCtrl.create({
+                        title: 'Error',
+                        subTitle: 'Data Already Create',
+                        buttons: ['OK']
+                      });
+                      alert.present();
+                    }
+                    else {
+                      let alert = this.alertCtrl.create({
+                        title: 'Confirm Start',
+                        message: 'Do you want to QC Now?',
+                        buttons: [
+                          {
+                            text: 'Cancel',
+                            role: 'cancel',
+                            handler: () => {
+                            }
+                          },
+                          {
+                            text: 'Start',
+                            handler: () => {
+                              this.getNextNoQCResult().subscribe(val => {
+                                let time = moment().format('HH:mm:ss');
+                                let date = moment().format('YYYY-MM-DD');
+                                let uuid = UUID.UUID();
+                                this.nextnoqcresult = val['nextno'];
+                                const headers = new HttpHeaders()
+                                  .set("Content-Type", "application/json");
+                                this.api.post("table/qc_in_result",
+                                  {
+                                    "qc_result_no": this.nextnoqcresult,
+                                    "qc_no": this.qcinbarcode[0].qc_no,
+                                    "batch_no": this.qcinbarcode[0].batch_no,
+                                    "item_no": this.qcinbarcode[0].item_no,
+                                    "date_start": date,
+                                    "date_finish": date,
+                                    "time_start": time,
+                                    "time_finish": time,
+                                    "qc_pic": 'AJI',
+                                    "qty_receiving": 25,
+                                    "unit": this.qcinbarcode[0].unit,
+                                    "qc_status": "OPEN",
+                                    "qc_description": "",
+                                    "uuid": uuid
+                                  },
+                                  { headers })
+                                  .subscribe(val => {
+                                    document.getElementById("myQCChecking").style.display = "block";
+                                    document.getElementById("myBTNChecking").style.display = "block";
+                                    document.getElementById("myHeader").style.display = "none";
+                                    this.button = true;
+                                    this.uuidqcresult = uuid;
+                                    this.qcnoresult = this.nextnoqcresult;
+                                    this.qcno = this.qcinbarcode[0].qc_no
+                                    this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + this.uuidqcresult + "'" } }).subscribe(val => {
+                                      this.photos = val['data'];
+                                      this.totalphoto = val['count'];
+                                    });
+                                  })
+                              });
+                            }
+                          }
+                        ]
+                      });
+                      alert.present();
+                    }
+                  });
+                }
 
-        });
+              });
+          }
+        }
+      ]
     });
+    alert.present();
+    /*});*/
   }
   doOffChecking() {
     document.getElementById("myQCChecking").style.display = "none";
@@ -502,7 +526,7 @@ export class QcinPage {
         headers: {}
       }
 
-      let url = "http://10.10.10.7/webapi5/api/Upload";
+      let url = "http://10.10.10.7/serverapi/api/Upload";
       fileTransfer.upload(this.imageURI, url, options)
         .then((data) => {
           loader.dismiss();
@@ -514,7 +538,7 @@ export class QcinPage {
               "no": this.uuid,
               "parent": this.uuidqcresult,
               "table_name": "Qc_in_result",
-              "img_src": 'http://101.255.60.202/webapi5/img/' + this.uuid,
+              "img_src": 'http://101.255.60.202/serverapi/img/' + this.uuid,
               "file_name": this.uuid,
               "description": "",
               "latitude": "",
