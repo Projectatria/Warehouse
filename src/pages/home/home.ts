@@ -80,6 +80,9 @@ export class HomePage {
   doQcIn() {
     this.navCtrl.push('QcinPage');
   }
+  doQcOut() {
+    this.navCtrl.push('QcoutPage');
+  }
   doPutaway() {
     this.navCtrl.push('PutawayPage');
   }
@@ -93,6 +96,6 @@ export class HomePage {
     this.navCtrl.push('UseraccountPage');
   }
   doTransferOrder() {
-    this.navCtrl.push('FilteringPage');
+    this.navCtrl.push('TransferorderPage');
   }
 }

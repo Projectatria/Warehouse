@@ -22,8 +22,7 @@
           IN
         </ion-card-header>
         <ion-list class="side-list">
-          <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('PurchasingorderPage')"
-            menuClose>
+          <button *ngIf="rolearea == 'INBOUND'" class="btn-side-menu" ion-item (click)="open('PurchasingorderPage')" menuClose>
             <i class="fas fa-box imgfa"></i>
             Purchasing Order
           </button>
@@ -101,6 +100,11 @@
         <ion-card-header class="side-header-list">
           Report
         </ion-card-header>
+        <ion-list class="side-list">
+          <button class="btn-side-menu" ion-item (click)="doLogout()" menuClose>
+            <i class="fas fa-sign-out-alt"> Logout</i>
+          </button>
+        </ion-list>
       </ion-item>
     </ion-list>
   </ion-content>

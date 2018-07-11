@@ -23,6 +23,7 @@ export class MyApp {
   private rolegroup = '';
   public preparation = [];
   public receiving = [];
+  public users = [];
   constructor(
     platform: Platform,
     statusBar: StatusBar,
@@ -142,6 +143,27 @@ export class MyApp {
   };
   doHome() {
     this.appCtrl.getRootNav().setRoot(HomePage);
+  }
+  doLogout() {
+    console.log(this.userid)
+    this.api.get('table/user', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
+      .subscribe(val => {
+        this.users = val['data'];
+        const headers = new HttpHeaders()
+          .set("Content-Type", "application/json");
+        this.api.put("table/user",
+          {
+            "id_user": this.userid,
+            "token": ''
+          },
+          { headers })
+          .subscribe(val => {
+            this.storage.remove('token');
+            this.storage.remove('userid');
+            this.storage.remove('name')
+            this.appCtrl.getRootNav().setRoot(LoginPage);
+          })
+      });
   }
 }
 
