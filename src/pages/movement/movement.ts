@@ -9,7 +9,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
 import { Storage } from '@ionic/storage';
 
-declare var cordova;
+declare var window;
 
 @IonicPage()
 @Component({
@@ -410,10 +410,10 @@ export class MovementPage {
     alert.present();
   }
   doScan() {
-    cordova.plugins.pm80scanner.scan(result => {
+    window.plugins.honeywell.listen(data => {
       let alert = this.alertCtrl.create({
         subTitle: 'Sukses',
-        message: result,
+        message: data,
         buttons: ['OK']
       });
       alert.present();
@@ -437,8 +437,8 @@ export class MovementPage {
     //     this.loading = false;
     //     return false;
     //   }
-    cordova.plugins.pm80scanner.scan(result => {
-      var barcodeno = result;
+    window.plugins.honeywell.listen(data => {
+      var barcodeno = data;
       var batchno = barcodeno.substring(0, 6);
       var itemno = barcodeno.substring(6, 14);
       this.api.get('table/putaway', { params: { limit: 30, filter: "batch_no=" + "'" + batchno + "'" + ' AND ' + "item_no=" + "'" + itemno + "'" + ' AND ' + "status='OPEN'" } })
@@ -564,8 +564,8 @@ export class MovementPage {
     //     this.loading = false;
     //     return false;
     //   }
-    cordova.plugins.pm80scanner.scan(result => {
-      var barcodeno = result.substring(0, 12);
+    window.plugins.honeywell.listen(data => {
+      var barcodeno = data.substring(0, 12);
       this.myForm.get('rackno').setValue(barcodeno)
     });
   }

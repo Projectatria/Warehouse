@@ -29,27 +29,29 @@
       pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
     </ion-refresher-content>
   </ion-refresher>
-  <ion-segment [(ngModel)]="detailpo">
-    <ion-segment-button value="detailpoitem">
-      Detail Items
+  <ion-segment [(ngModel)]="pickingdetail">
+    <ion-segment-button value="pickingdetailitem">
+      Picking Detail
     </ion-segment-button>
     <ion-segment-button value="history">
       History
     </ion-segment-button>
   </ion-segment>
 
-  <div [ngSwitch]="detailpo">
+  <div [ngSwitch]="pickingdetail">
     <div>
       <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
     </div>
-    <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
-      <ion-item class="content-data-item" *ngFor="let detailpo of trans_sales_detail">
+    <ion-list class="content-list-menu" *ngSwitchCase="'pickingdetailitem'">
+      <ion-item class="content-data-item" *ngFor="let picking of picking_detail">
         <ion-avatar item-start>
           <img src="assets/imgs/noimage.jpg" alt="">
         </ion-avatar>
         <div no-padding>
-          <h2>No Item : {{detailpo.item_no}}</h2>
-          <ion-note>Qty : {{detailpo.qty}}</ion-note><br/>
+          <h2>No Item : {{picking["Item No_"]}}</h2>
+          <p>Description : {{picking.Description}}</p>
+          <p>Qty : {{picking.Quantity}} {{picking.UOM}}</p>
+          <p>Retail So No : {{picking["Retail SO No_"]}}</p>
         </div>
       </ion-item>
     </ion-list>

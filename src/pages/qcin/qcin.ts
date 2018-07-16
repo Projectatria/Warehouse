@@ -641,6 +641,10 @@ export class QcinPage {
                                 this.api.put("table/qc_in",
                                   {
                                     "qc_no": this.qcno,
+                                    "date_start" : this.qcresult[0].date_start,
+                                    "date_finish" : this.qcresult[0].date_finish,
+                                    "time_start" : this.qcresult[0].time_start,
+                                    "time_finish" : this.qcresult[0].time_finish,
                                     "status": 'CLSD'
                                   },
                                   { headers })
@@ -737,6 +741,10 @@ export class QcinPage {
                                 this.api.put("table/qc_in",
                                   {
                                     "qc_no": this.qcno,
+                                    "date_start" : this.qcresult[0].date_start,
+                                    "date_finish" : this.qcresult[0].date_finish,
+                                    "time_start" : this.qcresult[0].time_start,
+                                    "time_finish" : this.qcresult[0].time_finish,
                                     "status": 'CLSD'
                                   },
                                   { headers })

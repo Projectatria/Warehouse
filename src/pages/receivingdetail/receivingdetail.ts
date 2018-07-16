@@ -9,7 +9,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import moment from 'moment';
 import { Storage } from '@ionic/storage';
 
-declare var cordova;
+declare var window;
 
 @IonicPage()
 @Component({
@@ -297,8 +297,8 @@ export class ReceivingdetailPage {
     //     this.loading = false;
     //     return false;
     //   }
-    cordova.plugins.pm80scanner.scan(result => {
-      var barcodeno = result;
+    window.plugins.honeywell.listen(data => {
+      var barcodeno = data;
       var batchno = barcodeno.substring(0, 6);
       var itemno = barcodeno.substring(6, 14);
       return new Promise(resolve => {
@@ -318,7 +318,7 @@ export class ReceivingdetailPage {
           }
           if (this.itemdata[0].qty_receiving < this.itemdata[0].qty) {
             let alert = this.alertCtrl.create({
-              subTitle: result,
+              subTitle: data,
               inputs: [
                 {
                   name: 'qty',
