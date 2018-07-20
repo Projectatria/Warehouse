@@ -566,7 +566,7 @@ export class PickingPage {
     });
   }
   doListPickingDetail() {
-    this.api.get('table/picking_list', { params: { limit: 30, filter: "status='INP1' AND pic=" + "'" + this.userid + "'" } })
+    this.api.get('table/picking_list', { params: { limit: 30, filter: "status='INP1'" } })
       .subscribe(val => {
         this.listpickingdetail = val['data'];
       });

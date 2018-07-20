@@ -246,18 +246,21 @@
           pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
         </ion-refresher-content>
       </ion-refresher>
-      <ion-item class="content-data-item" *ngFor="let listpickdetail of listpickingdetail" (click)="viewDetailPicking(listpickdetail)">
-        <ion-avatar item-start>
-          <img src="assets/imgs/noimage.jpg" alt="">
-        </ion-avatar>
-        <div no-padding>
-          <h2>
-            <b>Receipt No : {{listpickdetail.receipt_no}}</b>
-          </h2>
-          <p>Receipt Date : {{listpickdetail.receipt_date | date: "dd-MM-yyyy"}}</p>
-          <p>So No : {{listpickdetail.so_no}}</p>
-        </div>
-      </ion-item>
+      <div *ngFor="let listpickdetail of listpickingdetail">
+        <ion-item *ngIf="roleid == 'ADMIN' || roleid =='TL' || userid == listpickdetail.pic" class="content-data-item" (click)="viewDetailPicking(listpickdetail)">
+          <ion-avatar item-start>
+            <img src="assets/imgs/noimage.jpg" alt="">
+          </ion-avatar>
+          <div no-padding>
+            <h2>
+              <b>Receipt No : {{listpickdetail.receipt_no}}</b>
+            </h2>
+            <p>Receipt Date : {{listpickdetail.receipt_date | date: "dd-MM-yyyy"}}</p>
+            <p>So No : {{listpickdetail.so_no}}</p>
+            <ion-note *ngIf="roleid == 'ADMIN' || roleid == 'TL'">Pic : {{listpickdetail.pic}}</ion-note>
+          </div>
+        </ion-item>
+      </div>
     </ion-list>
     <ion-list *ngSwitchCase="'history'">
       <ion-item>
