@@ -48,13 +48,14 @@ page-qcout {
         position: relative;
         text-align: center;
         color: white;
-        top:10%;
     }
     
     .bottom-left {
         position: absolute;
-        bottom: 8px;
-        left: 16px;
+        top: 0px;
+        left: 5px;
+        color:#fff;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     }
     
     .top-left {

@@ -39,17 +39,15 @@
   </ion-segment>
 
   <div [ngSwitch]="detailpo">
-    <div>
-      <ion-item no-lines class="toolbar-scroll">Showing {{totaldata}} entries</ion-item>
-    </div>
     <ion-list class="content-list-menu" *ngSwitchCase="'detailpoitem'">
-      <ion-item class="content-data-item" *ngFor="let detailpo of trans_sales_detail">
+      <ion-item class="content-data-item" *ngFor="let detailpo of trans_sales_detail" text-wrap>
         <ion-avatar item-start>
           <img src="assets/imgs/noimage.jpg" alt="">
         </ion-avatar>
         <div no-padding>
-          <h2>No Item : {{detailpo.item_no}}</h2>
-          <ion-note>Qty : {{detailpo.qty}}</ion-note><br/>
+          <h2>No Item : {{detailpo["Item No_"]}}</h2>
+          <p>Description: {{detailpo.Description}}</p>
+          <ion-note>Qty : {{detailpo.Quantity}}</ion-note><br/>
         </div>
       </ion-item>
     </ion-list>

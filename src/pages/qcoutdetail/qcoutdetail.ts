@@ -40,7 +40,7 @@ export class QcoutdetailPage {
     this.toggled = false;
     this.detailpo = "detailpoitem"
     this.receiptno = navParams.get('receiptno');
-    this.api.get('table/trans_sales_entry', { params: { limit: 100, filter: "status_qc='0' AND receipt_no=" + "'" + this.receiptno + "'"} })
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'"} })
     .subscribe(val => {
       this.trans_sales_detail = val['data'];
       this.totaldata = val['count'];
@@ -59,7 +59,7 @@ export class QcoutdetailPage {
     });
   }
   getPOD() {
-    this.api.get('table/trans_sales_entry', { params: { limit: 100, filter: "status_qc='0' AND receipt_no=" + "'" + this.receiptno + "'"} })
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'"} })
     .subscribe(val => {
       this.trans_sales_detail = val['data'];
       this.totaldata = val['count'];
@@ -82,7 +82,7 @@ export class QcoutdetailPage {
     this.toggled = this.toggled ? false : true;
   }
   doRefresh(refresher) {
-    this.api.get('table/trans_sales_entry', { params: { limit: 100, filter: "status_qc='0' AND receipt_no=" + "'" + this.receiptno + "'"} })
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'"} })
     .subscribe(val => {
       this.trans_sales_detail = val['data'];
       this.totaldata = val['count'];
