@@ -101,7 +101,6 @@ export class QcoutPage {
         .subscribe(val => {
           this.role = val['data']
           this.roleid = this.role[0].id_group
-          console.log(this.roleid)
         })
     });
   }
@@ -137,11 +136,7 @@ export class QcoutPage {
                     this.searchdatadm = this.datadm;
                   }
                   else if (this.dataqc.length) {
-                    if (this.dataqc[0].status == 'OPEN') {
-                      this.datadm.push(data[i]);
-                      this.totaldatadatadm = val['count'];
-                      this.searchdatadm = this.datadm;
-                    }
+
                   }
                 });
             }
@@ -295,12 +290,7 @@ export class QcoutPage {
                 refresher.complete()
               }
               else if (this.dataqc.length) {
-                if (this.dataqc[0].status == 'OPEN') {
-                  this.datadm.push(data[i]);
-                  this.totaldatadatadm = val['count'];
-                  this.searchdatadm = this.datadm;
-                  refresher.complete()
-                }
+
               }
             });
         }
@@ -386,7 +376,6 @@ export class QcoutPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
           }
         },
         {
@@ -474,7 +463,7 @@ export class QcoutPage {
                                     this.uuidqcresult = uuid;
                                     this.qcnoresult = this.nextnoqcresult;
                                     this.qcno = this.qcoutbarcode[0].qc_no
-                                    this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + this.uuidqcresult + "'" } }).subscribe(val => {
+                                    this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + this.uuidqcresult + "'", sort: 'upload_date ASC' } }).subscribe(val => {
                                       this.photos = val['data'];
                                       this.totalphoto = val['count'];
                                     });
@@ -505,10 +494,8 @@ export class QcoutPage {
     this.button = false;
   }
   getfoto(result) {
-    this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + result.uuid + "'" } }).subscribe(val => {
+    this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + result.uuid + "'", sort: 'upload_date ASC' } }).subscribe(val => {
       this.photos = val['data'];
-      console.log(result.uuid)
-      console.log(this.photos)
       this.totalphoto = val['count'];
       this.uuidqcresult = result.uuid;
       this.qcnoresult = result.qc_result_no;
@@ -569,6 +556,7 @@ export class QcoutPage {
         fileTransfer.upload(this.imageURI, url, options)
           .then((data) => {
             loader.dismiss();
+            let date = moment().format('YYYY-MM-DD HH:mm');
             const headers = new HttpHeaders()
               .set("Content-Type", "application/json");
 
@@ -583,7 +571,7 @@ export class QcoutPage {
                 "latitude": "",
                 "longitude": "",
                 "location_code": '',
-                "upload_date": "",
+                "upload_date": date,
                 "upload_by": ""
               },
               { headers })
@@ -591,7 +579,7 @@ export class QcoutPage {
                 (val) => {
                   this.presentToast("Image uploaded successfully");
                   this.photos = [];
-                  this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidqcresult + "'" } }).subscribe(val => {
+                  this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.uuidqcresult + "'", sort: 'upload_date ASC' } }).subscribe(val => {
                     this.photos = val['data'];
                     this.totalphoto = val['count'];
                   });
@@ -877,34 +865,31 @@ export class QcoutPage {
     alert.present();
   }
   doInsertQCResult(datai, nextnoqc) {
-    this.getNextNoQCResult().subscribe(val => {
-      let time = moment().format('HH:mm:ss');
-      let date = moment().format('YYYY-MM-DD');
-      let uuid = UUID.UUID();
-      this.nextnoqcresult = val['nextno'];
-      const headers = new HttpHeaders()
-        .set("Content-Type", "application/json");
-      this.api.post("table/qc_out_result",
-        {
-          "qc_result_no": datai["Receipt No_"] + datai["Item No_"],
-          "qc_no": nextnoqc,
-          "receipt_no": datai["Receipt No_"],
-          "batch_no": '',
-          "item_no": datai["Item No_"],
-          "date_start": date,
-          "date_finish": date,
-          "time_start": time,
-          "time_finish": time,
-          "qc_pic": this.userid,
-          "qty_receiving": datai.Quantity,
-          "unit": datai.UOM,
-          "qc_status": "OPEN",
-          "qc_description": "",
-          "uuid": uuid
-        },
-        { headers })
-        .subscribe(val => {
-        });
-    });
+    let time = moment().format('HH:mm:ss');
+    let date = moment().format('YYYY-MM-DD');
+    let uuid = UUID.UUID();
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+    this.api.post("table/qc_out_result",
+      {
+        "qc_result_no": datai["Receipt No_"] + datai["Item No_"],
+        "qc_no": nextnoqc,
+        "receipt_no": datai["Receipt No_"],
+        "batch_no": '',
+        "item_no": datai["Item No_"],
+        "date_start": date,
+        "date_finish": date,
+        "time_start": time,
+        "time_finish": time,
+        "qc_pic": this.userid,
+        "qty_receiving": datai.Quantity,
+        "unit": datai.UOM,
+        "qc_status": "OPEN",
+        "qc_description": "",
+        "uuid": uuid
+      },
+      { headers })
+      .subscribe(val => {
+      });
   }
 }
