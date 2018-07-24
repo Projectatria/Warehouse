@@ -24,6 +24,7 @@ import { VideoPlayer } from '@ionic-native/video-player';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
 import { FCM } from '@ionic-native/fcm';
 import { HTTP } from '@ionic-native/http';
+import { IonicImageViewerModule } from 'ionic-img-viewer';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { HTTP } from '@ionic-native/http';
     QRCodeModule,
     NgxBarcodeModule,
     Angular2FontawesomeModule,
+    IonicImageViewerModule,
     IonicStorageModule.forRoot({
       name: '__mydb',
          driverOrder: ['indexeddb', 'sqlite', 'websql']
