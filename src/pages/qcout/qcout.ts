@@ -71,6 +71,11 @@ export class QcoutPage {
   public loader: any;
   public receiptno: any;
   public itemno: any;
+  public param: any;
+  public parent: any;
+  public photosview = [];
+  public paramdesc: any;
+  public description: any;
 
   constructor(
     public navCtrl: NavController,
@@ -505,20 +510,25 @@ export class QcoutPage {
       this.qcresultclsd = val['data'];
       this.totaldataqcresultclsd = val['count'];
     });
+    this.qcresult = [];
+    this.api.get("table/qc_out_result", { params: { limit: 1000, filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
+      this.qcresult = val['data'];
+      this.totaldataqcresult = val['count'];
+    });
   }
   getfoto(result) {
     if (this.roleid == 'ADMIN') {
       this.api.get("table/link_image", { params: { limit: 100, filter: 'parent=' + "'" + result.uuid + "'", sort: "param" + " ASC " } })
-      .subscribe(val => {
-        this.photos = val['data'];
-        this.totalphoto = val['count'];
-        this.uuidqcresult = result.uuid;
-        this.qcnoresult = result.qc_result_no;
-        this.qcno = result.qc_no;
-        this.receiptno = result.receipt_no;
-        this.itemno = result.item_no;
-        this.qcstatus = result.qc_status
-      });
+        .subscribe(val => {
+          this.photos = val['data'];
+          this.totalphoto = val['count'];
+          this.uuidqcresult = result.uuid;
+          this.qcnoresult = result.qc_result_no;
+          this.qcno = result.qc_no;
+          this.receiptno = result.receipt_no;
+          this.itemno = result.item_no;
+          this.qcstatus = result.qc_status
+        });
     }
     else {
       if (result.time_start == '00:00:00') {
@@ -734,7 +744,7 @@ export class QcoutPage {
                                                                           this.receiptno = result.receipt_no;
                                                                           this.itemno = result.item_no;
                                                                           this.qcstatus = result.qc_status
-                                                                          if (result.qc_status == 'OPEN') {
+                                                                          if (result.qc_status != 'PASSED') {
                                                                             document.getElementById("myQCChecking").style.display = "block";
                                                                             document.getElementById("myBTNChecking").style.display = "block";
                                                                             // document.getElementById("button").style.display = "block";
@@ -748,14 +758,185 @@ export class QcoutPage {
                                                                             document.getElementById("myHeader").style.display = "none";
                                                                           }
                                                                         });
+                                                                    }, err => {
+                                                                      this.api.post("table/link_image",
+                                                                        {
+                                                                          "no": UUID.UUID(),
+                                                                          "param": '09',
+                                                                          "param_desc": 'Lainnya 5',
+                                                                          "parent": result.uuid,
+                                                                          "table_name": "Qc_out_result",
+                                                                          "img_src": '',
+                                                                          "file_name": '',
+                                                                          "description": '',
+                                                                          "latitude": "",
+                                                                          "longitude": "",
+                                                                          "location_code": '',
+                                                                          "upload_date": datetime,
+                                                                          "upload_by": ""
+                                                                        },
+                                                                        { headersa })
+                                                                        .subscribe()
                                                                     });
+                                                              }, err => {
+                                                                this.api.post("table/link_image",
+                                                                  {
+                                                                    "no": UUID.UUID(),
+                                                                    "param": '08',
+                                                                    "param_desc": 'Lainnya 4',
+                                                                    "parent": result.uuid,
+                                                                    "table_name": "Qc_out_result",
+                                                                    "img_src": '',
+                                                                    "file_name": '',
+                                                                    "description": '',
+                                                                    "latitude": "",
+                                                                    "longitude": "",
+                                                                    "location_code": '',
+                                                                    "upload_date": datetime,
+                                                                    "upload_by": ""
+                                                                  },
+                                                                  { headersa })
+                                                                  .subscribe()
                                                               });
+                                                        }, err => {
+                                                          this.api.post("table/link_image",
+                                                            {
+                                                              "no": UUID.UUID(),
+                                                              "param": '07',
+                                                              "param_desc": 'Lainnya 3',
+                                                              "parent": result.uuid,
+                                                              "table_name": "Qc_out_result",
+                                                              "img_src": '',
+                                                              "file_name": '',
+                                                              "description": '',
+                                                              "latitude": "",
+                                                              "longitude": "",
+                                                              "location_code": '',
+                                                              "upload_date": datetime,
+                                                              "upload_by": ""
+                                                            },
+                                                            { headersa })
+                                                            .subscribe()
                                                         });
+                                                  }, err => {
+                                                    this.api.post("table/link_image",
+                                                      {
+                                                        "no": UUID.UUID(),
+                                                        "param": '06',
+                                                        "param_desc": 'Lainnya 2',
+                                                        "parent": result.uuid,
+                                                        "table_name": "Qc_out_result",
+                                                        "img_src": '',
+                                                        "file_name": '',
+                                                        "description": '',
+                                                        "latitude": "",
+                                                        "longitude": "",
+                                                        "location_code": '',
+                                                        "upload_date": datetime,
+                                                        "upload_by": ""
+                                                      },
+                                                      { headersa })
+                                                      .subscribe()
                                                   });
+                                            }, err => {
+                                              this.api.post("table/link_image",
+                                                {
+                                                  "no": UUID.UUID(),
+                                                  "param": '05',
+                                                  "param_desc": 'Lainnya 1',
+                                                  "parent": result.uuid,
+                                                  "table_name": "Qc_out_result",
+                                                  "img_src": '',
+                                                  "file_name": '',
+                                                  "description": '',
+                                                  "latitude": "",
+                                                  "longitude": "",
+                                                  "location_code": '',
+                                                  "upload_date": datetime,
+                                                  "upload_by": ""
+                                                },
+                                                { headersa })
+                                                .subscribe()
                                             });
+                                      }, err => {
+                                        this.api.post("table/link_image",
+                                          {
+                                            "no": UUID.UUID(),
+                                            "param": '04',
+                                            "param_desc": 'Tampak Bawah',
+                                            "parent": result.uuid,
+                                            "table_name": "Qc_out_result",
+                                            "img_src": '',
+                                            "file_name": '',
+                                            "description": '',
+                                            "latitude": "",
+                                            "longitude": "",
+                                            "location_code": '',
+                                            "upload_date": datetime,
+                                            "upload_by": ""
+                                          },
+                                          { headersa })
+                                          .subscribe()
                                       });
+                                }, err => {
+                                  this.api.post("table/link_image",
+                                    {
+                                      "no": UUID.UUID(),
+                                      "param": '03',
+                                      "param_desc": 'Tampak Atas',
+                                      "parent": result.uuid,
+                                      "table_name": "Qc_out_result",
+                                      "img_src": '',
+                                      "file_name": '',
+                                      "description": '',
+                                      "latitude": "",
+                                      "longitude": "",
+                                      "location_code": '',
+                                      "upload_date": datetime,
+                                      "upload_by": ""
+                                    },
+                                    { headersa })
+                                    .subscribe()
                                 });
+                          }, err => {
+                            this.api.post("table/link_image",
+                              {
+                                "no": UUID.UUID(),
+                                "param": '02',
+                                "param_desc": 'Tampak Kanan',
+                                "parent": result.uuid,
+                                "table_name": "Qc_out_result",
+                                "img_src": '',
+                                "file_name": '',
+                                "description": '',
+                                "latitude": "",
+                                "longitude": "",
+                                "location_code": '',
+                                "upload_date": datetime,
+                                "upload_by": ""
+                              },
+                              { headersa })
+                              .subscribe()
                           });
+                    }, err => {
+                      this.api.post("table/link_image",
+                        {
+                          "no": UUID.UUID(),
+                          "param": '01',
+                          "param_desc": 'Tampak Kiri',
+                          "parent": result.uuid,
+                          "table_name": "Qc_out_result",
+                          "img_src": '',
+                          "file_name": '',
+                          "description": '',
+                          "latitude": "",
+                          "longitude": "",
+                          "location_code": '',
+                          "upload_date": datetime,
+                          "upload_by": ""
+                        },
+                        { headersa })
+                        .subscribe()
                     });
               }
             }
@@ -774,7 +955,7 @@ export class QcoutPage {
             this.receiptno = result.receipt_no;
             this.itemno = result.item_no;
             this.qcstatus = result.qc_status
-            if (result.qc_status == 'OPEN') {
+            if (result.qc_status != 'PASSED') {
               document.getElementById("myQCChecking").style.display = "block";
               document.getElementById("myBTNChecking").style.display = "block";
               // document.getElementById("button").style.display = "block";
@@ -793,7 +974,35 @@ export class QcoutPage {
   }
   doViewPhoto(foto) {
     this.viewfoto = foto.img_src
+    this.param = foto.param
+    this.parent = foto.parent
+    this.paramdesc = foto.param_desc
+    this.description = foto.description
     document.getElementById("foto").style.display = "block";
+  }
+  doPreviousFoto() {
+    let param = parseInt(this.param) - parseInt('01')
+    let paramprevious: string = "0" + param
+    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.parent + "' AND param=" + "'" + paramprevious + "'"} }).subscribe(val => {
+      this.photosview = val['data'];
+      this.viewfoto = this.photosview[0].img_src
+      this.param = this.photosview[0].param
+      this.parent = this.photosview[0].parent
+      this.paramdesc = this.photosview[0].param_desc
+      this.description = this.photosview[0].description
+    });
+  }
+  doNextFoto() {
+    let param = parseInt(this.param) + parseInt('01')
+    let parampnext: string = "0" + param
+    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.parent + "' AND param=" + "'" + parampnext + "'"} }).subscribe(val => {
+      this.photosview = val['data'];
+      this.viewfoto = this.photosview[0].img_src
+      this.param = this.photosview[0].param
+      this.parent = this.photosview[0].parent
+      this.paramdesc = this.photosview[0].param_desc
+      this.description = this.photosview[0].description
+    });
   }
   doCloseViewPhoto() {
     document.getElementById("foto").style.display = "none";
@@ -841,7 +1050,7 @@ export class QcoutPage {
     alert.present();
   }
   doCamera(foto) {
-    if (this.qcstatus == 'OPEN') {
+    if (this.qcstatus != 'PASSED') {
       let options: CameraOptions = {
         quality: 50,
         destinationType: this.camera.DestinationType.FILE_URI
@@ -1000,7 +1209,7 @@ export class QcoutPage {
                           this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
                             this.qcresult = val['data'];
                             this.totaldataqcresult = val['count'];
-                            this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "' AND qc_status= 'OPEN'" } }).subscribe(val => {
+                            this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "' AND qc_status!= 'PASSED'" } }).subscribe(val => {
                               this.qcresultopen = val['data'];
                               if (this.qcresultopen.length == 0) {
                                 const headers = new HttpHeaders()
@@ -1017,12 +1226,22 @@ export class QcoutPage {
                                         this.quality_control = val['data'];
                                         this.totaldataqc = val['count'];
                                       });
+                                    this.api.get('table/qc_out', { params: { limit: 30, filter: "status='CLSD'" } })
+                                      .subscribe(val => {
+                                        this.quality_control_clsd = val['data']
+                                        this.searchqcclsd = this.quality_control_clsd
+                                      });
                                   });
                               }
                               this.api.get('table/qc_out', { params: { limit: 30, filter: "status='OPEN'" } })
                                 .subscribe(val => {
                                   this.quality_control = val['data'];
                                   this.totaldataqc = val['count'];
+                                });
+                              this.api.get('table/qc_out', { params: { limit: 30, filter: "status='CLSD'" } })
+                                .subscribe(val => {
+                                  this.quality_control_clsd = val['data']
+                                  this.searchqcclsd = this.quality_control_clsd
                                 });
                             });
                           });
@@ -1095,43 +1314,78 @@ export class QcoutPage {
                         },
                         { headers })
                         .subscribe(val => {
-                          document.getElementById("myQCChecking").style.display = "none";
-                          document.getElementById("myBTNChecking").style.display = "none";
-                          document.getElementById("myHeader").style.display = "block";
-                          this.button = false;
-                          this.qcnoresult = '';
-                          this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
-                            this.qcresult = val['data'];
-                            this.totaldataqcresult = val['count'];
-                          });
-                          this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
-                            this.qcresult = val['data'];
-                            this.totaldataqcresult = val['count'];
-                            this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" + " AND " + "qc_status='OPEN'" } }).subscribe(val => {
-                              this.qcresultopen = val['data'];
-                              this.totaldataqcresultopen = val['count'];
-                              if ((this.totaldataqcresult == this.qcqty) && this.totaldataqcresultopen == 0) {
-                                const headers = new HttpHeaders()
-                                  .set("Content-Type", "application/json");
-                                this.api.put("table/qc_out",
-                                  {
-                                    "qc_no": this.qcno,
-                                    "date_start": this.qcresult[0].date_start,
-                                    "date_finish": this.qcresult[0].date_finish,
-                                    "time_start": this.qcresult[0].time_start,
-                                    "time_finish": this.qcresult[0].time_finish,
-                                    "status": 'CLSD'
-                                  },
-                                  { headers })
+                          this.api.get("table/qc_out_result", { params: { filter: 'qc_result_no=' + "'" + this.qcnoresult + "'" } }).subscribe(val => {
+                            let datareject = val['data'];
+                            let uuidreject = UUID.UUID();
+                            const headers = new HttpHeaders()
+                              .set("Content-Type", "application/json");
+                            this.api.post("table/qc_out_result_reject",
+                              {
+                                "qc_result_no": datareject[0].qc_result_no,
+                                "qc_no": datareject[0].qc_no,
+                                "receipt_no": datareject[0].receipt_no,
+                                "batch_no": '',
+                                "item_no": datareject[0].item_no,
+                                "date_start": datareject[0].date_start,
+                                "date_finish": datareject[0].date_finish,
+                                "time_start": datareject[0].time_start,
+                                "time_finish": datareject[0].time_finish,
+                                "qc_pic": datareject[0].qc_pic,
+                                "qty_receiving": datareject[0].qty_receiving,
+                                "unit": datareject[0].unit,
+                                "qc_status": datareject[0].qc_status,
+                                "qc_description": datareject[0].qc_description,
+                                "uuid": uuidreject
+                              },
+                              { headers })
+                              .subscribe(val => {
+                                this.api.get('table/link_image', { params: { limit: 100, filter: "parent=" + "'" + datareject[0].uuid + "'" } })
                                   .subscribe(val => {
-                                    this.api.get('table/qc_out', { params: { limit: 30, filter: "status='OPEN'" } })
-                                      .subscribe(val => {
-                                        this.quality_control = val['data'];
-                                        this.totaldataqc = val['count'];
-                                      });
+                                    let data = val['data'];
+                                    for (let i = 0; i < data.length; i++) {
+                                      let datai = data[i]
+                                      this.doInsertfoto(datai, uuidreject)
+                                    }
                                   });
-                              }
-                            });
+                                document.getElementById("myQCChecking").style.display = "none";
+                                document.getElementById("myBTNChecking").style.display = "none";
+                                document.getElementById("myHeader").style.display = "block";
+                                this.button = false;
+                                this.qcnoresult = '';
+                                this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
+                                  this.qcresult = val['data'];
+                                  this.totaldataqcresult = val['count'];
+                                });
+                                this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" } }).subscribe(val => {
+                                  this.qcresult = val['data'];
+                                  this.totaldataqcresult = val['count'];
+                                  this.api.get("table/qc_out_result", { params: { filter: 'qc_no=' + "'" + this.qcno + "'" + " AND " + "qc_status='OPEN'" } }).subscribe(val => {
+                                    this.qcresultopen = val['data'];
+                                    this.totaldataqcresultopen = val['count'];
+                                    if ((this.totaldataqcresult == this.qcqty) && this.totaldataqcresultopen == 0) {
+                                      const headers = new HttpHeaders()
+                                        .set("Content-Type", "application/json");
+                                      this.api.put("table/qc_out",
+                                        {
+                                          "qc_no": this.qcno,
+                                          "date_start": this.qcresult[0].date_start,
+                                          "date_finish": this.qcresult[0].date_finish,
+                                          "time_start": this.qcresult[0].time_start,
+                                          "time_finish": this.qcresult[0].time_finish,
+                                          "status": 'CLSD'
+                                        },
+                                        { headers })
+                                        .subscribe(val => {
+                                          this.api.get('table/qc_out', { params: { limit: 30, filter: "status='OPEN'" } })
+                                            .subscribe(val => {
+                                              this.quality_control = val['data'];
+                                              this.totaldataqc = val['count'];
+                                            });
+                                        });
+                                    }
+                                  });
+                                });
+                              });
                           });
                           let alert = this.alertCtrl.create({
                             title: 'Sukses',
@@ -1151,6 +1405,34 @@ export class QcoutPage {
       });
       alert.present();
     }
+  }
+  doInsertfoto(datai, uuidreject) {
+    let uuid = UUID.UUID();
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+
+    this.api.post("table/link_image",
+      {
+        "no": uuid,
+        "param": datai.param,
+        "param_desc": datai.param_desc,
+        "parent": uuidreject,
+        "table_name": datai.table_name,
+        "img_src": datai.img_src,
+        "file_name": datai.file_name,
+        "description": datai.description,
+        "latitude": datai.latitude,
+        "longitude": datai.longitude,
+        "location_code": datai.location_code,
+        "upload_date": datai.upload_date,
+        "upload_by": ""
+      },
+      { headers })
+      .subscribe(
+        (val) => {
+        }, err => {
+          this.doInsertfoto(datai, uuidreject);
+        });
   }
   doDetail(dm) {
     this.navCtrl.push('QcoutdetailPage', {
@@ -1236,12 +1518,13 @@ export class QcoutPage {
   doInsertQCResult(datai, nextnoqc) {
     let time = moment().format('HH:mm:ss');
     let date = moment().format('YYYY-MM-DD');
+    let datetime = moment().format('YYYYMMDDHHmm');
     let uuid = UUID.UUID();
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
     this.api.post("table/qc_out_result",
       {
-        "qc_result_no": datai["Receipt No_"] + datai["Item No_"],
+        "qc_result_no": datai["Receipt No_"] + datai["Item No_"] + datetime,
         "qc_no": nextnoqc,
         "receipt_no": datai["Receipt No_"],
         "batch_no": '',
@@ -1255,6 +1538,8 @@ export class QcoutPage {
       },
       { headers })
       .subscribe(val => {
+      }, err => {
+        this.doInsertQCResult(datai, nextnoqc);
       });
   }
 }

@@ -18,7 +18,7 @@ page-qcout {
     .modal-foto {
         display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
+        z-index: 999; /* Sit on top */
         padding-top: 0px; /* Location of the box */
         left: 0;
         top: 0;
@@ -57,7 +57,19 @@ page-qcout {
         color:#fff;
         text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     }
-    
+    .bottom-2 {
+        margin-left:30%;
+        position: absolute;
+        bottom: 0px;
+        width: 40%;
+        height:20%;
+        background: rgba(34,39,51,0.6);
+        color:rgb(255, 255, 255);
+        opacity: 0.9;
+        padding-left:10px;
+        padding-top:20px;
+        font-size: 100%;
+    }
     .top-left {
         position: absolute;
         top: 8px;
@@ -82,6 +94,7 @@ page-qcout {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        z-index: 999;
     }
     .bottom {
         position: absolute;
@@ -95,5 +108,22 @@ page-qcout {
         padding-left:10px;
         padding-top:20px;
         font-size: 100%;
+    }
+    .col-foto:hover {
+        cursor: pointer;
+    }
+    .close-foto:hover {
+        cursor: pointer;
+    }
+    .left {
+        position: absolute;
+        top: 40%;
+        left: 16px;
+    }
+    
+    .right {
+        position: absolute;
+        top: 40%;
+        right: 16px;
     }
 }

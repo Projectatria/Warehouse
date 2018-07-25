@@ -232,9 +232,9 @@
         <h4>Receipt No : {{receiptno}} - {{itemno}}</h4>
         <ion-grid>
           <ion-row>
-            <ion-col col-3 *ngFor="let foto of photos">
+            <ion-col class="col-foto" col-3 *ngFor="let foto of photos">
               <div class="container">
-                <img *ngIf="foto.img_src != ''" src="{{foto.img_src}}" style="width:100%;" imageViewer />
+                <img *ngIf="foto.img_src != ''" src="{{foto.img_src}}" style="width:100%;" (click)="doViewPhoto(foto)" />
                 <div *ngIf="foto.img_src != ''" class="bottom-left">{{foto.param_desc}}</div>
                 <div *ngIf="foto.img_src != ''" class="bottom">{{foto.description}}</div>
               </div>
@@ -274,7 +274,7 @@
             <div class="container">
               <img *ngIf="foto.img_src == ''" src="http://101.255.60.202/webapi/img/noimage" style="width:100%;" />
               <img *ngIf="foto.img_src != ''" src="{{foto.img_src}}" style="width:100%;" imageViewer />
-              <div *ngIf="foto.img_src == '' && qcstatus == 'OPEN'" class="centered" (click)="doCamera(foto)">
+              <div *ngIf="(foto.img_src == '') || (foto.img_src != '' && qcstatus == 'REJECT')" class="centered" (click)="doCamera(foto)">
                 <ion-icon name="md-add" style="font-size:40px;font-weight:bold;color:#217481;"></ion-icon>
               </div>
               <div *ngIf="foto.img_src != '' && qcstatus == 'OPEN'" class="bottom-right" (click)="doHapus(foto)">
@@ -444,9 +444,23 @@
 </div> -->
 <div id="foto" class="modal-foto">
   <div class="container">
-    <img src="{{viewfoto}}" />
+    <img *ngIf="viewfoto != ''" src="{{viewfoto}}" style="width:40%;" />
+    <img *ngIf="viewfoto == ''" src="http://101.255.60.202/webapi/img/noimage" style="width:40%;margin-top:5%;" />
     <div class="top-right">
-      <ion-icon name="md-close" style="font-size:25px;" (click)="doCloseViewPhoto()"></ion-icon>
+      <ion-icon name="md-close" class="close-foto" style="font-size:25px;" (click)="doCloseViewPhoto()"></ion-icon>
+    </div>
+    <div class="bottom-2" style="font-size:200%;text-align: center;">
+      {{paramdesc}}<br>Keterangan: {{description}}
+    </div>
+    <div class="left">
+      <button ion-button [disabled]="param == '01'" clear style="height:100px;" color="light" (click)="doPreviousFoto()">
+        <ion-icon name="ios-arrow-back" style="font-size:70px;"></ion-icon>
+      </button>
+    </div>
+    <div class="right">
+      <button ion-button [disabled]="param == '09'" clear style="height:100px;" color="light" (click)="doNextFoto()">
+        <ion-icon name="ios-arrow-forward" style="font-size:70px;"></ion-icon>
+      </button>
     </div>
   </div>
 </div>
