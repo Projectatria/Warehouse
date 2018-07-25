@@ -203,8 +203,9 @@
                   <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
                     <ion-row>
                       <ion-col>Item No</ion-col>
-                      <ion-col>Date</ion-col>
+                      <ion-col>Date Start</ion-col>
                       <ion-col>Start QC</ion-col>
+                      <ion-col>Date Finish</ion-col>
                       <ion-col>Finish QC</ion-col>
                       <ion-col>Status</ion-col>
                     </ion-row>
@@ -214,6 +215,7 @@
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.item_no}}</ion-col>
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_start | date:'dd-MM-yy'}}</ion-col>
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_start}}</ion-col>
+                      <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_finish | date:'dd-MM-yy'}}</ion-col>
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_finish}}</ion-col>
                       <ion-col *ngIf="result.qc_status == 'OPEN'" style="color:black">{{result.qc_status}}</ion-col>
                       <ion-col *ngIf="result.qc_status == 'REJECT'" style="color:red">{{result.qc_status}}</ion-col>
@@ -227,13 +229,13 @@
         </div>
       </div>
       <div padding style="width:49%;margin-top:10px;position:absolute;right:0px;border:1px solid;border-color:#dedede;">
+        <h4>Receipt No : {{receiptno}} - {{itemno}}</h4>
         <ion-grid>
           <ion-row>
-            <ion-col col-2 *ngFor="let foto of photos">
+            <ion-col col-3 *ngFor="let foto of photos">
               <div class="container">
-                <img *ngIf="foto.img_src == ''" src="http://101.255.60.202/webapi/img/noimage" style="width:100%;" />
                 <img *ngIf="foto.img_src != ''" src="{{foto.img_src}}" style="width:100%;" imageViewer />
-                <div class="bottom-left">{{foto.param_desc}}</div>
+                <div *ngIf="foto.img_src != ''" class="bottom-left">{{foto.param_desc}}</div>
                 <div *ngIf="foto.img_src != ''" class="bottom">{{foto.description}}</div>
               </div>
             </ion-col>

@@ -512,6 +512,12 @@ export class QcoutPage {
       .subscribe(val => {
         this.photos = val['data'];
         this.totalphoto = val['count'];
+        this.uuidqcresult = result.uuid;
+        this.qcnoresult = result.qc_result_no;
+        this.qcno = result.qc_no;
+        this.receiptno = result.receipt_no;
+        this.itemno = result.item_no;
+        this.qcstatus = result.qc_status
       });
     }
     else {
