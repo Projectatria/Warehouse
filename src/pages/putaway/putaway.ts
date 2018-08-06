@@ -77,6 +77,7 @@ export class PutawayPage {
   locationlist = '';
   private token: any;
   public loader: any;
+  public name: any;
 
   constructor(
     public navCtrl: NavController,
@@ -105,6 +106,9 @@ export class PutawayPage {
       qty: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
     })
+    this.storage.get('name').then((val) => {
+      this.name = val;
+    });
     this.getrcv();
     this.api.get('table/putaway', { params: { limit: 30, filter: "status='OPEN'" } })
       .subscribe(val => {
@@ -119,6 +123,9 @@ export class PutawayPage {
   }  
   ngAfterViewInit() {
     this.loader.dismiss();
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

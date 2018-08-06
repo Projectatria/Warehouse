@@ -59,6 +59,7 @@ export class PurchasingorderPage {
   public statussendbarcode = '';
   public uuid = '';
   public porelease = [];
+  public name: any;
 
   constructor(
     public navCtrl: NavController,
@@ -99,6 +100,9 @@ export class PurchasingorderPage {
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
+      this.storage.get('name').then((val) => {
+        this.name = val;
+      });
       this.storage.get('userid').then((val) => {
         this.userid = val;
         this.api.get('table/purchasing_order',
@@ -132,6 +136,9 @@ export class PurchasingorderPage {
     this.sortPO = ''
     this.sortInfoPO = ''
     this.sortPrepare = ''
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
   ngAfterViewInit() {
     this.loader.dismiss();

@@ -68,6 +68,7 @@
                   <ion-col>Part No</ion-col>
                   <ion-col>Description</ion-col>
                   <ion-col>Unit</ion-col>
+                  <ion-col>Tools</ion-col>
                 </ion-row>
               </ion-col>
               <ion-col *ngFor="let result of pickingresult" col-12 style="border-top:1px solid;border-color:#dedede;">
@@ -76,6 +77,9 @@
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result["No_"]}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.Description}}</ion-col>
                   <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result["Unit of Measure Code"]}}</ion-col>
+                  <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">
+                    <i class="fas fa-dolly imgfa" style="font-size:25px;color:#217481;"></i>
+                  </ion-col>
                 </ion-row>
               </ion-col>
             </ion-row>

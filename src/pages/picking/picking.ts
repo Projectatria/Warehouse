@@ -79,6 +79,7 @@ export class PickingPage {
   public userpic = '';
   public loader: any;
   public uuid: any;
+  public name: any;
 
   constructor(
     public navCtrl: NavController,
@@ -103,6 +104,9 @@ export class PickingPage {
     this.myFormModal = formBuilder.group({
       pic: ['', Validators.compose([Validators.required])],
     })
+    this.storage.get('name').then((val) => {
+      this.name = val;
+    });
     this.storage.get('userid').then((val) => {
       this.userid = val;
       console.log(this.userid)
@@ -114,7 +118,8 @@ export class PickingPage {
             this.rolearea = this.role[0].id_area
             this.rolegroup = this.role[0].id_group
             this.roleid = this.role[0].id_role
-            if (this.roleid == "STAFF") {
+            console.log(this.roleid, this.rolearea, this.rolegroup)
+            if (this.rolegroup == "STAFF") {
               this.pick = "picking"
             }
             else {
@@ -130,6 +135,9 @@ export class PickingPage {
   }
   ngAfterViewInit() {
     this.loader.dismiss();
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

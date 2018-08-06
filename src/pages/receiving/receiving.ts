@@ -26,6 +26,7 @@ export class ReceivingPage {
   private height: number;
   private token:any;
   public loader: any;
+  public name: any;
 
   constructor(
     public navCtrl: NavController,
@@ -53,10 +54,16 @@ export class ReceivingPage {
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
+      this.storage.get('name').then((val) => {
+        this.name = val;
+      });
     });
   }
   ngAfterViewInit() {
     this.loader.dismiss();
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

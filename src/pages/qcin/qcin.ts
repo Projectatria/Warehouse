@@ -52,6 +52,7 @@ export class QcinPage {
   private viewfoto = '';
   private qcqty = '';
   private token: any;
+  public name: any;
 
   constructor(
     public navCtrl: NavController,
@@ -72,12 +73,18 @@ export class QcinPage {
     this.qc = "qcin"
     this.detailqc = false;
     this.button = false;
+    this.storage.get('name').then((val) => {
+      this.name = val;
+    });
     this.api.get('table/qc_in', { params: { limit: 30, filter: "pic='12345'" + " AND " + "status='OPEN'" } })
       .subscribe(val => {
         this.quality_control = val['data'];
         this.totaldataqc = val['count'];
         this.searchqc = this.quality_control;
       });
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {

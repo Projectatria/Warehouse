@@ -76,6 +76,12 @@ export class QcoutPage {
   public photosview = [];
   public paramdesc: any;
   public description: any;
+  public datadmsearch = [];
+  public totaldatadatadmsearch: any;
+  public searchdata: any;
+  public dataqcsearch = [];
+  public name: any;
+
 
   constructor(
     public navCtrl: NavController,
@@ -96,12 +102,16 @@ export class QcoutPage {
       content: 'Loading...'
     });
     this.loader.present()
+    this.getDataDMSearch();
     this.getDataDM();
     this.toggled = false;
     this.qc = "qcout"
     this.detailqc = false;
     this.detailqcclsd = false;
     this.button = false;
+    this.storage.get('name').then((val) => {
+      this.name = val;
+    });
     this.storage.get('userid').then((val) => {
       this.userid = val;
       this.api.get('table/qc_out', { params: { limit: 30, filter: "status='OPEN'" } })
@@ -132,6 +142,29 @@ export class QcoutPage {
       }
     });
   }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
+  }
+  getDataDMSearch() {
+    this.api.get("tablenav", { params: { limit: 10000, table: "CSB_LIVE$Delivery Management Header",  sort: "[Expected Receipt Date]" + " ASC " } })
+    .subscribe(val => {
+      let data = val['data'];
+      for (let i = 0; i < data.length; i++) {
+        this.api.get('table/qc_out', { params: { limit: 10000, filter: "receipt_no=" + "'" + data[i]["Receipt No_"] + "'" } })
+          .subscribe(val => {
+            this.dataqcsearch = val['data'];
+            if (this.dataqcsearch.length == 0) {
+              this.datadmsearch.push(data[i]);
+              this.totaldatadatadmsearch = val['count'];
+              this.searchdatadm = this.datadmsearch;
+            }
+            else if (this.dataqcsearch.length) {
+
+            }
+          });
+      }
+    });
+  }
   getDataDM() {
     return new Promise(resolve => {
       let offsetpicking = 30 * this.halaman
@@ -150,7 +183,7 @@ export class QcoutPage {
                   if (this.dataqc.length == 0) {
                     this.datadm.push(data[i]);
                     this.totaldatadatadm = val['count'];
-                    this.searchdatadm = this.datadm;
+                    this.searchdata = this.datadm
                   }
                   else if (this.dataqc.length) {
 
@@ -251,7 +284,7 @@ export class QcoutPage {
         return dm["Receipt No_"].toLowerCase().indexOf(val.toLowerCase()) > -1;
       })
     } else {
-      this.datadm = this.searchdatadm;
+      this.datadm = this.searchdata;
     }
   }
   getSearchQCclsd(ev: any) {

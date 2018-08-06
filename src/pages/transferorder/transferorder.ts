@@ -3,6 +3,7 @@ import { Events, LoadingController, ActionSheetController, Platform, ModalContro
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Storage } from '@ionic/storage';
 
 
 @IonicPage()
@@ -25,6 +26,7 @@ export class TransferorderPage {
   to: string;
   private width: number;
   private height: number;
+  public name: any;
 
   constructor(
     public navCtrl: NavController,
@@ -32,11 +34,15 @@ export class TransferorderPage {
     public api: ApiProvider,
     public platform: Platform,
     public modalCtrl: ModalController,
+    public storage: Storage,
     public alertCtrl: AlertController) {
     platform.ready().then(() => {
       this.width = platform.width();
       this.height = platform.height();
       this.to = 'transferorder'
+      this.storage.get('name').then((val) => {
+        this.name = val;
+      });
       this.api.get('table/transfer_order', { params: { limit: 30, filter: "status='OPEN'" } }).subscribe(val => {
         this.transferorder = val['data']
         console.log(this.transferorder)
@@ -47,6 +53,9 @@ export class TransferorderPage {
       });
     })
     this.getTO()
+  }
+  doProfile() {
+    this.navCtrl.push('UseraccountPage');
   }
   getTO() {
     return new Promise(resolve => {
