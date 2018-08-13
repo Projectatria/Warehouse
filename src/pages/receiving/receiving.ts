@@ -6,6 +6,7 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { HttpHeaders } from "@angular/common/http";
 import { Storage } from '@ionic/storage';
 
+
 @IonicPage()
 @Component({
   selector: 'page-receiving',

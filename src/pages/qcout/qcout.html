@@ -27,6 +27,9 @@
     <ion-segment-button value="finished">
       Qc Finished
     </ion-segment-button>
+    <ion-segment-button value="rejected">
+      Qc Rejected
+    </ion-segment-button>
   </ion-segment>
 
   <ion-segment *ngIf="roleid != 'ADMIN'" [(ngModel)]="qc">
@@ -53,7 +56,7 @@
       <ion-card *ngFor="let dm of datadm">
         <ion-item text-wrap>
           <h3 (click)="doDetail(dm)" style="font-weight:bold;padding-bottom:5px;">Receipt No - {{dm["Receipt No_"]}}</h3>
-          <p (click)="doDetail(dm)">Receipt Date : {{dm["Receipt Date"] | date: 'dd-MM-yyyy'}}</p>
+          <p (click)="doDetail(dm)">Expected Receipt Date : {{dm["Expected Receipt Date"] | date: 'dd-MM-yyyy'}}</p>
           <p (click)="doDetail(dm)">Store No : {{dm["Store No_"]}}</p>
           <p (click)="doDetail(dm)">SO No : {{dm["SO No_"]}}</p>
           <button item-end ion-button clear color="greenlake" (click)="doMyQC(dm)">
@@ -217,7 +220,77 @@
                     </ion-row>
                   </ion-col>
                   <ion-col *ngFor="let result of qcresultclsd" col-12 style="border-top:1px solid;border-color:#dedede;">
-                    <ion-row (click)="getfoto(result);" *ngIf="detailqcclsd && result.qc_no == qclistclsd">
+                    <ion-row (click)="getfoto(result);" *ngIf="detailqcclsd && result.qc_no == qclistclsd" class="col-hover">
+                      <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.item_no}}</ion-col>
+                      <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_start | date:'dd-MM-yy'}}</ion-col>
+                      <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_start}}</ion-col>
+                      <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_finish | date:'dd-MM-yy'}}</ion-col>
+                      <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_finish}}</ion-col>
+                      <ion-col *ngIf="result.qc_status == 'OPEN'" style="color:black">{{result.qc_status}}</ion-col>
+                      <ion-col *ngIf="result.qc_status == 'REJECT'" style="color:red">{{result.qc_status}}</ion-col>
+                      <ion-col *ngIf="result.qc_status == 'PASSED'" style="color:green">{{result.qc_status}}</ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </ion-card>
+        </div>
+      </div>
+      <div padding style="width:49%;margin-top:10px;position:absolute;right:0px;border:1px solid;border-color:#dedede;">
+        <h4>Receipt No : {{receiptno}} - {{itemno}}</h4>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="col-foto" col-3 *ngFor="let foto of photos">
+              <div class="container">
+                <img *ngIf="foto.img_src != ''" src="{{foto.img_src}}" style="width:100%;" (click)="doViewPhoto(foto)" />
+                <div *ngIf="foto.img_src != ''" class="bottom-left">{{foto.param_desc}}</div>
+                <div *ngIf="foto.img_src != ''" class="bottom">{{foto.description}}</div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </ion-list>
+    <ion-list *ngSwitchCase="'rejected'">
+      <ion-refresher (ionRefresh)="doRefreshqcrejected($event)">
+        <ion-refresher-content>
+          pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing..."
+        </ion-refresher-content>
+      </ion-refresher>
+      <ion-searchbar style="margin-top:-10px;margin-left:-10px;padding:0px;width:105%;" (ionInput)="getSearchQCrejected($event)" placeholder="Search Receipt No"></ion-searchbar>
+      <div style="width:50%;margin-top:10px;position:absolute;left:0px;border:1px solid;border-color:#dedede;">
+        <div *ngFor="let myqc of quality_control_rejected">
+          <ion-card *ngIf="roleid =='ADMIN' || roleid == 'TL' || userid == myqc.pic">
+            <ion-item>
+              <h3 style="font-weight:bold;padding-bottom:5px;">Receipt No - {{myqc.receipt_no}}</h3>
+            </ion-item>
+            <ion-row (click)="doDetailQCrejected(myqc)" style="border-top:1px solid;border-color:#dedede;background: #dedede;">
+              <ion-col *ngIf="!detailqcrejected" style="text-align: center;">
+                <ion-icon style="color:#217481;font-size: 20px;" name="ios-arrow-down"></ion-icon>
+              </ion-col>
+              <ion-col *ngIf="detailqcrejected && myqc.receipt_no == qclistrejectedreceiptno" style="text-align: center;">
+                <ion-icon style="color:#217481;font-size: 20px;" name="ios-arrow-up"></ion-icon>
+              </ion-col>
+            </ion-row>
+            <div *ngIf="detailqcrejected && myqc.receipt_no == qclistrejectedreceiptno" style="border-top:1px solid;border-color:#dedede;background:#ffffff;">
+              <div padding style="font-weight:bold;">
+                Inspection Result
+              </div>
+              <ion-grid>
+                <ion-row *ngIf="detailqcrejected && myqc.receipt_no == qclistrejectedreceiptno">
+                  <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
+                    <ion-row>
+                      <ion-col>Item No</ion-col>
+                      <ion-col>Date Start</ion-col>
+                      <ion-col>Start QC</ion-col>
+                      <ion-col>Date Finish</ion-col>
+                      <ion-col>Finish QC</ion-col>
+                      <ion-col>Status</ion-col>
+                    </ion-row>
+                  </ion-col>
+                  <ion-col *ngFor="let result of qcresultrejected" col-12 style="border-top:1px solid;border-color:#dedede;">
+                    <ion-row (click)="getfoto(result);" *ngIf="qclistrejectedreceiptno && result.receipt_no == qclistrejectedreceiptno" class="col-hover">
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.item_no}}</ion-col>
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.date_start | date:'dd-MM-yy'}}</ion-col>
                       <ion-col style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{result.time_start}}</ion-col>

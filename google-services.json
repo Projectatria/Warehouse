@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "784937619783",
-    "firebase_url": "https://warehouse-544eb.firebaseio.com",
-    "project_id": "warehouse-544eb",
-    "storage_bucket": "warehouse-544eb.appspot.com"
+    "project_number": "480287543877",
+    "firebase_url": "https://warehouse-training.firebaseio.com",
+    "project_id": "warehouse-training",
+    "storage_bucket": "warehouse-training.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:784937619783:android:7ae046b8bd08ea96",
+        "mobilesdk_app_id": "1:480287543877:android:0f7368153cd7f854",
         "android_client_info": {
-          "package_name": "com.atria.warehouse"
+          "package_name": "com.atria.warehousetraining"
         }
       },
       "oauth_client": [
         {
-          "client_id": "784937619783-2pg6nt57k3s9vgc1n7eapcaph6kjq7r8.apps.googleusercontent.com",
+          "client_id": "480287543877-938rfdd3jde13jji2obqrckpu719nios.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBwjS951Msb4I61gTFC8JUFGh3IXJICUbA"
+          "current_key": "AIzaSyBEFF1OB9gPdcUjTzNs5iV7FEr-_0SlsQk"
         }
       ],
       "services": {

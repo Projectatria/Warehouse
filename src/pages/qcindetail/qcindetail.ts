@@ -515,7 +515,7 @@ export class QcindetailPage {
         headers: {}
       }
 
-      let url = "http://101.255.60.202/serverapi/api/Upload";
+      let url = "http://101.255.60.202/qctesting/api/Upload";
       fileTransfer.upload(this.imageURI, url, options)
         .then((data) => {
           loader.dismiss();

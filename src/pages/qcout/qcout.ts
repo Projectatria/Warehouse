@@ -23,8 +23,10 @@ export class QcoutPage {
   private trans_sales_entry = [];
   private quality_control = [];
   private quality_control_clsd = [];
+  private quality_control_rejected = [];
   private qcresult = [];
   private qcresultclsd = [];
+  private qcresultrejected = [];
   private qcresultopen = [];
   private qcoutpic = [];
   private qcoutbarcode = [];
@@ -32,12 +34,14 @@ export class QcoutPage {
   searchdatadm: any;
   searchqc: any;
   searchqcclsd: any;
+  searchqcrejected: any;
   halaman = 0;
   totaldata: any;
   totaldataqc: any;
   totaldataqcclsd: any;
   totaldataqcresult: any;
   totaldataqcresultclsd: any;
+  totaldataqcresultrejected: any;
   totaldataqcresultopen: any;
   totalphoto: any;
   public toggled: boolean = false;
@@ -46,10 +50,12 @@ export class QcoutPage {
   private nextnoqcresult = '';
   public detailqc: boolean = false;
   public detailqcclsd: boolean = false;
+  public detailqcrejected: boolean = false;
   public button: boolean = false;
   private qclist = '';
   private batchnolist = '';
   private qclistclsd = '';
+  private qclistrejected = '';
   private batchnolistclsd = '';
   option: BarcodeScannerOptions;
   imageURI: string = '';
@@ -81,7 +87,7 @@ export class QcoutPage {
   public searchdata: any;
   public dataqcsearch = [];
   public name: any;
-
+  public qclistrejectedreceiptno: any;
 
   constructor(
     public navCtrl: NavController,
@@ -123,6 +129,17 @@ export class QcoutPage {
           this.quality_control_clsd = val['data']
           this.searchqcclsd = this.quality_control_clsd
         });
+      this.api.get('table/qc_out_result_reject', { params: { limit: 1000, group: 'receipt_no' } })
+        .subscribe(val => {
+          let data = val['data']
+          for (let i = 0; i < data.length; i++) {
+            this.api.get('table/qc_out', { params: { limit: 30, filter: "receipt_no=" + "'" + data[i].receipt_no + "'" } })
+              .subscribe(val => {
+                this.quality_control_rejected.push(data[i]);
+                this.searchqcrejected = this.quality_control_rejected
+              });
+          }
+        });
       this.api.get('table/user_role', { params: { filter: "id_user=" + "'" + this.userid + "'" } })
         .subscribe(val => {
           this.role = val['data']
@@ -146,24 +163,24 @@ export class QcoutPage {
     this.navCtrl.push('UseraccountPage');
   }
   getDataDMSearch() {
-    this.api.get("tablenav", { params: { limit: 10000, table: "CSB_LIVE$Delivery Management Header",  sort: "[Expected Receipt Date]" + " ASC " } })
-    .subscribe(val => {
-      let data = val['data'];
-      for (let i = 0; i < data.length; i++) {
-        this.api.get('table/qc_out', { params: { limit: 10000, filter: "receipt_no=" + "'" + data[i]["Receipt No_"] + "'" } })
-          .subscribe(val => {
-            this.dataqcsearch = val['data'];
-            if (this.dataqcsearch.length == 0) {
-              this.datadmsearch.push(data[i]);
-              this.totaldatadatadmsearch = val['count'];
-              this.searchdatadm = this.datadmsearch;
-            }
-            else if (this.dataqcsearch.length) {
+    this.api.get("tablenav", { params: { limit: 10000, table: "CSB_LIVE$Delivery Management Header", filter: "Status=0 AND [Expected Receipt Date] > '2018-01-01'", sort: "[Expected Receipt Date]" + " DESC " } })
+      .subscribe(val => {
+        let data = val['data'];
+        for (let i = 0; i < data.length; i++) {
+          this.api.get('table/qc_out', { params: { limit: 10000, filter: "receipt_no=" + "'" + data[i]["Receipt No_"] + "'" } })
+            .subscribe(val => {
+              this.dataqcsearch = val['data'];
+              if (this.dataqcsearch.length == 0) {
+                this.datadmsearch.push(data[i]);
+                this.totaldatadatadmsearch = val['count'];
+                this.searchdatadm = this.datadmsearch;
+              }
+              else if (this.dataqcsearch.length) {
 
-            }
-          });
-      }
-    });
+              }
+            });
+        }
+      });
   }
   getDataDM() {
     return new Promise(resolve => {
@@ -173,7 +190,7 @@ export class QcoutPage {
       }
       else {
         this.halaman++;
-        this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Header", offset: offsetpicking, sort: "[Expected Receipt Date]" + " ASC " } })
+        this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Header", filter: "Status=0 AND [Expected Receipt Date] > '2018-01-01'", offset: offsetpicking, sort: "[Expected Receipt Date]" + " DESC " } })
           .subscribe(val => {
             let data = val['data'];
             for (let i = 0; i < data.length; i++) {
@@ -327,7 +344,7 @@ export class QcoutPage {
     this.toggled = this.toggled ? false : true;
   }
   doRefreshDM(refresher) {
-    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Header", sort: "[Expected Receipt Date]" + " ASC " } })
+    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Header", filter: "Status=0 AND [Expected Receipt Date] > '2018-01-01'", sort: "[Expected Receipt Date]" + " DESC " } })
       .subscribe(val => {
         let data = val['data'];
         for (let i = 0; i < data.length; i++) {
@@ -393,6 +410,15 @@ export class QcoutPage {
     this.detailqcclsd = this.detailqcclsd ? false : true;
     this.getQCResultclsd(myqc);
   }
+  doDetailQCrejected(myqc) {
+    console.log(myqc)
+    this.qcresultrejected = [];
+    this.qclistrejected = myqc.qc_no;
+    this.qclistrejectedreceiptno = myqc.receipt_no
+    this.qcqty = myqc.qty
+    this.detailqcrejected = this.detailqcrejected ? false : true;
+    this.getQCResultrejected(myqc);
+  }
   getQCResult(myqc) {
     return new Promise(resolve => {
       this.api.get("table/qc_out_result", { params: { limit: 1000, filter: 'qc_no=' + "'" + myqc.qc_no + "'" } }).subscribe(val => {
@@ -407,6 +433,18 @@ export class QcoutPage {
       this.api.get("table/qc_out_result", { params: { limit: 1000, filter: 'receipt_no=' + "'" + myqc.receipt_no + "'" } }).subscribe(val => {
         this.qcresultclsd = val['data'];
         this.totaldataqcresultclsd = val['count'];
+        resolve();
+      })
+    });
+  }
+  getQCResultrejected(myqc) {
+    return new Promise(resolve => {
+      this.api.get("table/qc_out_result_reject", { params: { limit: 1000, filter: 'receipt_no=' + "'" + myqc.receipt_no + "'" } }).subscribe(val => {
+        this.qcresultrejected = val['data'];
+        this.totaldataqcresultrejected = val['count'];
+        console.log(this.qcresultrejected)
+        console.log(this.detailqcrejected)
+        console.log(this.qclistrejected)
         resolve();
       })
     });
@@ -1016,7 +1054,7 @@ export class QcoutPage {
   doPreviousFoto() {
     let param = parseInt(this.param) - parseInt('01')
     let paramprevious: string = "0" + param
-    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.parent + "' AND param=" + "'" + paramprevious + "'"} }).subscribe(val => {
+    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.parent + "' AND param=" + "'" + paramprevious + "'" } }).subscribe(val => {
       this.photosview = val['data'];
       this.viewfoto = this.photosview[0].img_src
       this.param = this.photosview[0].param
@@ -1028,7 +1066,7 @@ export class QcoutPage {
   doNextFoto() {
     let param = parseInt(this.param) + parseInt('01')
     let parampnext: string = "0" + param
-    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.parent + "' AND param=" + "'" + parampnext + "'"} }).subscribe(val => {
+    this.api.get("table/link_image", { params: { filter: 'parent=' + "'" + this.parent + "' AND param=" + "'" + parampnext + "'" } }).subscribe(val => {
       this.photosview = val['data'];
       this.viewfoto = this.photosview[0].img_src
       this.param = this.photosview[0].param
@@ -1123,7 +1161,7 @@ export class QcoutPage {
                   headers: {}
                 }
 
-                let url = "http://101.255.60.202/serverapi/api/Upload";
+                let url = "http://101.255.60.202/qctesting/api/Upload";
                 fileTransfer.upload(this.imageURI, url, options)
                   .then((data) => {
                     loader.dismiss();
@@ -1134,7 +1172,7 @@ export class QcoutPage {
                     this.api.put("table/link_image",
                       {
                         "no": foto.no,
-                        "img_src": 'http://101.255.60.202/serverapi/img/' + this.receiptno + "-" + this.itemno + "-" + foto.param + uuid,
+                        "img_src": 'http://101.255.60.202/qctesting/img/' + this.receiptno + "-" + this.itemno + "-" + foto.param + uuid,
                         "file_name": this.receiptno + "-" + this.itemno + "-" + foto.param + uuid,
                         "description": datadesc.description,
                         "upload_date": date,
@@ -1187,7 +1225,7 @@ export class QcoutPage {
   doPassedQC() {
     if (this.photos[0].img_src == '' || this.photos[1].img_src == '' || this.photos[2].img_src == '' || this.photos[3].img_src == '') {
       let alert = this.alertCtrl.create({
-        title: 'Error',
+        title: 'Warning',
         subTitle: 'Foto Tampak Kiri, Tampak Kanan, Tampak Atas dan Tampak Bawah harus terpenuhi',
         buttons: ['OK']
       });
@@ -1512,7 +1550,7 @@ export class QcoutPage {
 
                       })
                     this.datadm = [];
-                    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Header", sort: "[Expected Receipt Date]" + " ASC " } })
+                    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Header", filter: "Status=0 AND [Expected Receipt Date] > '2018-01-01'", sort: "[Expected Receipt Date]" + " DESC " } })
                       .subscribe(val => {
                         let data = val['data'];
                         for (let i = 0; i < data.length; i++) {

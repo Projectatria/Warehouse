@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.atria.warehouse" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.atria.warehousetraining" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Atria Warehouse</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
@@ -11,6 +11,7 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="none" />
@@ -99,6 +100,6 @@
     <plugin name="cordova-plugin-fcm" spec="^2.1.2" />
     <allow-navigation href="http://192.168.99.212:8100" />
     <plugin name="cordova-plugin-advanced-http" spec="^1.11.1" />
-    <plugin name="cordova-honeywell-scanner-simplified" spec="^1.1.1" />
+    <plugin name="dff-cordova-plugin-honeywell" spec="https://github.com/dff-solutions/dff-cordova-plugin-honeywell.git" />
     <engine name="android" spec="6.3.0" />
 </widget>
