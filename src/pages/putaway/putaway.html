@@ -39,7 +39,7 @@
       <ion-card *ngFor="let rcv of receiving">
         <ion-item *ngIf="rcv.staging != 'RACK'" (click)="viewDetail(rcv)">
           <h3 style="font-weight:bold;padding-bottom:5px;text-align:left;">ITEM NO - {{rcv.item_no}}</h3>
-          <p>Qty : {{rcv.qty}}</p>
+          <p>Qty : {{rcv.qty_receiving}}</p>
           <p>Staging : {{rcv.staging}}</p>
           <p item-end>Batch No : {{rcv.batch_no}}</p>
         </ion-item>
@@ -298,7 +298,7 @@
       </form>
       <ion-buttons end>
         <button ion-button color="greenlake" style="margin-top:20px;" (click)="doOpenLocation()">Location</button>
-        <button ion-button color="greenlake" style="margin-top:20px;" [disabled]="!myFormModal.valid" (click)="doSavePutaway(rcv)">Save</button>
+        <button ion-button color="greenlake" style="margin-top:20px;" [disabled]="!myFormModal.valid" (click)="doSavePutaway()">Save</button>
       </ion-buttons>
     </div>
   </div>

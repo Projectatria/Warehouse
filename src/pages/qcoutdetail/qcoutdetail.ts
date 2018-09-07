@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher } from 'ionic-angular';
+import { ModalController, MenuController, IonicPage, NavController, ToastController, NavParams, Refresher, LoadingController } from 'ionic-angular';
 import { ApiProvider } from '../../providers/api/api';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder } from "@angular/forms";
@@ -24,28 +24,35 @@ export class QcoutdetailPage {
   locationcode = '';
   expectedreceiptdate = '';
   detailpo: string = "detailpoitem";
-  private token:any;
+  private token: any;
+  public loader: any;
 
   constructor(
     public navCtrl: NavController,
     public api: ApiProvider,
     public toastCtrl: ToastController,
     public alertCtrl: AlertController,
+    public loadingCtrl: LoadingController,
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public menu: MenuController,
     public modalCtrl: ModalController,
     public storage: Storage
   ) {
+    this.loader = this.loadingCtrl.create({
+      // cssClass: 'transparent',
+      content: 'Loading...'
+    });
+    this.loader.present()
     this.toggled = false;
     this.detailpo = "detailpoitem"
     this.receiptno = navParams.get('receiptno');
-    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'"} })
-    .subscribe(val => {
-      this.trans_sales_detail = val['data'];
-      this.totaldata = val['count'];
-    })
-    this.getPOD();
+    this.api.get("tablenav", { params: { limit: 10, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'" } })
+      .subscribe(val => {
+        this.trans_sales_detail = val['data'];
+        this.totaldata = val['count'];
+        this.loader.dismiss();
+      })
   }
   ionViewCanEnter() {
     this.storage.get('token').then((val) => {
@@ -59,11 +66,11 @@ export class QcoutdetailPage {
     });
   }
   getPOD() {
-    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'"} })
-    .subscribe(val => {
-      this.trans_sales_detail = val['data'];
-      this.totaldata = val['count'];
-    })
+    this.api.get("tablenav", { params: { limit: 10, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'" } })
+      .subscribe(val => {
+        this.trans_sales_detail = val['data'];
+        this.totaldata = val['count'];
+      })
   }
   getSearchPODetail(ev: any) {
     // set val to the value of the searchbar
@@ -82,13 +89,13 @@ export class QcoutdetailPage {
     this.toggled = this.toggled ? false : true;
   }
   doRefresh(refresher) {
-    this.api.get("tablenav", { params: { limit: 30, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'"} })
-    .subscribe(val => {
-      this.trans_sales_detail = val['data'];
-      this.totaldata = val['count'];
-      this.searchpodetail = this.trans_sales_detail;
-      refresher.complete();
-    });
+    this.api.get("tablenav", { params: { limit: 10, table: "CSB_LIVE$Delivery Management Line", filter: "[Receipt No_]=" + "'" + this.receiptno + "'" } })
+      .subscribe(val => {
+        this.trans_sales_detail = val['data'];
+        this.totaldata = val['count'];
+        this.searchpodetail = this.trans_sales_detail;
+        refresher.complete();
+      });
   }
   ionViewDidLoad() {
   }

@@ -58,9 +58,9 @@ export class HomePage {
     });
   }  
   ngAfterViewInit() {
-    this.loader.dismiss();
   }
   ionViewCanEnter() {
+    this.loader.dismiss();
     this.storage.get('token').then((val) => {
       this.token = val;
       if (this.token != null) {

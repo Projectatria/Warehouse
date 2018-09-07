@@ -268,7 +268,7 @@ export class DetailpoactionPage {
           document.getElementById("myModal").style.display = "none";
           const headers = new HttpHeaders()
             .set("Content-Type", "application/json");
-          if (this.myFormModal.value.location != '') {
+          /*if (this.myFormModal.value.location != '') {
             this.api.put("table/location_master",
               {
                 "location_alocation": this.myFormModal.value.location,
@@ -291,7 +291,7 @@ export class DetailpoactionPage {
               },
               { headers })
               .subscribe();
-          }
+          }*/
           this.myFormModal.reset()
           this.locations = [];
           let alert = this.alertCtrl.create({
@@ -470,11 +470,13 @@ export class DetailpoactionPage {
                         let date = moment().format();
                         const headers = new HttpHeaders()
                           .set("Content-Type", "application/json");
+                          console.log(detailpo.line_no)
                         this.api.post("table/receiving",
                           {
                             "receiving_no": this.nextno,
                             "order_no": detailpo.order_no,
                             "batch_no": detailpo.batch_no,
+                            "line_no": detailpo.line_no,
                             "item_no": detailpo.item_no,
                             "location_code": '81003',
                             "expected_receipt_date": detailpo.expected_receipt_date,
@@ -562,11 +564,13 @@ export class DetailpoactionPage {
                         let date = moment().format();
                         const headers = new HttpHeaders()
                           .set("Content-Type", "application/json");
+                          console.log(detailpo.line_no)
                         this.api.post("table/receiving",
                           {
                             "receiving_no": this.nextno,
                             "order_no": detailpo.order_no,
                             "batch_no": detailpo.batch_no,
+                            "line_no": detailpo.line_no,
                             "item_no": detailpo.item_no,
                             "location_code": detailpo.location_code,
                             "expected_receipt_date": detailpo.expected_receipt_date,

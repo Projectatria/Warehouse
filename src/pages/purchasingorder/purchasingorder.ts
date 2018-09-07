@@ -598,6 +598,7 @@ export class PurchasingorderPage {
                                 "code": code,
                                 "order_no": data[i]["Document No_"],
                                 "batch_no": batch,
+                                "line_no": data[i]["Line No_"],
                                 "item_no": data[i].No_,
                                 "location_code": '81003',
                                 "expected_receipt_date": data[i]["Expected Receipt Date"],

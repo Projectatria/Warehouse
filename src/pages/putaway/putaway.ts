@@ -79,6 +79,7 @@ export class PutawayPage {
   private token: any;
   public loader: any;
   public name: any;
+  public nextnostock = '';
 
   constructor(
     public navCtrl: NavController,
@@ -121,7 +122,7 @@ export class PutawayPage {
     this.put = "qcin"
     this.groupby = ""
     this.search = 'item_no';
-  }  
+  }
   ngAfterViewInit() {
     this.loader.dismiss();
   }
@@ -518,22 +519,22 @@ export class PutawayPage {
                       .subscribe(val => {
                         this.putawayfound = [];
                         this.api.get('table/putawaylist_temp', { params: { limit: 30, filter: "pic=" + '12345' } })
-                        .subscribe(val => {
-                          this.getputawaylist = val['data'];
-                          if(this.getputawaylist.length != 0) {
-                            this.doSavelistToPutaway();
-                          }
-                          else {
-                            let alert = this.alertCtrl.create({
-                              title: 'Sukses ',
-                              subTitle: 'Save Item To Rack Sukses',
-                              buttons: ['OK']
-                            });
-                            this.myForm.reset()
-                            alert.present();
-                            this.getPutawayTemp();
-                          }
-                        });
+                          .subscribe(val => {
+                            this.getputawaylist = val['data'];
+                            if (this.getputawaylist.length != 0) {
+                              this.doSavelistToPutaway();
+                            }
+                            else {
+                              let alert = this.alertCtrl.create({
+                                title: 'Sukses ',
+                                subTitle: 'Save Item To Rack Sukses',
+                                buttons: ['OK']
+                              });
+                              this.myForm.reset()
+                              alert.present();
+                              this.getPutawayTemp();
+                            }
+                          });
                       })
                   });
               });
@@ -635,7 +636,7 @@ export class PutawayPage {
         this.totalqty = this.putaway.reduce(function (prev, cur) {
           return prev + cur.qty;
         }, 0);
-        if (this.totalqty >= rcv.qty) {
+        if (this.totalqty >= rcv.qty_receiving) {
           let alert = this.alertCtrl.create({
             title: 'Error ',
             subTitle: 'Qty does not exist',
@@ -647,7 +648,7 @@ export class PutawayPage {
           this.myFormModal.reset();
           document.getElementById("myModal").style.display = "block";
           this.myFormModal.get('location').setValue(rcv.position)
-          this.myFormModal.get('qty').setValue(rcv.qty - this.totalqty)
+          this.myFormModal.get('qty').setValue(rcv.qty_receiving - this.totalqty)
           this.receivingno = rcv.receiving_no;
           this.docno = rcv.doc_no;
           this.orderno = rcv.order_no;
@@ -656,7 +657,7 @@ export class PutawayPage {
           this.locationcode = rcv.location_code;
           this.position = rcv.position;
           this.divisionno = rcv.division;
-          this.qty = rcv.qty;
+          this.qty = rcv.qty_receiving;
           this.unit = rcv.unit;
         }
       });
@@ -732,6 +733,14 @@ export class PutawayPage {
           this.putawayno = '';
         }
         else {
+          console.log('ok')
+          this.api.get('table/receiving', { params: { limit: 30, filter: "receiving_no=" + "'" + this.receivingno + "'" } })
+            .subscribe(val => {
+              let cek = val['data']
+              console.log(cek)
+              this.doAddStockMin(cek);
+              this.doAddStockPlus(cek);
+            });
           if (this.qtyprevious == '') {
             this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno + " AND " + "location_position=" + "'" + this.myFormModal.value.location + "'" } })
               .subscribe(val => {
@@ -795,7 +804,7 @@ export class PutawayPage {
                       .subscribe(val => {
                         const headers = new HttpHeaders()
                           .set("Content-Type", "application/json");
-                        this.api.put("table/location_master",
+                        /*this.api.put("table/location_master",
                           {
                             "location_alocation": this.position,
                             "batch_no": '',
@@ -804,40 +813,40 @@ export class PutawayPage {
                             "status": 'TRUE'
                           },
                           { headers })
+                          .subscribe(val => {*/
+                        this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
                           .subscribe(val => {
-                            this.api.get('table/putaway', { params: { limit: 30, filter: "receiving_no=" + this.receivingno } })
-                              .subscribe(val => {
-                                if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
-                                  var position = this.myFormModal.value.location.substring(0, 2);
-                                  this.api.put("table/receiving",
-                                    {
-                                      "receiving_no": this.receivingno,
-                                      "staging": 'RACK',
-                                      "position": position
-                                    },
-                                    { headers })
+                            if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
+                              var position = this.myFormModal.value.location.substring(0, 2);
+                              this.api.put("table/receiving",
+                                {
+                                  "receiving_no": this.receivingno,
+                                  "staging": 'RACK',
+                                  "position": position
+                                },
+                                { headers })
+                                .subscribe(val => {
+                                  this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
                                     .subscribe(val => {
-                                      this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
-                                        .subscribe(val => {
-                                          this.receiving = val['data'];
-                                        });
+                                      this.receiving = val['data'];
                                     });
-                                }
-                                this.putaway = val['data'];
-                                this.rcvlist = this.receivingno;
-                                this.totaldataputaway = val['count'];
-                                this.detailput = this.detailput ? false : true;
-                                let alert = this.alertCtrl.create({
-                                  title: 'Sukses',
-                                  subTitle: 'Save Sukses',
-                                  buttons: ['OK']
                                 });
-                                alert.present();
-                                this.doOffPutaway();
-                                this.receivingno = '';
-                                this.qtyprevious = '';
-                              });
+                            }
+                            this.putaway = val['data'];
+                            this.rcvlist = this.receivingno;
+                            this.totaldataputaway = val['count'];
+                            this.detailput = this.detailput ? false : true;
+                            let alert = this.alertCtrl.create({
+                              title: 'Sukses',
+                              subTitle: 'Save Sukses',
+                              buttons: ['OK']
+                            });
+                            alert.present();
+                            this.doOffPutaway();
+                            this.receivingno = '';
+                            this.qtyprevious = '';
                           });
+                        //});
                       });
                   });
                 }
@@ -881,7 +890,22 @@ export class PutawayPage {
                 });
             }
           }
-
+          if ((parseInt(this.totalqty) + parseInt(this.myFormModal.value.qty)) == parseInt(this.qty)) {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+            this.api.put("table/receiving",
+              {
+                "receiving_no": this.receivingno,
+                "status": 'CLSDLOC'
+              },
+              { headers })
+              .subscribe(val => {
+                this.api.get('table/receiving', { params: { limit: 30, filter: "status='CLSD'" } })
+                  .subscribe(val => {
+                    this.receiving = val['data'];
+                  });
+              });
+          }
         }
       });
   }
@@ -944,7 +968,7 @@ export class PutawayPage {
                     text: 'Cancel',
                     role: 'cancel',
                     handler: data => {
-  
+
                     }
                   },
                   {
@@ -1033,7 +1057,7 @@ export class PutawayPage {
               });
               alert.present();
             }
-  
+
           });
       }, function (reason) {
         console.error(reason);
@@ -1086,5 +1110,55 @@ export class PutawayPage {
   }
   doSortPUTDetail(filter, listpu) {
 
+  }
+  doAddStockMin(cek) {
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+    let date = moment().format('YYYY-MM-DD HH:mm');
+    this.api.post("table/stock_trans",
+      {
+        "doc_no": "STG-" + cek[0].order_no,
+        "location": cek[0].location_code,
+        "sub_location": cek[0].staging,
+        "status": '1',
+        "item_no": cek[0].item_no,
+        "varian_no": '',
+        "batch_no": cek[0].batch_no,
+        "serial_no": '',
+        "qty_in": 0,
+        "qty_out": this.myFormModal.value.qty,
+        "trans_date_time": date
+      },
+      { headers })
+      .subscribe(val => {
+
+      }, err => {
+        this.doAddStockMin(cek)
+      });
+  }
+  doAddStockPlus(cek) {
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
+    let date = moment().format('YYYY-MM-DD HH:mm');
+    this.api.post("table/stock_trans",
+      {
+        "doc_no": "PTW-" + cek[0].order_no,
+        "location": cek[0].location_code,
+        "sub_location": this.myFormModal.value.location,
+        "status": '2',
+        "item_no": cek[0].item_no,
+        "varian_no": '',
+        "batch_no": cek[0].batch_no,
+        "serial_no": '',
+        "qty_in": this.myFormModal.value.qty,
+        "qty_out": 0,
+        "trans_date_time": date
+      },
+      { headers })
+      .subscribe(val => {
+
+      }, err => {
+        this.doAddStockPlus(cek)
+      });
   }
 }
