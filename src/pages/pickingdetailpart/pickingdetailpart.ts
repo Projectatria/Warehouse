@@ -28,6 +28,7 @@ export class PickingdetailpartPage {
   public detailpicking: any;
   public pickinglist: any;
   public pickingresult = [];
+  public groupby = 'default'
 
   constructor(
     public navCtrl: NavController,
@@ -87,5 +88,51 @@ export class PickingdetailpartPage {
         this.pickingresult = val['data']
       });
     })
+  }
+  getSetGroupBy(groupby) {
+    if (groupby == 'default') {
+      this.getDetailGroupByDefault()
+    }
+    else if (groupby == 'item') {
+      this.getDetailGroupByItems()
+    }
+    else if (groupby == 'part') {
+      this.getDetailGroupByPart()
+    }
+    else if (groupby == 'location') {
+      this.getDetailGroupByLocation()
+    }
+  }
+  getDetailGroupByDefault() {
+    this.api.get('table/picking_list_detail', { params: { limit: 30, filter: "receipt_no=" + "'" + this.receiptno + "'"} })
+      .subscribe(val => {
+        this.picking_detail = val['data'];
+        console.log(this.picking_detail)
+        this.totaldata = val['count'];
+      });
+  }
+  getDetailGroupByItems() {
+    this.api.get('table/picking_list_detail', { params: { limit: 30, filter: "receipt_no=" + "'" + this.receiptno + "'", group: 'item_no', groupSummary: "sum (qty) as qtysum" } })
+      .subscribe(val => {
+        this.picking_detail = val['data'];
+        console.log(this.picking_detail)
+        this.totaldata = val['count'];
+      });
+  }
+  getDetailGroupByPart() {
+    this.api.get('table/picking_list_detail', { params: { limit: 30, filter: "receipt_no=" + "'" + this.receiptno + "'", group: 'location_code', groupSummary: "sum (qty) as qtysum" } })
+      .subscribe(val => {
+        this.picking_detail = val['data'];
+        console.log(this.picking_detail)
+        this.totaldata = val['count'];
+      });
+  }
+  getDetailGroupByLocation() {
+    this.api.get('table/picking_list_detail', { params: { limit: 30, filter: "receipt_no=" + "'" + this.receiptno + "'", group: 'location_code', groupSummary: "sum (qty) as qtysum" } })
+      .subscribe(val => {
+        this.picking_detail = val['data'];
+        console.log(this.picking_detail)
+        this.totaldata = val['count'];
+      });
   }
 }
